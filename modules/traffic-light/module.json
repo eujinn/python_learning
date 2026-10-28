@@ -1,0 +1,67 @@
+{
+  "id": "traffic-light",
+  "name": "Traffic Light Python",
+  "icon": "🚦",
+  "description": "Learn Python conditionals by programming a self-driving car.",
+  "commands": ["stop", "slow", "crawl", "go"],
+  "labels": {
+    "stop": "brake now",
+    "slow": "slow down, then stop",
+    "crawl": "drive slowly",
+    "go": "drive on"
+  },
+  "legend": "📜 <b>stop()</b> brake now · <b>slow()</b> slow down, then stop · <b>crawl()</b> drive slowly · <b>go()</b> drive on",
+  "idleText": "The traffic light is waiting for your code.",
+  "css": "modules/traffic-light/scene.css",
+  "badges": [
+    {
+      "id": "commands",
+      "title": "Commands",
+      "desc": "Calling car actions like go() and stop()",
+      "levels": [0],
+      "badge": "🚗 Ignition Starter"
+    },
+    {
+      "id": "variables",
+      "title": "Variables",
+      "desc": "Saving values inside memory boxes with =",
+      "levels": [1],
+      "badge": "📦 Memory Keeper"
+    },
+    {
+      "id": "if_eq",
+      "title": "if / ==",
+      "desc": "Asking True/False equality questions",
+      "levels": [2],
+      "badge": "🚦 Signal Reader"
+    },
+    {
+      "id": "else_elif",
+      "title": "else / elif",
+      "desc": "Choosing between two or three road branches",
+      "levels": [3, 4],
+      "badge": "🔀 Fork Navigator"
+    },
+    {
+      "id": "comparisons",
+      "title": "Comparisons",
+      "desc": "Checking !=, >, <, <=, ranges, and nested if",
+      "levels": [5, 6, 7, 8, 9, 10],
+      "badge": "📏 Safety Ranger"
+    },
+    {
+      "id": "and_or",
+      "title": "and / or",
+      "desc": "Joining two questions together",
+      "levels": [11, 12],
+      "badge": "🤝 Logic Linker"
+    },
+    {
+      "id": "booleans",
+      "title": "Boolean logic",
+      "desc": "Using True, False, not, and combined rules",
+      "levels": [13, 14],
+      "badge": "🧠 Autopilot Master"
+    }
+  ]
+}
