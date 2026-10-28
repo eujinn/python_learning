@@ -1,0 +1,23 @@
+{
+  "id": "_template",
+  "name": "Module Template",
+  "icon": "🧩",
+  "description": "Scaffold starter for building new Python teaching modules. Copy this folder to modules/<your-id>/ and fill in the pieces.",
+  "commands": ["go", "stop"],
+  "labels": {
+    "go": "the program drives on",
+    "stop": "the program stops"
+  },
+  "legend": "📜 <b>go()</b> advance · <b>stop()</b> halt",
+  "idleText": "This is a stub module. Switch to a module branch (e.g. module/traffic-light) for a full lesson set.",
+  "css": "modules/_template/scene.css",
+  "badges": [
+    {
+      "id": "starter",
+      "title": "Module Runner",
+      "desc": "Confirm the module system boots and runs your first lesson",
+      "levels": [0],
+      "badge": "🧩 Scaffold Runner"
+    }
+  ]
+}

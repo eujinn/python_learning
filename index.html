@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Playground</title>
+<link rel="stylesheet" href="./core/styles.css">
+</head>
+<body>
+<header>
+  <div class="hdr-top">
+    <h1 id="appTitle">🧪 Python Playground</h1>
+    <div class="hdr-btns">
+      <div class="module-picker-wrap">
+        <span>Module:</span>
+        <select class="module-picker" id="modulePicker" aria-label="Choose a lesson module"></select>
+      </div>
+      <button class="edu-btn" id="journeyBtn">📋 Learning Record</button>
+      <button class="edu-btn t-btn" id="teacherBtn">👩‍🏫 Teacher Mode</button>
+    </div>
+  </div>
+  <div class="prog-bar-wrap">
+    <span id="progText">Progress: 0 / 0 Challenges</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <span id="badgeSummary">🏅 0 / 0 Badges</span>
+  </div>
+  <div class="tabs" id="tabs"></div>
+</header>
+
+<main class="grid">
+<!-- LEFT COLUMN: LESSON & CODE INPUT -->
+<section class="panel">
+  <span class="concept-tag" id="conceptTag"></span>
+  <h2 id="title"></h2>
+  <p class="task" id="task"></p>
+
+  <!-- Teacher Mode Control Drawer (hidden in normal student view) -->
+  <div class="t-drawer" id="teacherDrawer" hidden>
+    <div class="t-drawer-hdr">
+      <span>👩‍🏫 Teacher Mode Controls</span>
+      <button class="t-act" id="lockTeacherBtn">🔒 Exit Teacher Mode</button>
+    </div>
+    <div class="t-actions">
+      <button class="t-act" id="tRevealBtn">1. Reveal Solution</button>
+      <button class="t-act" id="tNotesBtn">2. Show Teaching Notes</button>
+      <button class="t-act" id="tDemoBtn">3. Demonstrate Step Execution</button>
+      <button class="t-act" id="tTestsBtn">4. Show Expected Test Results</button>
+      <button class="t-act" id="tResetBtn">5. Reset Student View</button>
+    </div>
+    <div class="t-out" id="teacherOut" hidden></div>
+  </div>
+
+  <!-- Learn First teaching system (closed by default to keep screen compact) -->
+  <div class="learn-card closed" id="learnCard">
+    <div class="learn-hdr" id="learnHdr">
+      <span>🧠 Learn First: 6-Step Python Thinking Guide</span>
+      <span id="learnToggleIcon">◀</span>
+    </div>
+    <div class="learn-body" id="learnBody"></div>
+  </div>
+
+  <!-- Interactive Vocabulary Bar -->
+  <div class="vocab-bar" id="vocabBar"></div>
+  <div class="vocab-pop" id="vocabPop" hidden></div>
+
+  <!-- Progressive 3-Tier Hint System -->
+  <div class="hint-wrap">
+    <button class="hint-trig" id="hintBtn">💡 Hint 1: Concept Clue</button>
+    <div class="hint-panel" id="hintPanel" hidden></div>
+  </div>
+
+  <!-- Protected Legacy Elements (Hidden) -->
+  <button class="peek" id="peek" hidden style="display:none">Show the answer 👀</button>
+  <pre class="ex" id="ex" hidden></pre>
+
+  <!-- Python Code Input Textarea -->
+  <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Type your Python code here"></textarea>
+
+  <!-- Virtual Keys Toolbar -->
+  <div class="keys" id="keys">
+    <button data-i="    ">Tab</button><button data-i=":">:</button><button data-i="&quot;">&quot;</button><button data-i="==">==</button><button data-i="=">=</button><button data-i="!=">!=</button><button data-i="&gt;">&gt;</button><button data-i="&lt;">&lt;</button><button data-i="&lt;=">&lt;=</button><button data-i="&gt;=">&gt;=</button><button data-i="and">and</button><button data-i="or">or</button><button data-i="not">not</button><button data-i="()">()</button>
+  </div>
+  <div class="row">
+    <button id="run">▶ Run step by step</button>
+    <button id="next" hidden>Next level ➜</button>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="refl-box" id="reflBox" hidden></div>
+</section>
+
+<!-- RIGHT COLUMN: SIMULATION, THINKING TRACE, AND NEXT STEP CONTROLS -->
+<section class="panel">
+  <!-- Module injects its scene DOM here -->
+  <div id="module-scene"></div>
+  <div class="legend" id="legend"></div>
+
+  <!-- Python Thinking Trace View -->
+  <div id="view" hidden></div>
+
+  <!-- Step Thought Explanation -->
+  <div class="expl" id="expl">Press Run to watch your code, one step at a time.</div>
+
+  <!-- Next Step Controls -->
+  <div class="row" id="stepbar" hidden style="margin-top:6px">
+    <button id="step">Next step ▶</button>
+    <button class="sec" id="skip">⏭ Skip to results</button>
+    <button class="sec" id="edit">✏️ Edit code</button>
+  </div>
+
+  <!-- Active Sensor Variables -->
+  <div class="vars" id="vars">The program is waiting for your code.</div>
+
+  <!-- Test Results Suite -->
+  <div id="res"></div>
+</section>
+</main>
+
+<!-- Learning Record Modal -->
+<div class="modal-bg" id="journeyModal" hidden>
+  <div class="modal-box">
+    <button class="modal-x" id="closeJourneyBtn">✕</button>
+    <h3 style="margin:0 0 6px">📋 Student Learning Record</h3>
+    <p style="margin:0 0 10px;color:var(--muted);font-size:.92rem">Your progress and earned badges are saved on this computer.</p>
+    <div id="journeySummary" style="font-weight:700;margin-bottom:8px"></div>
+    <div class="rec-list" id="skillList"></div>
+    <div style="margin-top:10px;font-weight:700;font-size:.92rem">🏅 Earned Achievement Badges:</div>
+    <div class="badge-grid" id="badgeGrid"></div>
+    <div id="nextSkillBanner" style="margin-top:12px;padding:10px;border-radius:10px;background:var(--bg);font-size:.92rem"></div>
+  </div>
+</div>
+
+<!-- Teacher Mode Password Modal -->
+<div class="modal-bg" id="teacherModal" hidden>
+  <div class="modal-box">
+    <button class="modal-x" id="closeTeacherBtn">✕</button>
+    <h3 style="margin:0 0 6px">👩‍🏫 Teacher Mode Authentication</h3>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:.92rem">Enter the teacher password to access solutions, teaching notes, and step demonstrations.</p>
+    <form id="teacherAuthForm" onsubmit="return false;">
+      <input type="password" id="teacherPwdInput" placeholder="Enter teacher password" autocomplete="off" style="width:100%;height:42px;padding:0 12px;border:2px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px">
+      <div class="row" style="justify-content:flex-end">
+        <button type="submit" class="edu-btn t-btn unlocked" id="teacherUnlockSubmit">Unlock Teacher Mode</button>
+      </div>
+      <div id="teacherAuthError" style="color:var(--bad);font-size:.9rem;font-weight:700;margin-top:8px" hidden>Incorrect password. Please try again.</div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="./core/ui-shell.js"></script>
+</body></html>
