@@ -1,0 +1,33 @@
+/* Traffic Light scene styles */
+.scene{position:relative;height:170px;min-height:170px;border-radius:12px;overflow:hidden;background:linear-gradient(var(--sky1),var(--sky2));flex-shrink:0;transition:filter 1s}
+.sun{position:absolute;right:10px;top:6px;font-size:24px}
+.ground{position:absolute;left:0;right:0;bottom:0;height:80px;background:var(--grass)}
+.road{position:absolute;left:0;right:0;bottom:12px;height:54px;background:var(--road)}
+.road::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:3px dashed #f5f5f5aa}
+.zebra{position:absolute;left:48%;width:9%;top:0;bottom:0;background:repeating-linear-gradient(0deg,#fff 0 6px,transparent 6px 12px);opacity:.85}
+.pole{position:absolute;left:62%;bottom:68px;width:28px;background:#1d232c;border-radius:8px;padding:4px 0}
+.pole::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;width:5px;height:18px;background:#444c58}
+.lamp{width:17px;height:17px;margin:3px auto;border-radius:50%;background:#555;opacity:.35;transition:all .25s}
+#l-red.on{background:#ff3b30;box-shadow:0 0 14px #ff3b30;opacity:1}
+#l-yellow.on{background:#ffcc00;box-shadow:0 0 14px #ffcc00;opacity:1}
+#l-green.on{background:#2ee66b;box-shadow:0 0 14px #2ee66b;opacity:1}
+.walker{position:absolute;left:51%;bottom:24px;font-size:26px;animation:bob .7s infinite alternate}
+.walker[hidden]{display:none}
+@keyframes bob{to{transform:translateY(-4px)}}
+.car{position:absolute;bottom:20px;left:-120px;width:80px;height:40px}
+.bubble{position:absolute;left:8px;top:8px;font-weight:700;font-size:.85rem;background:var(--panel);color:var(--ink);border-radius:10px;padding:3px 8px}
+.bubble:empty{display:none}
+.deco{position:absolute;left:6%;bottom:70px;font-size:30px}
+
+.gauge{position:absolute;right:6px;top:32px;width:90px;background:#ffffffd9;border-radius:10px;padding:2px}
+
+.ruler{margin-top:4px;padding:6px 10px 20px;background:var(--bg);border-radius:10px;flex-shrink:0}
+.ruler[hidden]{display:none}
+.rl{margin-bottom:2px;color:var(--muted);font-size:.82rem}
+.rt{position:relative;height:36px;margin:0 16px;border-bottom:3px solid var(--ink)}
+.tk{position:absolute;bottom:-3px;width:2px;height:6px;background:var(--ink);transform:translateX(-1px)}
+.tk.mj{height:14px}
+.tk b{position:absolute;top:16px;left:50%;transform:translateX(-50%);font:500 .75rem "Fira Code",monospace;white-space:nowrap}
+.span{position:absolute;left:0;bottom:6px;height:8px;background:#f59e0b;border-radius:4px;transition:width .8s;min-width:2px}
+.span span{position:absolute;left:50%;top:-20px;transform:translateX(-50%);font-weight:700;font-size:.78rem;white-space:nowrap}
+.rc{position:absolute;bottom:12px;font-size:22px;line-height:1;transform:translateX(-50%) scaleX(-1);transition:left .8s}#me{left:0}
