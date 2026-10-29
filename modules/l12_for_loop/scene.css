@@ -1,0 +1,129 @@
+/* For Loop — Ice Cream Machine scene styles (Argon design system). */
+.ic-scene {
+  position: relative;
+  height: 220px;
+  min-height: 220px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 85%, #ffe4b5 100%);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.ic-awning {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #ffffff;
+  background: linear-gradient(90deg, #f472b6, #fb7185);
+  padding: 5px 0;
+  letter-spacing: 0.02em;
+}
+.bubble {
+  position: absolute;
+  left: 8px;
+  top: 30px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: var(--bg-card);
+  color: var(--ink-main);
+  border-radius: 10px;
+  padding: 3px 8px;
+  z-index: 5;
+}
+.bubble:empty { display: none; }
+
+.ic-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  margin: 6px 12px;
+  padding-bottom: 8px;
+}
+.ic-customer {
+  font-size: 56px;
+  line-height: 1;
+  animation: ic-hop 2s ease-in-out infinite;
+  filter: drop-shadow(0 3px 3px rgba(15, 23, 42, 0.2));
+}
+@keyframes ic-hop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.ic-bowl {
+  position: relative;
+  width: 120px;
+  height: 86px;
+  background: #fff7ed;
+  border: 3px solid #fbd38d;
+  border-bottom-width: 8px;
+  border-radius: 8px 8px 22px 22px;
+  box-shadow: 0 4px 0 #ecc9a0, inset 0 -10px 0 rgba(251, 211, 141, 0.35);
+}
+.ic-scoops {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+.ic-scoop {
+  width: 42px;
+  height: 26px;
+  border-radius: 50% 50% 44% 44%;
+  border: 2.5px solid;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: 10px;
+  box-shadow: 0 2px 3px rgba(15, 23, 42, 0.18);
+  animation: ic-drop 0.4s ease-out;
+}
+@keyframes ic-drop {
+  from { transform: translateY(-16px) scale(0.7); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.ic-sauce {
+  position: absolute;
+  left: 50%;
+  bottom: 66px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+}
+.ic-sauce-drop {
+  width: 7px;
+  height: 10px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+.ic-toppings {
+  position: absolute;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.ic-hud {
+  display: flex;
+  gap: 6px;
+  padding: 4px 10px 8px;
+  flex-wrap: wrap;
+}
+.fl-hud-chip {
+  font: 700 0.76rem "JetBrains Mono", monospace;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1.5px solid var(--border-strong);
+  color: #1e3a8a;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
