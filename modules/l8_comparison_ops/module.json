@@ -1,8 +1,8 @@
 {
-  "id": "traffic-light",
-  "name": "Traffic Light Python",
+  "id": "l8_comparison_ops",
+  "name": "Comparison Operators — Traffic Light",
   "icon": "🚦",
-  "description": "Learn Python conditionals by programming a self-driving car.",
+  "description": "Lesson 8 — Learn Python comparison operators (==, !=, >, <, <=, >=) by programming a self-driving car.",
   "commands": ["stop", "slow", "crawl", "go"],
   "labels": {
     "stop": "brake now",
@@ -12,7 +12,8 @@
   },
   "legend": "📜 <b>stop()</b> brake now · <b>slow()</b> slow down, then stop · <b>crawl()</b> drive slowly · <b>go()</b> drive on",
   "idleText": "The traffic light is waiting for your code.",
-  "css": "modules/traffic-light/scene.css",
+  "css": "modules/l8_comparison_ops/scene.css",
+  "userIdea": "Traffic light theme: compare sensors to decide how the car should drive.",
   "badges": [
     {
       "id": "commands",
