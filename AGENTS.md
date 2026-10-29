@@ -8,7 +8,7 @@ An offline-capable static web platform for teaching Python through interactive m
 
 ```
 core/                shared engine and UI (do not couple to one module's scene)
-  engine.js          Python-like interpreter: parse/cond/exec/tr/py
+  engine.js          placeholder interpreter; each module branch extends its own copy for the lesson's syntax
   lessons.js         adaptLesson() + label/exprOf/used helpers
   ui-shell.js        module loading, lesson tabs, step-through runner, event wiring
   editor.js          code editor line-number gutter renderer (renderGutter)
@@ -34,11 +34,11 @@ index.html           shell (module picker, lesson tab, code pane, output pane)
 
 ## Branch model (important)
 
-- `main` = scaffolding + `modules/_template/` only. No real module content.
+- `main` = scaffolding + `modules/_template/` + a **placeholder engine**. It carries NO real lesson syntax — `core/engine.js` on `main` is only a minimal starter so the template loads.
 - **Each module is its own long-lived branch** named `module/<id>` (e.g. `module/l12_for_loop`).
 - A new module MUST branch from `main`, never from another module branch.
 - Each branch deploys to its own Netlify site. `modules.json` should list only the module(s) that branch is about.
-- `core/` must stay identical across branches. When `core/` changes on `main`, sync module branches with `git rebase origin/main` (or merge).
+- **Each module owns its engine.** The interpreter is per-branch: when a lesson needs syntax the starter lacks (`print`, args, `while`, lists, `input`, `time.sleep`, …), implement it in that module's **own** `core/engine.js` copy. Never promote module engine features onto `main` just because one module added them; `main` stays a placeholder and `core/` is allowed to drift across branches.
 
 ### Curriculum module naming convention
 
@@ -73,8 +73,8 @@ The official 19-lesson curriculum — **this table is the canonical source of tr
 | Lesson 19 — Python AI Challenge | `module/l19_ai_challenge` |
 
 - Each branch's module folder id matches the branch id (`modules/l12_for_loop/`), and `modules.json` lists that id.
-- Existing theme-based branches (`module/traffic-light`, `module/forloop`) are legacy and NOT part of this curriculum table.
-- **Engine notes for these lessons:** the shared interpreter currently supports calls, assignment, if/elif/else, comparisons, and/or/not, True/False, and `for ... in range(...)`. Lessons that need `print()` (l1), arithmetic operators (l7), `time.sleep()` (l13), lists (l14, l15), `while` (l16, l17), or `input()` (l18) REQUIRE extending `core/engine.js` on `main` first (and syncing module branches). Do not author a lesson branch until its required syntax is supported (see Engine capability fence).
+- Existing theme-based branches (`module/forloop`) are legacy and NOT part of this curriculum table. `module/l8_comparison_ops` is the curriculum Lesson 8 module (traffic-light theme). There is no `module/l12_for_loop` on `main`; curriculum branches are created on demand.
+- **Engine notes for these lessons:** `main` carries only a placeholder interpreter (zero-arg calls, assignment, if/elif/else, comparisons, and/or/not, True/False). Each lesson branch extends its OWN `core/engine.js` for the syntax that lesson needs — `print()` (l1), call arguments + for `range()` (l12), arithmetic operators (l7), `time.sleep()` (l13), lists (l14, l15), `while` (l16, l17), `input()` (l18). Do not author a lesson branch until its required syntax runs in that branch's engine (see Engine capability fence).
 
 ### Agent workflow: creating a lesson module on request
 
@@ -90,7 +90,7 @@ Resolve and build without asking for the branch name:
    - `module.json` → description, `commands`, `labels`, `badges`
    - `data.js` → storyProblem, learnFirst, vocabulary, hints (shared lesson schema; `tests` may use `cmd`, `cmd*N`, `cmd+` wants)
    - `scene.js`/`scene.css` → the visual right-pane for the idea's theme
-4. **Engine gate first**: if the lesson needs syntax the interpreter lacks (`print`, arithmetic, lists, `while`, `input`, `time.sleep`), extend `core/engine.js` on `main` first, update the capability fence, sync module branches, then author the lesson. Do not write lessons around unsupported syntax.
+4. **Engine gate first — in the MODULE branch**: if the lesson needs syntax the placeholder lacks (`print`, call arguments, arithmetic, lists, `while`, `input`, `time.sleep`), extend **that branch's own** `core/engine.js` to support it, then author the lesson. Do not write lessons around unsupported syntax, and do not push module engine features back onto `main`.
 5. **Register** the id in `modules.json`, run the verification harness (every `solution` must pass every `tests`, count-aware), commit, and push the branch.
 6. **Preserve the user's idea**: keep a `userIdea` field in `module.json` (e.g. `"userIdea": "hula-hoop counter robot"`) so the design intent stays traceable, and mirror the idea in the scene + story.
 
@@ -99,19 +99,20 @@ Resolve and build without asking for the branch name:
 1. `git checkout main && git checkout -b module/<id>` — for curriculum lessons use the canonical branch name from the table above (via the Agent workflow), never an invented ad-hoc id.
 2. Copy `modules/_template/` → `modules/<id>/`
 3. Fill in `module.json`, `data.js`, `scene.js` (and `scene.css` if needed) per the contracts below.
-4. Add the module id to `modules.json` (array of ids).
-5. Verify (see Verification). Commit and push the branch.
+4. **Extend the engine in this branch** if the lesson needs syntax beyond the placeholder (`core/engine.js` on the branch — see per-branch engine model).
+5. Add the module id to `modules.json` (array of ids).
+6. Verify (see Verification). Commit and push the branch.
 
 ## `module.json` contract
 
 ```json
 {
-  "id": "traffic-light",
-  "name": "Traffic Light Python",
-  "icon": "🚦",
-  "description": "Learn Python conditionals by programming a self-driving car.",
-  "commands": ["stop", "slow", "crawl", "go"],
-  "labels": { "stop": "brake now" },
+  "id": "l12_for_loop",
+  "name": "For Loop — Ice Cream Machine",
+  "icon": "🍦",
+  "description": "Lesson 12 — Learn Python for loops by serving scoops.",
+  "commands": ["scoop", "topping", "sauce"],
+  "labels": { "scoop": "serve a scoop" },
   "legend": "HTML shown under the scene",
   "idleText": "Shown in the #vars row before any run",
   "css": "modules/<id>/scene.css",
@@ -168,9 +169,9 @@ The scaffold's UI/color base is extracted from the Argon "Pro Edition" style. Fu
 
 ## Engine capability fence
 
-The shared interpreter (core/engine.js) supports exactly: function calls listed in `commands`, `name = value` assignment, `if/elif/else`, comparisons `== != < > <= >=`, `and` / `or` / `not`, `True` / `False`, string (`"…"`) and number literals, `for` loops (`for <name> in range(N):` or `range(start, stop):`, where bounds are integer literals or variables holding whole numbers), and `#` comments via indentation rules. Loops unroll into per-iteration trace events (`k: "for"`), so the step-runner walks each iteration; `exec` (Script mode) iterates normally.
+**`main`'s placeholder engine** (core/engine.js on main) supports exactly: zero-arg function calls listed in `commands`, `name = value` assignment, `if/elif/else`, comparisons `== != < > <= >=`, `and` / `or` / `not`, `True` / `False`, string (`"…"`) and number literals, and `#` comments via indentation rules. It does NOT support `for`/`while`, call arguments (`scoop("vanilla")`), `def`, `print()`, arithmetic (`+ - * /`), lists, `import`, or `break`/`continue`. This placeholder exists only so the `_template` module loads — nothing else runs on main.
 
-It does NOT support: `while`, `def`/functions, `print()`, `import`, arithmetic operators (`+ - * /`), lists/dicts, method calls, or `break`/`continue`. **Do not author lessons that require unsupported syntax.** If a future module needs new syntax, extend `core/engine.js` deliberately, keep `core/` shared, and update this file.
+**Each module branch extends its own engine** as its lesson requires — e.g. `module/l12_for_loop` adds call arguments + for `range()` loops + sequence-array `want` matching in its own `core/engine.js`/`core/lessons.js`. Treat the branch's `core/` copy as the authoritative interpreter for that module; never depend on `main` for syntax, and never push module engine features back onto `main` (it stays a placeholder). See the branch model and `matchesWant` docs above for what each extension adds.
 
 ## UI conventions
 
