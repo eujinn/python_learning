@@ -1,9 +1,13 @@
 /* =========================================================================
-   CORE PYTHON ENGINE
-   A small Python-like interpreter for educational purposes.
-   Understands: function calls, variable assignment (=), if/elif/else,
-   comparisons (==, !=, <, >, <=, >=), and / or / not, True / False.
-   Pure language layer — no DOM access.
+   PLACEHOLDER CORE PYTHON ENGINE (main branch)
+   main intentionally carries only a minimal starter interpreter that can run
+   the _template module's stub lesson (comments, assignment, zero-arg calls,
+   if/elif/else, comparisons, and/or/not, True/False).
+
+   Each module branch ships its OWN engine copy (core/engine.js), extended
+   locally for that lesson's syntax needs — e.g. module/l12_for_loop adds
+   call arguments (scoop("vanilla")) and sequence wants. Nothing on main
+   should grow beyond this starter; put new syntax in the module branch.
    ========================================================================= */
 
 export class PyErr extends Error {}
@@ -41,7 +45,7 @@ export function cond(txt, names, n) {
 }
 
 /* Parse source code into a small AST. `allowedCalls` is the module's list of
-   command names (e.g. ["stop","slow","crawl","go"]). */
+   command names (e.g. ["stop","slow","go"]). Zero-argument calls only. */
 export function parse(src, names, allowedCalls) {
   const L = [];
   src.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/\t/g, "    ").split("\n")
@@ -70,21 +74,6 @@ export function parse(src, names, allowedCalls) {
     }
     return { t: "if", br, els, elsN };
   }
-  function forNode(l) {
-    if (!l.s.endsWith(":")) throw E(l.n, "Don’t forget the colon : at the end.");
-    const m = l.s.match(/^for\s+([A-Za-z_]\w*)\s+in\s+range\(([^)]*)\)\s*:$/);
-    if (!m) throw E(l.n, "Use: for i in range(3): — put the loop name before in, and a whole number in range().");
-    const varName = m[1];
-    const args = m[2].split(",").map(a => a.trim()).filter(Boolean);
-    if (!args.length || args.length > 2) throw E(l.n, "range() takes one number (or two: start, stop).");
-    const rargs = args.map(a => {
-      if (/^\d+$/.test(a)) return { n: parseInt(a, 10) };
-      if (/^[A-Za-z_]\w*$/.test(a)) return { v: a };
-      throw E(l.n, "range() needs a whole number like 3, or a variable like count.");
-    });
-    if (!nm.includes(varName)) nm.push(varName);
-    return { t: "for", v: varName, rargs, b: sub(l), n: l.n, s: l.s };
-  }
   function simple(l) {
     let m;
     if (allowedCalls.some(c => new RegExp("^" + c + "$").test(l.s))) throw E(l.n, "Add brackets: " + l.s + "()");
@@ -100,7 +89,7 @@ export function parse(src, names, allowedCalls) {
       if (!nm.includes(m[1])) nm.push(m[1]);
       return { t: "set", k: m[1], v, n: l.n };
     }
-    throw E(l.n, "I can’t read this line. Try if, elif, for, or a spell like go().");
+    throw E(l.n, "I can’t read this line. Try if, elif, or a spell like go().");
   }
   function block(ind) {
     const out = [];
@@ -110,7 +99,6 @@ export function parse(src, names, allowedCalls) {
       if (l.ind > ind) throw E(l.n, "This line is pushed in too far.");
       p++;
       if (/^if\b/.test(l.s)) out.push(ifNode(l));
-      else if (/^for\b/.test(l.s)) out.push(forNode(l));
       else if (/^(elif|else)\b/.test(l.s)) throw E(l.n, "“" + l.s.split(/\W/)[0] + "” needs an if above it, in the same column.");
       else out.push(simple(l));
     }
@@ -122,34 +110,11 @@ export function parse(src, names, allowedCalls) {
   return top;
 }
 
-/* Resolve a range() argument list to an array of integer values. */
-function rangeVals(x, env) {
-  const get = a => {
-    if ("n" in a) return a.n;
-    const v = env[a.v];
-    if (typeof v !== "number" || !Number.isFinite(v) || !Number.isInteger(v))
-      throw new PyErr("Line " + x.n + ": range(" + a.v + ") needs a whole number, like 3.");
-    return v;
-  };
-  const a = get(x.rargs[0]);
-  const b = x.rargs.length === 2 ? get(x.rargs[1]) : undefined;
-  if (!Number.isInteger(a) || (b !== undefined && !Number.isInteger(b)))
-    throw new PyErr("Line " + x.n + ": range() needs whole numbers.");
-  const start = b === undefined ? 0 : a;
-  const stop = b === undefined ? a : b;
-  const out = [];
-  for (let k = start; k < stop; k++) out.push(k);
-  return out;
-}
-
 /* Execute a parsed AST against env, collecting called commands into acts. */
 export function exec(ns, env, acts) {
   for (const x of ns) {
     if (x.t == "call") acts.push(x.f);
     else if (x.t == "set") env[x.k] = x.v(env);
-    else if (x.t == "for") {
-      for (const k of rangeVals(x, env)) { env[x.v] = k; exec(x.b, env, acts); }
-    }
     else {
       let hit = false;
       for (const b of x.br) {
@@ -160,23 +125,13 @@ export function exec(ns, env, acts) {
   }
 }
 
-/* Collect trace events for the step-through view.
-   (Generates trace events in order, unrolling for-loops into per-iteration events.) */
+/* Collect trace events for the step-through view. */
 export function tr(ns, env, ev) {
   for (const x of ns) {
     if (x.t == "call") ev.push({ k: "call", n: x.n, f: x.f });
     else if (x.t == "set") {
       env[x.k] = x.v(env);
       ev.push({ k: "set", n: x.n, key: x.k, val: env[x.k], env: Object.assign({}, env) });
-    }
-    else if (x.t == "for") {
-      const vals = rangeVals(x, env);
-      for (let k = 0; k < vals.length; k++) {
-        const v = vals[k];
-        env[x.v] = v;
-        ev.push({ k: "for", n: x.n, var: x.v, val: v, iter: k + 1, total: vals.length, env: Object.assign({}, env) });
-        tr(x.b, env, ev);
-      }
     }
     else {
       let hit = false;
