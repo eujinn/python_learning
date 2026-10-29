@@ -5,7 +5,7 @@
    ========================================================================= */
 
 import { PyErr, parse, tr, py } from "./engine.js";
-import { adaptLesson, label, exprOf, used } from "./lessons.js";
+import { adaptLesson, label, exprOf, used, matchesWant, describeWant } from "./lessons.js";
 import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal } from "./progress.js";
 import { resetHints, advanceHint } from "./hints.js";
 import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
@@ -150,8 +150,9 @@ function run() {
     try { tr(prog, env, ev); }
     catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); return; }
     if (!ev.some(x => x.k == "call")) ev.push({ k: "call", n: 0, f: "go", auto: true });
-    const calls = ev.filter(x => x.k == "call"), got = calls[calls.length - 1].f;
-    T.push({ sc, env0, ev, got, good: L.free || got === sc.want, lab: sc.label || label(env0) });
+    const calls = ev.filter(x => x.k == "call").map(c => c.f);
+    const got = calls[calls.length - 1];
+    T.push({ sc, env0, ev, got, calls, good: L.free || matchesWant(sc.want, calls), lab: sc.label || label(env0) });
   }
   /* Lessons 4+ (0-indexed >= 3): an unseen auto "go" is not a pass. */
   if (st.cur >= 3 && !L.free) T.forEach(t => { if (t.ev.some(e => e.auto)) t.good = false; });
@@ -191,8 +192,16 @@ function intro() {
 
 function addRow(i) {
   const t = st.S.T[i], r = document.createElement("div");
+  const want = t.sc.want;
   r.className = "chip";
-  r.textContent = st.S.L.free ? "Program did: " + t.got + "()" : (t.good ? "✅ " : "❌ ") + t.lab + " → " + t.got + "()" + (t.good ? "" : "  (needed " + t.sc.want + "())");
+  if (st.S.L.free) {
+    r.textContent = "Program did: " + t.calls.map(c => c + "()").join(", ") + (t.calls.length ? "" : " (nothing)");
+  } else if (t.good) {
+    r.textContent = "✅ " + t.lab + " → " + (want == null ? describeWant(t.got) : describeWant(want));
+  } else {
+    const yourCalls = t.calls.length ? t.calls.map(c => c + "()").join(", ") : "nothing";
+    r.textContent = "❌ " + t.lab + " → " + yourCalls + "  (needed " + describeWant(want) + ")";
+  }
   els.res.appendChild(r);
   st.S.rows = i + 1;
 }
@@ -262,7 +271,7 @@ async function step() {
     st.S.testDone = true;
     addRow(st.S.si);
     hl(0);
-    X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + t.sc.want + "() but your code cast " + t.got + "().");
+    X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing") + ".");
   }
   st.running = false;
   els.step.disabled = false;
