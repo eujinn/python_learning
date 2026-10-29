@@ -5,7 +5,7 @@ A modular platform for teaching Python through interactive, visual lessons. Each
 ## Overview
 
 - `main` branch — scaffolding, core engine, and a `_template` module stub
-- Each module = a separate long-lived branch (e.g. `module/traffic-light`)
+- Each module = a separate long-lived branch (e.g. `module/traffic-light`, or curriculum `module/l12_for_loop`)
 - Each branch deploys independently to its own Netlify site
 - UI/color base (the "design system") is derived from the Argon Pro Edition style — see `AGENTS.md`
 
@@ -22,7 +22,11 @@ index.html
 
 | Branch | Module | Description |
 |---|---|---|
-| `module/traffic-light` | Traffic Light Python | Learn conditionals by programming a self-driving car |
+| `module/traffic-light` | Traffic Light Python (legacy) | Learn conditionals by programming a self-driving car |
+| `module/forloop` | For-Loop Outpost (legacy) | Learn Python for loops with an outpost mecha |
+| `module/l12_for_loop` | For Loop — Lesson 12 | Curriculum lesson: bend the rules of repetition with for loops |
+
+**Curriculum lessons** follow the one-lesson-per-module convention: branch id = `module/l<NN>_<snake_slug>`. The canonical 19-lesson table (l1_pyprint … l19_ai_challenge) lives in `AGENTS.md` — read it before creating any lesson module.
 
 ## Local Development
 
@@ -41,6 +45,8 @@ Then open the URL shown in your terminal. ES modules require an HTTP server; `fi
 5. Add your module id to `modules.json`
 6. Create a branch: `git checkout -b module/<your-module-id>`
 7. Read `AGENTS.md` — the module contracts and the Argon-derived design system are defined there
+
+**In plain words:** to request a new curriculum lesson, just describe it (e.g. "Lesson 12 — kids program a spinning robot with a hula-hoop counter for N times"). An agent reading `AGENTS.md` resolves the canonical branch name from the table, scaffolds the module from `modules/_template/`, and folds your idea into the scene, lessons, and commands.
 
 ## Deploy
 
