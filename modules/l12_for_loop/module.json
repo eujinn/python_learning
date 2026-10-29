@@ -1,0 +1,53 @@
+{
+  "id": "l12_for_loop",
+  "name": "For Loop — Ice Cream Machine",
+  "icon": "🍦",
+  "description": "Lesson 12 — Learn Python for loops by serving scoops at Bear's Ice Cream Academy.",
+  "commands": ["scoop", "topping", "sauce"],
+  "labels": {
+    "scoop": "serve a scoop of ice cream",
+    "topping": "shake a topping onto the sundae",
+    "sauce": "pour a sauce over the sundae"
+  },
+  "legend": "📜 <b>scoop(\"...\")</b> serve a scoop · <b>topping(\"...\")</b> add a topping · <b>sauce(\"...\")</b> pour a sauce",
+  "idleText": "Customer Bear is waiting for his sundae.",
+  "css": "modules/l12_for_loop/scene.css",
+  "userIdea": "Ice-cream academy theme: kids serve scoops and sundaes to Customer Bear, repeating with for loops.",
+  "badges": [
+    {
+      "id": "command_arg",
+      "title": "Commands with Args",
+      "desc": "Calling scoop(\"vanilla\") with a flavor inside the brackets",
+      "levels": [0],
+      "badge": "🍦 Scoop Server"
+    },
+    {
+      "id": "first_loop",
+      "title": "First for Loop",
+      "desc": "Repeating a scoop with for i in range(3)",
+      "levels": [1],
+      "badge": "🔁 Loop Whisk"
+    },
+    {
+      "id": "indent_scope",
+      "title": "Loop + One More",
+      "desc": "Knowing which lines are indented under the loop and which run once",
+      "levels": [2],
+      "badge": "📏 Sundae Stacker"
+    },
+    {
+      "id": "var_flavor",
+      "title": "Variables in Commands",
+      "desc": "Using a variable flavor inside scoop(flavor)",
+      "levels": [3],
+      "badge": "🧠 Flavor Box"
+    },
+    {
+      "id": "range_var",
+      "title": "range with a Variable",
+      "desc": "Looping range(n) from the customer order",
+      "levels": [4],
+      "badge": "🍨 Order Master"
+    }
+  ]
+}
