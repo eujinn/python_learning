@@ -184,7 +184,7 @@ function intro() {
   st.S.ei = -1;
   st.S.testDone = false;
   hl(0);
-  if (st.api.render) st.api.render(t.env0);
+  if (st.api.render) st.api.render(t.env0, { want: t.sc.want, label: t.lab });
   if (st.api.reset) st.api.reset();
   setBubble("");
   els.expl.textContent = "Test " + (st.S.si + 1) + " of " + st.S.T.length + ": " + t.lab + ". Press Next step to see what your code does.";
@@ -195,6 +195,8 @@ function addRow(i) {
   const t = st.S.T[i], r = document.createElement("div");
   const want = t.sc.want;
   r.className = "chip";
+  if (t.good) r.classList.add("pass");
+  else if (!st.S.L.free) r.classList.add("fail");
   if (st.S.L.free) {
     r.textContent = "Program did: " + t.calls.map(c => c + "()").join(", ") + (t.calls.length ? "" : " (nothing)");
   } else if (t.good) {
