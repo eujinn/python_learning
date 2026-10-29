@@ -1,0 +1,45 @@
+{
+  "id": "forloop",
+  "name": "For-Loop Outpost",
+  "icon": "🤖",
+  "description": "Learn Python for loops by marching a mecha through the Argon Outpost defense line.",
+  "commands": ["march", "fire", "recharge"],
+  "labels": {
+    "march": "advance one tile",
+    "fire": "fire at the drone",
+    "recharge": "recharge the reactor"
+  },
+  "legend": "📜 <b>march()</b> advance one tile · <b>fire()</b> fire at drones · <b>recharge()</b> recharge the reactor",
+  "idleText": "The outpost is waiting for your loop.",
+  "css": "modules/forloop/scene.css",
+  "badges": [
+    {
+      "id": "first_loop",
+      "title": "First Loop",
+      "desc": "Writing a for range loop that repeats a command",
+      "levels": [0],
+      "badge": "🔁 Loop Starter"
+    },
+    {
+      "id": "range_var",
+      "title": "range with a Variable",
+      "desc": "Reading the loop count from a sensor variable",
+      "levels": [1],
+      "badge": "📊 Range Reader"
+    },
+    {
+      "id": "loops_and_if",
+      "title": "Loops + Decisions",
+      "desc": "Putting if/elif/else questions inside a loop",
+      "levels": [2, 3, 4],
+      "badge": "🤖 Mecha Autopilot"
+    },
+    {
+      "id": "range_range",
+      "title": "range(start, stop)",
+      "desc": "Looping over a chosen slice using two arguments",
+      "levels": [5],
+      "badge": "🎯 Range Sniper"
+    }
+  ]
+}
