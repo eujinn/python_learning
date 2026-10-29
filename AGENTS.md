@@ -11,11 +11,17 @@ core/                shared engine and UI (do not couple to one module's scene)
   engine.js          Python-like interpreter: parse/cond/exec/tr/py
   lessons.js         adaptLesson() + label/exprOf/used helpers
   ui-shell.js        module loading, lesson tabs, step-through runner, event wiring
+  editor.js          code editor line-number gutter renderer (renderGutter)
   progress.js        per-module localStorage progress + badges + Learning Record modal
   hints.js           3-tier hint system
   vocabulary.js      Learn First 6-question guide + vocab pills
   teacher.js         teacher auth (SHA-256) + 5 classroom functions
-  styles.css         shared layout/theme/components
+css/                 shared design system (Argon-derived base)
+  base.css           design tokens, reset, body gradient, .btn-3d (tactile buttons)
+  layout.css         header, .module-select, .level-tabs, .progress-pill, .workspace-grid/.card-panel
+  editor.css         mission header, .learn-drawer, vocab, hints, .editor-shell/.editor-gutter, .syntax-keys, .action-row, #run/#next, .msg
+  stage.css          output panel: scene shell, shared #bubble, #view trace, #stepbar, .vars/.pill, #res/.chip, .legend
+  modals.css         .modal-bg/.modal-box/.modal-x, learning record, badges, teacher drawer + auth
 modules/<id>/        one folder per module
   module.json        module metadata, commands, labels, legend, badges
   data.js            `export const LESSONS = [...]`
@@ -94,7 +100,17 @@ export async function play(name, { setBubble })  // animate one command; await i
 
 - `render(env)` mutates the DOM to reflect `env` (e.g. `env.light`). Use `document.getElementById("vars")` to render the sensor pill row if desired.
 - `play()` must resolve (async). Use `setBubble` (from the engine) or a local bubble element scoped to your scene.
-- Scene CSS goes in `scene.css`; do not add scene-specific rules to `core/styles.css`.
+- Scene CSS goes in the module's own `scene.css`; do not add scene-specific rules to the shared `css/` files.
+
+## Design system (Argon-derived)
+
+The scaffold's UI/color base is extracted from the Argon "Pro Edition" style. Future modules **must** reuse it; do not introduce a second visual language.
+
+- **Theme:** light arcade only. No dark-mode rules; do not add `prefers-color-scheme` blocks.
+- **Tokens** (`css/base.css`): `--bg-app #e0f2fe`, `--bg-card #ffffff`, `--bg-subtle #f0f9ff`, `--ink-main #0f172a`, `--ink-muted #475569`, `--border-line #bae6fd`, `--border-strong #7dd3fc`; accents `--primary #2563eb`, `--success #16a34a`, `--warning #f59e0b`, `--danger #ef4444`, `--purple #7c3aed`; code `--code-bg #0f172a / --code-gutter #1e293b / --code-ink #f8fafc`. Scene tokens `--sky1/--sky2/--grass/--road/--sun` are back-compat for module scene.css files.
+- **Class conventions:** tactile `.btn-3d` buttons (+ `.btn-teacher`, `.btn-journey`, `.unlocked`), `.level-tab` with `.active`/`.completed` states, `.brand-title`/`.brand-badge`, `.module-select`, `.progress-pill`/`.progress-track`/`.progress-fill`, `.workspace-grid`/`.card-panel`, `.concept-badge`, `.mission-title`/`.mission-story`, `.learn-drawer` (collapsible via `.closed`) + `.q6-item`, `.vocab-pill`/`.info-pop`, `.editor-shell`/`.editor-gutter`, `.syntax-keys`, `.action-row`, `.modal-bg`/`.modal-box`/`.modal-x`, `.badge-chip`(+`.earned`), `.t-drawer`/`.t-act`/`.t-out`.
+- **Fonts:** user-visible text uses Fredoka (set on `:root`); code, pills, trace, keys, and gutter use `"JetBrains Mono", monospace`.
+- **Editor gutter:** line numbers are rendered by `renderGutter()` from `core/editor.js` into `.editor-gutter`. Call it after programmatically setting `#code` value; the shell wires it on `input` automatically.
 
 ## Engine capability fence
 

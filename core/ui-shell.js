@@ -9,6 +9,7 @@ import { adaptLesson, label, exprOf, used } from "./lessons.js";
 import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal } from "./progress.js";
 import { resetHints, advanceHint } from "./hints.js";
 import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
+import { renderGutter } from "./editor.js";
 import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
   demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
@@ -97,6 +98,7 @@ const hl = n => els.view.querySelectorAll(".ln").forEach(d => d.classList.toggle
 /* ---- Editor helpers (Tab, smart Enter, virtual keys) ------------------ */
 const ta = els.code;
 function ins(t) { ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); }
+ta.addEventListener("input", renderGutter);
 ta.addEventListener("keydown", e => {
   if (e.key == "Tab") { e.preventDefault(); ins("    "); }
   else if (e.key == "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -268,8 +270,11 @@ function tabs() {
   els.tabs.innerHTML = "";
   st.LV.forEach((L, i) => {
     const b = document.createElement("button");
-    b.className = "tab" + (i == st.cur ? " cur" : "");
-    b.textContent = (i == st.LV.length - 1 ? "🎮" : (i + 1)) + (st.done.has(i) ? " ⭐" : "");
+    b.className = "level-tab";
+    if (i == st.cur) b.classList.add("active");
+    if (st.done.has(i)) b.classList.add("completed");
+    b.title = L.t;
+    b.textContent = i == st.LV.length - 1 ? "🎮" : (i + 1);
     b.onclick = () => { if (!st.running) load(i); };
     els.tabs.appendChild(b);
   });
@@ -286,6 +291,7 @@ function load(i) {
   els.peek.hidden = true;
   els.peek.style.display = "none";
   els.code.value = L.start || "";
+  renderGutter();
   els.res.innerHTML = "";
   els.next.hidden = true;
   msg("", "");

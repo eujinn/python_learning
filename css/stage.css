@@ -1,0 +1,145 @@
+/* =========================================================================
+   STAGE — shared output-panel styles: scene shell, trace board, stepbar.
+   Modules inject their own scene markup into #module-scene; the shared
+   scene tokens from base.css keep module scene.css files working.
+   ========================================================================= */
+#module-scene {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+/* Scene shell default (modules may override with their own .scene) */
+.scene {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  display: block;
+}
+
+/* Shared speech bubble used by the trace runner (#bubble inside scene DOM) */
+.bubble {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: var(--bg-card);
+  color: var(--ink-main);
+  border-radius: 10px;
+  padding: 3px 8px;
+  z-index: 5;
+}
+.bubble:empty { display: none; }
+
+.legend {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+.legend[hidden] { display: none; }
+
+/* Python thinking trace board */
+#view {
+  min-height: 60px;
+  max-height: 120px;
+  border-radius: 10px;
+  padding: 6px 0;
+  margin-top: 6px;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+#view[hidden] { display: none; }
+.ln { display: flex; padding: 0 10px; border-left: 3px solid transparent; }
+.ln i { color: #7d8fb0; width: 1.8em; flex: none; font-style: normal; }
+.ln.hl { background: rgba(56, 189, 248, 0.28); border-left-color: #38bdf8; }
+
+.expl {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  font-size: 0.92rem;
+  min-height: 2.4em;
+  flex-shrink: 0;
+}
+
+/* Step controls */
+#stepbar {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+#stepbar[hidden] { display: none; }
+#step {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 0;
+  border-radius: 12px;
+  padding: 7px 16px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border: 2px solid var(--primary-dark);
+  box-shadow: 0 3px 0 var(--primary-dark);
+}
+#step:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--primary-dark); }
+#step:disabled { opacity: 0.5; }
+
+.sec {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.86rem;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  color: var(--ink-main);
+  box-shadow: 0 3px 0 #cbd5e1;
+  border-radius: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.sec:active { transform: translateY(2px); box-shadow: 0 1px 0 #cbd5e1; }
+
+/* Sensor values + results */
+.vars {
+  margin-top: 4px;
+  min-height: 1.8em;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+}
+.lbl { margin-right: 6px; color: var(--ink-muted); font-size: 0.82rem; }
+.pill {
+  display: inline-block;
+  margin: 0 4px 4px 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  border: 1.5px solid #7dd3fc;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+}
+
+#res { margin-top: 4px; max-height: 100px; overflow-y: auto; }
+.chip {
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}

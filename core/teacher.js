@@ -3,6 +3,8 @@
    Pure-JS SHA-256 so authentication works 100% offline (file:// and Netlify).
    ========================================================================= */
 
+import { renderGutter } from "./editor.js";
+
 function sha256Hex(ascii) {
   function rightRotate(v, amount) { return (v >>> amount) | (v << (32 - amount)); }
   const mathPow = Math.pow, maxWord = mathPow(2, 32), lengthProperty = "length";
@@ -103,6 +105,7 @@ export function renderTeacherSolution(els, state) {
   btn.onclick = () => {
     state.exitStep();
     els.code.value = lesson.solution;
+    renderGutter();
   };
   out.append(title, pre, btn);
 }
@@ -122,6 +125,7 @@ export function demonstrateStepExecution(els, state) {
   if (!teacherModeActive) return;
   state.exitStep();
   els.code.value = state.lessons[state.cur].solution;
+  renderGutter();
   state.run();
 }
 

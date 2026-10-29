@@ -19,7 +19,7 @@ export function renderLearnFirst(lesson) {
   ];
   items.forEach(([labelText, text, isCode]) => {
     const d = document.createElement("div");
-    d.className = "q6-box";
+    d.className = "q6-item";
     const b = document.createElement("b");
     b.textContent = labelText;
     const span = document.createElement(isCode ? "code" : "span");

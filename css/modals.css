@@ -1,0 +1,155 @@
+/* =========================================================================
+   MODALS — student learning record, teacher drawer + authentication, badges
+   ========================================================================= */
+/* Teacher drawer & controls */
+.t-drawer {
+  background: #fffbeb;
+  color: #78350f;
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+.t-drawer[hidden] { display: none; }
+.t-drawer-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+.t-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+.t-act {
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: #ffffff;
+  color: #92400e;
+  border: 1.5px solid #d97706;
+  border-radius: 8px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.t-act:hover { background: #fde68a; }
+.t-act:active { transform: translateY(1px); }
+
+.t-out {
+  margin-top: 6px;
+  padding: 8px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px dashed #d97706;
+}
+.t-out[hidden] { display: none; }
+.t-out pre {
+  margin: 4px 0 0;
+  padding: 6px;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  border-radius: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
+}
+.t-out table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+/* Modal shells */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 999;
+}
+.modal-bg[hidden] { display: none; }
+
+.modal-box {
+  background: #ffffff;
+  border: 3px solid var(--border-strong);
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  padding: 20px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+.modal-x {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: #f1f5f9;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--ink-main);
+}
+.modal-x:hover { background: #e2e8f0; }
+
+/* Learning record list */
+.rec-list { display: grid; gap: 6px; margin: 10px 0; }
+.rec-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  font-size: 0.88rem;
+}
+
+/* Badges */
+.badge-grid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.badge-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  opacity: 0.45;
+}
+.badge-chip.earned {
+  opacity: 1;
+  background: #dcfce7;
+  color: #166534;
+  border-color: #22c55e;
+}
+
+#nextSkillBanner {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  font-size: 0.92rem;
+}
+
+/* Teacher auth form */
+#teacherPwdInput {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 2px solid var(--border-strong);
+  border-radius: 10px;
+  font: inherit;
+  margin-bottom: 10px;
+}
+#teacherPwdInput:focus-visible { outline: 3px solid #fbbf24; outline-offset: 1px; }
+#teacherAuthError { color: var(--danger-dark); font-size: 0.9rem; font-weight: 700; margin-top: 8px; }
+#teacherAuthError[hidden] { display: none; }
