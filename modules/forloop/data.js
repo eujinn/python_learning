@@ -30,8 +30,8 @@ export const LESSONS = [
     variables: ["count"],
     base: { count: 3 },
     tests: [
-      { environment: { count: 3 }, want: "march", label: "3 guard tiles" },
-      { environment: { count: 2 }, want: "march", label: "2 guard tiles" }
+      { environment: { count: 3 }, want: "march*3", label: "3 guard tiles" },
+      { environment: { count: 2 }, want: "march*3", label: "2 guard tiles (still 3 marches)" }
     ],
     teacherExplanation: "Introduce the for loop as 'repeat N times'. range(3) yields 0,1,2, and the indented block runs once per value.",
     commonMistakes: [
@@ -68,8 +68,8 @@ export const LESSONS = [
     variables: ["count"],
     base: { count: 3 },
     tests: [
-      { environment: { count: 3 }, want: "march", label: "count = 3" },
-      { environment: { count: 6 }, want: "march", label: "count = 6" }
+      { environment: { count: 3 }, want: "march*3", label: "count = 3" },
+      { environment: { count: 6 }, want: "march*6", label: "count = 6" }
     ],
     teacherExplanation: "Show that range() accepts a variable read from sensors, so the same code works for different wall lengths.",
     commonMistakes: [
@@ -105,8 +105,8 @@ export const LESSONS = [
     variables: ["count"],
     base: { count: 3 },
     tests: [
-      { environment: { count: 3 }, want: "fire", label: "count = 3 (beacon last)" },
-      { environment: { count: 5 }, want: "march", label: "count = 5 (march after beacon)" }
+      { environment: { count: 3 }, want: "fire*1", label: "count = 3 (beacon last)" },
+      { environment: { count: 5 }, want: "march*4", label: "count = 5 (march after beacon)" }
     ],
     teacherExplanation: "Walk through the calls for count=3 (march, march, fire) and count=5 (march, march, fire, march, march). The last command differs by count.",
     commonMistakes: [
@@ -143,9 +143,9 @@ export const LESSONS = [
     variables: ["count", "energy"],
     base: { count: 3, energy: 50 },
     tests: [
-      { environment: { count: 3, energy: 20 }, want: "recharge", label: "energy = 20 (low)" },
-      { environment: { count: 3, energy: 90 }, want: "march", label: "energy = 90 (high)" },
-      { environment: { count: 3, energy: 50 }, want: "fire", label: "energy = 50 (middle)" }
+      { environment: { count: 3, energy: 20 }, want: "recharge*3", label: "energy = 20 (low)" },
+      { environment: { count: 3, energy: 90 }, want: "march*3", label: "energy = 90 (high)" },
+      { environment: { count: 3, energy: 50 }, want: "fire*3", label: "energy = 50 (middle)" }
     ],
     teacherExplanation: "Each loop round evaluates the same ladder; for a constant energy every round uses the same branch, so the last call equals that branch.",
     commonMistakes: [
@@ -182,8 +182,8 @@ export const LESSONS = [
     variables: ["start", "stop"],
     base: { start: 1, stop: 4 },
     tests: [
-      { environment: { start: 1, stop: 4 }, want: "march", label: "start=1, stop=4 (3 rounds)" },
-      { environment: { start: 0, stop: 5 }, want: "march", label: "start=0, stop=5 (5 rounds)" }
+      { environment: { start: 1, stop: 4 }, want: "march*3", label: "start=1, stop=4 (3 rounds)" },
+      { environment: { start: 0, stop: 5 }, want: "march*5", label: "start=0, stop=5 (5 rounds)" }
     ],
     teacherExplanation: "range(a, b) yields a..b-1. Emphasize that stop is excluded — a common off-by-one source.",
     commonMistakes: [
@@ -221,9 +221,9 @@ export const LESSONS = [
     variables: ["count", "distance", "siren"],
     base: { count: 3, distance: 20, siren: false },
     tests: [
-      { environment: { count: 3, distance: 20, siren: false }, want: "march", label: "far & quiet" },
-      { environment: { count: 3, distance: 5, siren: false }, want: "fire", label: "close drone" },
-      { environment: { count: 3, distance: 20, siren: true }, want: "fire", label: "far but siren!" }
+      { environment: { count: 3, distance: 20, siren: false }, want: "march*3", label: "far & quiet" },
+      { environment: { count: 3, distance: 5, siren: false }, want: "fire*3", label: "close drone" },
+      { environment: { count: 3, distance: 20, siren: true }, want: "fire*3", label: "far but siren!" }
     ],
     teacherExplanation: "Walk through why 'siren is True' flips not siren to False, making the else fire() run every round.",
     commonMistakes: [
