@@ -114,9 +114,9 @@ The scaffold's UI/color base is extracted from the Argon "Pro Edition" style. Fu
 
 ## Engine capability fence
 
-The shared interpreter (core/engine.js) supports exactly: function calls listed in `commands`, `name = value` assignment, `if/elif/else`, comparisons `== != < > <= >=`, `and` / `or` / `not`, `True` / `False`, string (`"…"`) and number literals, and `#` comments via indentation rules.
+The shared interpreter (core/engine.js) supports exactly: function calls listed in `commands`, `name = value` assignment, `if/elif/else`, comparisons `== != < > <= >=`, `and` / `or` / `not`, `True` / `False`, string (`"…"`) and number literals, `for` loops (`for <name> in range(N):` or `range(start, stop):`, where bounds are integer literals or variables holding whole numbers), and `#` comments via indentation rules. Loops unroll into per-iteration trace events (`k: "for"`), so the step-runner walks each iteration; `exec` (Script mode) iterates normally.
 
-It does NOT support: `while`/`for`, `def`/functions, `print()`, `import`, arithmetic operators, lists/dicts, or method calls. **Do not author lessons that require unsupported syntax.** If a future module needs new syntax, extend `core/engine.js` deliberately, keep `core/` shared, and update this file.
+It does NOT support: `while`, `def`/functions, `print()`, `import`, arithmetic operators (`+ - * /`), lists/dicts, method calls, or `break`/`continue`. **Do not author lessons that require unsupported syntax.** If a future module needs new syntax, extend `core/engine.js` deliberately, keep `core/` shared, and update this file.
 
 ## UI conventions
 

@@ -248,6 +248,10 @@ async function step() {
   } else if (e.k == "else") {
     setBubble("↪️ else");
     X.textContent = "None of the questions above were True, so the else lines run.";
+  } else if (e.k == "for") {
+    if (st.api.render) st.api.render(e.env);
+    setBubble("🔁 " + e.var + " = " + py(e.val));
+    X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
   } else {
     X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
     if (st.api.play) await st.api.play(e.f, { setBubble });
