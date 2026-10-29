@@ -1,0 +1,37 @@
+{
+  "id": "l1_pyprint",
+  "name": "Print \u2014 Echo Parrot",
+  "icon": "\ud83e\udd9c",
+  "description": "Lesson 1 \u2014 Learn Python print() by making an Echo Parrot repeat your messages.",
+  "commands": ["print"],
+  "labels": {
+    "print": "prints (repeats) whatever is inside the brackets"
+  },
+  "legend": "\ud83d\udcdc <b>print(\"...\")</b> repeats your message \u00b7 Quotes <b>\"</b> wrap text \u00b7 Multiple items separated by <b>,</b>",
+  "idleText": "The parrot is listening. Type a print() command to make it speak!",
+  "css": "modules/l1_pyprint/scene.css",
+  "badges": [
+    {
+      "id": "first_print",
+      "title": "First Print",
+      "desc": "Complete lesson 1 \u2014 run your very first print() command",
+      "levels": [0],
+      "badge": "\ud83d\udcda First Print"
+    },
+    {
+      "id": "message_artist",
+      "title": "Message Artist",
+      "desc": "Complete lessons 1\u20133 \u2014 write your own messages",
+      "levels": [0, 1, 2],
+      "badge": "\ud83c\udfa8 Message Artist"
+    },
+    {
+      "id": "print_master",
+      "title": "Print Master",
+      "desc": "Complete lessons 1\u20136 \u2014 master the print() spell",
+      "levels": [0, 1, 2, 3, 4, 5],
+      "badge": "\ud83c\udfc6 Print Master"
+    }
+  ],
+  "userIdea": "Echo Parrot \u2014 students print messages and the parrot repeats them"
+}

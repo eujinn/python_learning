@@ -24,6 +24,7 @@ index.html
 |---|---|---|
 | `module/traffic-light` | Traffic Light Python (legacy) | Learn conditionals by programming a self-driving car |
 | `module/forloop` | For-Loop Outpost (legacy) | Learn Python for loops with an outpost mecha |
+| `module/l1_pyprint` | Print — Lesson 1 | Curriculum lesson: make an Echo Parrot repeat your messages with print() |
 | `module/l12_for_loop` | For Loop — Lesson 12 | Curriculum lesson: bend the rules of repetition with for loops |
 
 **Curriculum lessons** follow the one-lesson-per-module convention: branch id = `module/l<NN>_<snake_slug>`. The canonical 19-lesson table (l1_pyprint … l19_ai_challenge) lives in `AGENTS.md` — read it before creating any lesson module.
