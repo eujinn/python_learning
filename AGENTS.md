@@ -35,14 +35,68 @@ index.html           shell (module picker, lesson tab, code pane, output pane)
 ## Branch model (important)
 
 - `main` = scaffolding + `modules/_template/` only. No real module content.
-- **Each module is its own long-lived branch** named `module/<id>` (e.g. `module/loops`).
+- **Each module is its own long-lived branch** named `module/<id>` (e.g. `module/l12_for_loop`).
 - A new module MUST branch from `main`, never from another module branch.
 - Each branch deploys to its own Netlify site. `modules.json` should list only the module(s) that branch is about.
 - `core/` must stay identical across branches. When `core/` changes on `main`, sync module branches with `git rebase origin/main` (or merge).
 
+### Curriculum module naming convention
+
+Each lesson in the Python curriculum is its own long-lived module branch (one lesson = one module), named with a stable lesson id:
+
+```
+module/l<NN>_<snake_slug>
+```
+
+The official 19-lesson curriculum — **this table is the canonical source of truth for branch ids. These ids are fixed; do not rename a lesson id once shipped.**
+
+| Full Lesson Name | Module Branch Name |
+| :--- | :--- |
+| Lesson 1 — Python + print() | `module/l1_pyprint` |
+| Lesson 2 — Coding Environment + Function + Comment | `module/l2_env_func_comment` |
+| Lesson 3 — Variable | `module/l3_variable` |
+| Lesson 4 — Variable Practice | `module/l4_var_practice` |
+| Lesson 5 — Data Types: String / Integer / Float | `module/l5_data_types` |
+| Lesson 6 — Data Type Detective | `module/l6_datatype_detective` |
+| Lesson 7 — Arithmetic Operators | `module/l7_arithmetic_ops` |
+| Lesson 8 — Comparison Operators | `module/l8_comparison_ops` |
+| Lesson 9 — Comparison + Boolean | `module/l9_compare_bool` |
+| Lesson 10 — If | `module/l10_if` |
+| Lesson 11 — If / Else + Decision Making | `module/l11_if_else` |
+| Lesson 12 — For Loop | `module/l12_for_loop` |
+| Lesson 13 — For Loop Challenge + time.sleep() | `module/l13_for_loop_sleep` |
+| Lesson 14 — List | `module/l14_list` |
+| Lesson 15 — List + For Loop | `module/l15_list_for_loop` |
+| Lesson 16 — While Loop | `module/l16_while_loop` |
+| Lesson 17 — While Loop Challenge | `module/l17_while_challenge` |
+| Lesson 18 — Input + Interactive Program | `module/l18_input_interactive` |
+| Lesson 19 — Python AI Challenge | `module/l19_ai_challenge` |
+
+- Each branch's module folder id matches the branch id (`modules/l12_for_loop/`), and `modules.json` lists that id.
+- Existing theme-based branches (`module/traffic-light`, `module/forloop`) are legacy and NOT part of this curriculum table.
+- **Engine notes for these lessons:** the shared interpreter currently supports calls, assignment, if/elif/else, comparisons, and/or/not, True/False, and `for ... in range(...)`. Lessons that need `print()` (l1), arithmetic operators (l7), `time.sleep()` (l13), lists (l14, l15), `while` (l16, l17), or `input()` (l18) REQUIRE extending `core/engine.js` on `main` first (and syncing module branches). Do not author a lesson branch until its required syntax is supported (see Engine capability fence).
+
+### Agent workflow: creating a lesson module on request
+
+A future developer (or a user) requests a lesson in plain language, e.g.:
+
+> "Create Lesson 12 — For Loop, idea: kids program a hula-hoop counter for a robot that spins N times"
+
+Resolve and build without asking for the branch name:
+
+1. **Match the lesson number/title to the canonical table above** → branch `module/l12_for_loop`. If the lesson is not listed, confirm it is a genuinely new curriculum lesson, append a row to the table (`l<NN>_<snake_slug>`), and use that id. Never shadow an existing id.
+2. **Scaffold from `main`**: `git checkout main -b module/l<NN>_<slug>`, copy `modules/_template/` → `modules/<id>/`.
+3. **Fold the user's idea into the module contents** — the idea drives:
+   - `module.json` → description, `commands`, `labels`, `badges`
+   - `data.js` → storyProblem, learnFirst, vocabulary, hints (shared lesson schema; `tests` may use `cmd`, `cmd*N`, `cmd+` wants)
+   - `scene.js`/`scene.css` → the visual right-pane for the idea's theme
+4. **Engine gate first**: if the lesson needs syntax the interpreter lacks (`print`, arithmetic, lists, `while`, `input`, `time.sleep`), extend `core/engine.js` on `main` first, update the capability fence, sync module branches, then author the lesson. Do not write lessons around unsupported syntax.
+5. **Register** the id in `modules.json`, run the verification harness (every `solution` must pass every `tests`, count-aware), commit, and push the branch.
+6. **Preserve the user's idea**: keep a `userIdea` field in `module.json` (e.g. `"userIdea": "hula-hoop counter robot"`) so the design intent stays traceable, and mirror the idea in the scene + story.
+
 ## Adding a new module
 
-1. `git checkout main && git checkout -b module/<id>`
+1. `git checkout main && git checkout -b module/<id>` — for curriculum lessons use the canonical branch name from the table above (via the Agent workflow), never an invented ad-hoc id.
 2. Copy `modules/_template/` → `modules/<id>/`
 3. Fill in `module.json`, `data.js`, `scene.js` (and `scene.css` if needed) per the contracts below.
 4. Add the module id to `modules.json` (array of ids).
