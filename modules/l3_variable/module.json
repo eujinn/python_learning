@@ -1,0 +1,37 @@
+{
+  "id": "l3_variable",
+  "name": "Variable \u2014 Variable Vault",
+  "icon": "\ud83d\udcda",
+  "description": "Lesson 3 \u2014 Learn Python variables by storing treasures in the Variable Vault.",
+  "commands": ["print"],
+  "labels": {
+    "print": "shows the value on screen"
+  },
+  "legend": "\ud83d\udcdc <b>name = value</b> stores a value \u00b7 <b>print(name)</b> looks inside \u00b7 The <b>=</b> sign saves, not compares",
+  "idleText": "\ud83d\udd12 The Variable Vault is empty. Write a variable and print it!",
+  "css": "modules/l3_variable/scene.css",
+  "badges": [
+    {
+      "id": "first_variable",
+      "title": "First Variable",
+      "desc": "Complete lesson 1 \u2014 store your first value in a variable",
+      "levels": [0],
+      "badge": "\ud83d\udcda First Variable"
+    },
+    {
+      "id": "var_swapper",
+      "title": "Treasure Swapper",
+      "desc": "Complete lessons 1\u20132 \u2014 reassign a variable to a new value",
+      "levels": [0, 1],
+      "badge": "\ud83d\udd04 Treasure Swapper"
+    },
+    {
+      "id": "vault_keeper",
+      "title": "Vault Keeper",
+      "desc": "Complete all 3 variable lessons \u2014 master storing multiple values",
+      "levels": [0, 1, 2],
+      "badge": "\ud83c\udfe6 Vault Keeper"
+    }
+  ],
+  "userIdea": "Variable Vault \u2014 students see live animated variable boxes appear on shelves as they assign values"
+}
