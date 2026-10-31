@@ -13,6 +13,9 @@ import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
 import { renderGutter } from "./editor.js";
 import { initEditorScrollSync } from "./editor.js";
 import {
+  setTypingLesson, getTargetCode, renderTypingDisplay, evaluateTyping, setGuidedMode, getGuidedMode
+} from "./typing-guide.js";
+import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
   demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
 } from "./teacher.js";
@@ -58,6 +61,12 @@ const els = {
   next: document.getElementById("next"),
   msg: document.getElementById("msg"),
   reflBox: document.getElementById("reflBox"),
+  freeModeBtn: document.getElementById("freeModeBtn"),
+  guidedModeBtn: document.getElementById("guidedModeBtn"),
+  tgProgressPill: document.getElementById("tgProgressPill"),
+  tgClueCard: document.getElementById("tgClueCard"),
+  tgClueText: document.getElementById("tgClueText"),
+  tgDisplay: document.getElementById("tgDisplay"),
   sceneRoot: document.getElementById("module-scene"),
   legend: document.getElementById("legend"),
   view: document.getElementById("view"),
@@ -100,7 +109,20 @@ const hl = n => els.view.querySelectorAll(".ln").forEach(d => d.classList.toggle
 /* ---- Editor helpers (Tab, smart Enter, virtual keys) ------------------ */
 const ta = els.code;
 function ins(t) { ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); }
-ta.addEventListener("input", renderGutter);
+ta.addEventListener("input", () => {
+  renderGutter();
+  if (getGuidedMode()) updateTypingUI();
+});
+ta.addEventListener("paste", e => {
+  if (getGuidedMode()) {
+    e.preventDefault();
+    if (els.tgClueCard) {
+      els.tgClueCard.hidden = false;
+      if (els.tgClueText) els.tgClueText.textContent = "🛡️ Type it by hand, never copy-paste! True wizards build muscle memory.";
+    }
+  }
+});
+
 ta.addEventListener("keydown", e => {
   if (e.key == "Tab") { e.preventDefault(); ins("    "); }
   else if (e.key == "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -119,6 +141,40 @@ els.keys.addEventListener("click", e => {
   if (b.dataset.i == "()") ta.setSelectionRange(ta.selectionStart - 1, ta.selectionStart - 1);
 });
 els.peek.onclick = () => { els.ex.hidden = !els.ex.hidden; };
+
+/* ---- Guided Typing controller ----------------------------------------- */
+function updateTypingUI() {
+  const isGuided = getGuidedMode();
+  if (els.freeModeBtn) els.freeModeBtn.classList.toggle("active", !isGuided);
+  if (els.guidedModeBtn) els.guidedModeBtn.classList.toggle("active", isGuided);
+
+  if (isGuided) {
+    if (els.tgDisplay) els.tgDisplay.hidden = false;
+    if (els.tgProgressPill) els.tgProgressPill.hidden = false;
+    if (els.tgClueCard) els.tgClueCard.hidden = false;
+    const target = getTargetCode();
+    const evalResult = evaluateTyping(target, els.code.value);
+    renderTypingDisplay(els.tgDisplay, target, els.code.value);
+    if (els.tgProgressPill) els.tgProgressPill.textContent = `${evalResult.progress} / ${evalResult.total}`;
+    if (els.tgClueText) els.tgClueText.textContent = evalResult.clue || "Follow the glowing cursor to type each rune!";
+  } else {
+    if (els.tgDisplay) els.tgDisplay.hidden = true;
+    if (els.tgProgressPill) els.tgProgressPill.hidden = true;
+    if (els.tgClueCard) els.tgClueCard.hidden = true;
+  }
+}
+
+function switchEditorMode(guided) {
+  setGuidedMode(guided);
+  if (guided) {
+    // If textarea is empty, start fresh with typing guide
+    updateTypingUI();
+    els.code.focus();
+  } else {
+    updateTypingUI();
+    els.code.focus();
+  }
+}
 
 /* ---- Step-through runner ---------------------------------------------- */
 function exitStep() {
@@ -326,6 +382,8 @@ function load(i) {
   renderLearnFirst(st.LESSONS[i]);
   resetHints(els);
   renderVocabulary(st.LESSONS[i]);
+  setTypingLesson(st.LESSONS[i]);
+  updateTypingUI();
   updateProgressHeader(els, st.done, st.moduleInfo.badges || [], st.LESSONS);
   if (isTeacherActive()) renderTeacherNotes(els, st);
   tabs();
@@ -408,6 +466,10 @@ els.step.onclick = step;
 els.skip.onclick = skip;
 els.edit.onclick = exitStep;
 els.next.onclick = () => load(st.cur + 1);
+
+if (els.freeModeBtn) els.freeModeBtn.onclick = () => switchEditorMode(false);
+if (els.guidedModeBtn) els.guidedModeBtn.onclick = () => switchEditorMode(true);
+if (els.tgDisplay) els.tgDisplay.onclick = () => els.code.focus();
 
 els.learnHdr.onclick = () => {
   const card = els.learnCard;

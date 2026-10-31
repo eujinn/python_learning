@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="./css/base.css">
 <link rel="stylesheet" href="./css/layout.css">
 <link rel="stylesheet" href="./css/editor.css">
+<link rel="stylesheet" href="./css/typing-guide.css">
 <link rel="stylesheet" href="./css/stage.css">
 <link rel="stylesheet" href="./css/modals.css">
 </head>
@@ -83,9 +84,26 @@
   <pre id="ex" hidden></pre>
 
   <!-- Python Code Input Editor (line-number gutter + textarea) -->
+    <!-- Editor Mode Switcher -->
+  <div class="mode-toggle-bar">
+    <div class="mode-pills">
+      <button class="mode-btn active" id="freeModeBtn">💻 Free Editor</button>
+      <button class="mode-btn" id="guidedModeBtn">⌨️ Guided Typing</button>
+    </div>
+    <span class="tg-progress-pill" id="tgProgressPill" hidden>0 / 0</span>
+  </div>
+
+  <!-- Detective Clue Card (for Guided Typing) -->
+  <div class="tg-clue-card" id="tgClueCard" hidden>
+    <div class="tg-clue-icon">🕵️</div>
+    <div class="tg-clue-text" id="tgClueText">Follow the glowing cursor to type each rune!</div>
+  </div>
+
+  <!-- Python Code Input Editor (line-number gutter + textarea + guided typing overlay) -->
   <div class="editor-shell" id="editorShell">
     <div class="editor-gutter" id="editorGutter" aria-hidden="true"></div>
     <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Type your Python code here"></textarea>
+    <div class="tg-display" id="tgDisplay" hidden tabindex="0" aria-label="Guided typing display"></div>
   </div>
 
   <!-- Quick-Insert Python Toolbar -->
