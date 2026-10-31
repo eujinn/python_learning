@@ -4,6 +4,7 @@
   "icon": "\ud83d\udcda",
   "description": "Lesson 3 \u2014 Learn Python variables by storing treasures in the Variable Vault.",
   "commands": ["print"],
+  "allowedSyntax": ["print", "strings", "variables", "int", "float"],
   "labels": {
     "print": "shows the value on screen"
   },
