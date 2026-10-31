@@ -126,8 +126,8 @@ export const LESSONS = [
       },
       {
         environment: { light: "green" },
-        want: "go",
-        label: 'light = "green"'
+        want: null,
+        label: 'light = "green" (no action)'
       }
     ],
     teacherExplanation: "Explain indentation as 'belonging'. The indented line only runs IF the question above it is True.",

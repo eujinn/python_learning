@@ -4,6 +4,7 @@
   "icon": "🚦",
   "description": "Lesson 8 — Learn Python comparison operators (==, !=, >, <, <=, >=) by programming a self-driving car.",
   "commands": ["stop", "slow", "crawl", "go"],
+  "allowedSyntax": ["strings", "variables", "comparisons", "booleans", "if"],
   "labels": {
     "stop": "brake now",
     "slow": "slow down, then stop",
