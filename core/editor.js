@@ -17,3 +17,16 @@ export function renderGutter() {
   gutter.innerHTML = "";
   gutter.appendChild(frag);
 }
+
+/* Sync gutter scroll position to textarea scroll on first call */
+let scrollSyncAttached = false;
+export function initEditorScrollSync() {
+  if (scrollSyncAttached) return;
+  const ta = document.getElementById("code");
+  const gutter = document.querySelector(".editor-gutter");
+  if (!ta || !gutter) return;
+  ta.addEventListener("scroll", () => {
+    gutter.scrollTop = ta.scrollTop;
+  });
+  scrollSyncAttached = true;
+}

@@ -165,7 +165,7 @@
   text-align: right;
   user-select: none;
   border-right: 1px solid #334155;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 textarea#code {
@@ -182,6 +182,8 @@ textarea#code {
   font-size: 0.94rem;
   line-height: 1.5;
   tab-size: 4;
+  white-space: pre;
+  overflow-wrap: normal;
   caret-color: #fbbf24;
   user-select: text;
 }

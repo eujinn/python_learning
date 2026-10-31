@@ -4,6 +4,7 @@
   "icon": "🧩",
   "description": "Scaffold starter for building new Python teaching modules. Copy this folder to modules/<your-id>/ and fill in the pieces.",
   "commands": ["go", "stop"],
+  "allowedSyntax": [],
   "labels": {
     "go": "the program drives on",
     "stop": "the program stops"

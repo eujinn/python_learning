@@ -79,7 +79,7 @@ export function setTeacherMode(active, els, state) {
   els.teacherBtn.textContent = teacherModeActive ? "👩‍🏫 Teacher Mode (Active)" : "👩‍🏫 Teacher Mode";
   if (!teacherModeActive) {
     els.teacherOut.hidden = true;
-    els.teacherOut.innerHTML = "";
+    els.teacherOut.textContent = "";
     els.ex.textContent = "";
     els.ex.hidden = true;
     els.peek.hidden = true;
@@ -93,7 +93,7 @@ export function renderTeacherSolution(els, state) {
   const lesson = state.lessons[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  out.innerHTML = "";
+  out.textContent = "";
   const title = document.createElement("b");
   title.textContent = `1. Canonical Solution (${lesson.title}):`;
   const pre = document.createElement("pre");
@@ -115,10 +115,21 @@ export function renderTeacherNotes(els, state) {
   const lesson = state.lessons[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  const mistakes = (lesson.commonMistakes || []).length
-    ? `<br><b>Common Student Mistakes:</b> ${lesson.commonMistakes.join(" · ")}`
-    : "";
-  out.innerHTML = `<b>2. Teaching Notes (${lesson.concept}):</b><br>${lesson.teacherExplanation}${mistakes}`;
+  out.textContent = "";
+  const head = document.createElement("b");
+  head.textContent = `2. Teaching Notes (${lesson.concept}):`;
+  out.appendChild(head);
+  out.appendChild(document.createElement("br"));
+  const expl = document.createTextNode(lesson.teacherExplanation || "");
+  out.appendChild(expl);
+  if ((lesson.commonMistakes || []).length) {
+    out.appendChild(document.createElement("br"));
+    const mHead = document.createElement("b");
+    mHead.textContent = "Common Student Mistakes: ";
+    out.appendChild(mHead);
+    const mText = document.createTextNode(lesson.commonMistakes.join(" · "));
+    out.appendChild(mText);
+  }
 }
 
 export function demonstrateStepExecution(els, state) {
@@ -134,11 +145,41 @@ export function renderExpectedTestResults(els, state, py) {
   const lesson = state.lessons[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  const rows = (lesson.tests || []).map((t, idx) => {
+  out.textContent = "";
+  const head = document.createElement("b");
+  head.textContent = "4. Expected Test Results:";
+  out.appendChild(head);
+  const table = document.createElement("table");
+  table.style.cssText = "width:100%;margin-top:6px;border-collapse:collapse;font-size:.84rem";
+  const thead = document.createElement("tr");
+  thead.style.cssText = "background:#fef3c7;text-align:left";
+  ["#", "Scenario Label", "Environment", "Expected Action"].forEach(h => {
+    const th = document.createElement("th");
+    th.style.cssText = "padding:4px 8px";
+    th.textContent = h;
+    thead.appendChild(th);
+  });
+  table.appendChild(thead);
+  (lesson.tests || []).forEach((t, idx) => {
     const envStr = Object.entries(t.environment || {}).map(([k, v]) => `${k}=${py(v)}`).join(", ") || "(base)";
-    return `<tr><td style="padding:4px 8px;border-bottom:1px solid #eee">Test ${idx + 1}</td><td style="padding:4px 8px;border-bottom:1px solid #eee">${t.label || envStr}</td><td style="padding:4px 8px;border-bottom:1px solid #eee"><code>${envStr}</code></td><td style="padding:4px 8px;border-bottom:1px solid #eee;font-weight:700;color:#12a150">${t.want}()</td></tr>`;
-  }).join("");
-  out.innerHTML = `<b>4. Expected Test Results:</b><table style="width:100%;margin-top:6px;border-collapse:collapse;font-size:.84rem"><tr style="background:#fef3c7;text-align:left"><th style="padding:4px 8px">#</th><th style="padding:4px 8px">Scenario Label</th><th style="padding:4px 8px">Environment</th><th style="padding:4px 8px">Expected Action</th></tr>${rows}</table>`;
+    const tr = document.createElement("tr");
+    const cells = [
+      `Test ${idx + 1}`,
+      t.label || envStr,
+      envStr,
+      `${t.want}()`
+    ];
+    cells.forEach((c, ci) => {
+      const td = document.createElement("td");
+      td.style.cssText = "padding:4px 8px;border-bottom:1px solid #eee";
+      if (ci === 3) { td.style.fontWeight = "700"; td.style.color = "#12a150"; }
+      if (ci === 2) { const code = document.createElement("code"); code.textContent = c; td.appendChild(code); }
+      else td.textContent = c;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  out.appendChild(table);
 }
 
 export function resetStudentView(els, state, load) {

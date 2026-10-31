@@ -5,11 +5,13 @@
    ========================================================================= */
 
 import { PyErr, parse, tr, py } from "./engine.js";
-import { adaptLesson, label, exprOf, used, matchesWant, describeWant } from "./lessons.js";
+import { adaptLesson, label, exprOf, used, describeWant } from "./lessons.js";
+import { checkWant, checkExpect, checkConstraints, checkAll } from "./assertions.js";
 import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal } from "./progress.js";
 import { resetHints, advanceHint } from "./hints.js";
 import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
 import { renderGutter } from "./editor.js";
+import { initEditorScrollSync } from "./editor.js";
 import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
   demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
@@ -137,7 +139,7 @@ function run() {
   msg("", "");
   let prog;
   try {
-    prog = parse(els.code.value, L.names, st.moduleInfo.commands || []);
+    prog = parse(els.code.value, L.names, st.moduleInfo.commands || [], st.moduleInfo.allowedSyntax || []);
   } catch (e) {
     if (e instanceof PyErr) { msg("🐞 " + e.message, "bad"); return; }
     throw e;
@@ -145,17 +147,16 @@ function run() {
   const T = [];
   for (const sc of (L.free ? [{}] : L.sc)) {
     const env0 = Object.assign({}, L.base || {}, sc);
-    delete env0.want; delete env0.label;
+    delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints;
     const env = Object.assign({}, env0), ev = [];
-    try { tr(prog, env, ev); }
+    const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [] };
+    try { tr(prog, env, ev, ctx); }
     catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); return; }
-    if (!ev.some(x => x.k == "call")) ev.push({ k: "call", n: 0, f: "go", auto: true });
     const calls = ev.filter(x => x.k == "call").map(c => c.f);
     const got = calls[calls.length - 1];
-    T.push({ sc, env0, ev, got, calls, good: L.free || matchesWant(sc.want, calls), lab: sc.label || label(env0) });
+    const result = checkAll(sc.want, calls, sc.expect, sc.constraints, prog, ev, env, ctx);
+    T.push({ sc, env0, ev, got, calls, good: L.free || result.ok, lab: sc.label || label(env0), result });
   }
-  /* Lessons 4+ (0-indexed >= 3): an unseen auto "go" is not a pass. */
-  if (st.cur >= 3 && !L.free) T.forEach(t => { if (t.ev.some(e => e.auto)) t.good = false; });
 
   const v = els.view;
   v.innerHTML = "";
@@ -200,7 +201,12 @@ function addRow(i) {
     r.textContent = "✅ " + t.lab + " → " + (want == null ? describeWant(t.got) : describeWant(want));
   } else {
     const yourCalls = t.calls.length ? t.calls.map(c => c + "()").join(", ") : "nothing";
-    r.textContent = "❌ " + t.lab + " → " + yourCalls + "  (needed " + describeWant(want) + ")";
+    const failures = t.result && t.result.failures;
+    if (failures && failures.length) {
+      r.textContent = "❌ " + t.lab + " → " + failures.join("; ");
+    } else {
+      r.textContent = "❌ " + t.lab + " → " + yourCalls + "  (needed " + describeWant(want) + ")";
+    }
   }
   els.res.appendChild(r);
   st.S.rows = i + 1;
@@ -417,35 +423,21 @@ els.journeyBtn.onclick = () => {
 els.closeJourneyBtn.onclick = () => { els.journeyModal.hidden = true; };
 
 els.teacherBtn.onclick = () => {
-  if (isTeacherActive()) {
-    els.teacherDrawer.hidden = !els.teacherDrawer.hidden;
-  } else {
-    els.teacherPwdInput.value = "";
-    els.teacherAuthError.hidden = true;
-    els.teacherModal.hidden = false;
-    els.teacherPwdInput.focus();
-  }
+  msg("👩‍🏫 Teacher Mode coming soon — stay tuned!", "info");
 };
 els.closeTeacherBtn.onclick = () => { els.teacherModal.hidden = true; };
-els.teacherAuthForm.onsubmit = () => {
-  if (verifyTeacherPassword(els.teacherPwdInput.value)) {
-    els.teacherModal.hidden = true;
-    setTeacherMode(true, els, st);
-  } else {
-    els.teacherAuthError.hidden = false;
-  }
-  return false;
-};
-els.lockTeacherBtn.onclick = () => setTeacherMode(false, els, st);
-els.tRevealBtn.onclick = () => renderTeacherSolution(els, st);
-els.tNotesBtn.onclick = () => renderTeacherNotes(els, st);
-els.tDemoBtn.onclick = () => demonstrateStepExecution(els, st);
-els.tTestsBtn.onclick = () => renderExpectedTestResults(els, st, py);
-els.tResetBtn.onclick = () => resetStudentView(els, st, load);
+els.teacherAuthForm.onsubmit = () => { return false; };
+els.lockTeacherBtn.onclick = () => {};
+els.tRevealBtn.onclick = () => {};
+els.tNotesBtn.onclick = () => {};
+els.tDemoBtn.onclick = () => {};
+els.tTestsBtn.onclick = () => {};
+els.tResetBtn.onclick = () => {};
 
 /* Expose runner entry points to teacher module */
 st.exitStep = exitStep;
 st.run = run;
 
 /* Boot */
+initEditorScrollSync();
 buildPicker();

@@ -11,7 +11,12 @@ export function adaptLesson(L) {
     base: L.base || {},
     free: !!L.free,
     start: L.starterCode || "",
-    sc: (L.tests || []).map(t => Object.assign({}, t.environment || {}, { want: t.want, label: t.label }))
+    sc: (L.tests || []).map(t => {
+      const base = Object.assign({}, t.environment || {}, { want: t.want, label: t.label });
+      if (t.expect) base.expect = t.expect;
+      if (t.constraints) base.constraints = t.constraints;
+      return base;
+    })
   };
 }
 

@@ -55,7 +55,20 @@ export function renderLearningRecordModal(els, done, badges, lessons) {
 
     const row = document.createElement("div");
     row.className = "rec-row";
-    row.innerHTML = `<span>${mastered ? "✅" : "⬜"}</span><div><b>${comp.title}</b> — <span style="color:var(--muted)">${comp.desc}</span></div>`;
+    const icon = document.createElement("span");
+    icon.textContent = mastered ? "✅" : "⬜";
+    row.appendChild(icon);
+    const desc = document.createElement("div");
+    const title = document.createElement("b");
+    title.textContent = comp.title;
+    desc.appendChild(title);
+    const sep = document.createTextNode(" — ");
+    desc.appendChild(sep);
+    const detail = document.createElement("span");
+    detail.style.cssText = "color:var(--muted)";
+    detail.textContent = comp.desc;
+    desc.appendChild(detail);
+    row.appendChild(desc);
     els.skillList.appendChild(row);
 
     const badge = document.createElement("span");
@@ -66,8 +79,21 @@ export function renderLearningRecordModal(els, done, badges, lessons) {
 
   if (nextSkill) {
     const nextLvl = nextSkill.levels.find(l => !done.has(l)) + 1;
-    els.nextSkillBanner.innerHTML = `<b>🎯 Next Skill:</b> ${nextSkill.title} — <i>${nextSkill.desc}</i> (Try Exercise ${nextLvl}!)`;
+    els.nextSkillBanner.textContent = "";
+    const icon = document.createElement("b");
+    icon.textContent = "🎯 Next Skill:";
+    els.nextSkillBanner.appendChild(icon);
+    const sep = document.createTextNode(" ");
+    els.nextSkillBanner.appendChild(sep);
+    const name = document.createTextNode(`${nextSkill.title} — `);
+    els.nextSkillBanner.appendChild(name);
+    const desc = document.createElement("i");
+    desc.textContent = `${nextSkill.desc} (Try Exercise ${nextLvl}!)`;
+    els.nextSkillBanner.appendChild(desc);
   } else {
-    els.nextSkillBanner.innerHTML = `<b>🏆 Congratulations!</b> You have mastered every Python concept and earned all ${badges.length} badges!`;
+    els.nextSkillBanner.textContent = "";
+    const icon = document.createElement("b");
+    icon.textContent = `🏆 Congratulations! You have mastered every Python concept and earned all ${badges.length} badges!`;
+    els.nextSkillBanner.appendChild(icon);
   }
 }
