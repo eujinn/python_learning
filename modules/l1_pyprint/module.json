@@ -4,6 +4,7 @@
   "icon": "\ud83e\udd9c",
   "description": "Lesson 1 \u2014 Learn Python print() by making an Echo Parrot repeat your messages.",
   "commands": ["print"],
+  "allowedSyntax": ["print", "strings"],
   "labels": {
     "print": "prints (repeats) whatever is inside the brackets"
   },
