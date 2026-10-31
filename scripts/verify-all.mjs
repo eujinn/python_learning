@@ -40,7 +40,8 @@ async function run() {
           const ctx = { gates, commands, stdout: [] };
           tr(ast, env, ev, ctx);
           const calls = ev.filter(x => x.k == "call").map(c => c.f);
-          const result = checkAll(sc.want, calls, sc.expect, sc.constraints, ast, ev, env, ctx);
+          const sigs = ev.filter(x => x.k == "call").map(c => c.args && c.args.length ? c.f + "(" + c.args.join(", ") + ")" : c.f + "()");
+          const result = checkAll(sc.want, sigs, sc.expect, sc.constraints, ast, ev, env, ctx);
 
           if (!result.ok) {
             lessonPassed = false;

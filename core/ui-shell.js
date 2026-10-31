@@ -153,9 +153,10 @@ function run() {
     try { tr(prog, env, ev, ctx); }
     catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); return; }
     const calls = ev.filter(x => x.k == "call").map(c => c.f);
+    const sigs = ev.filter(x => x.k == "call").map(c => c.args && c.args.length ? c.f + "(" + c.args.join(", ") + ")" : c.f + "()");
     const got = calls[calls.length - 1];
-    const result = checkAll(sc.want, calls, sc.expect, sc.constraints, prog, ev, env, ctx);
-    T.push({ sc, env0, ev, got, calls, good: L.free || result.ok, lab: sc.label || label(env0), result });
+    const result = checkAll(sc.want, sigs, sc.expect, sc.constraints, prog, ev, env, ctx);
+    T.push({ sc, env0, ev, got, calls, sigs, good: L.free || result.ok, lab: sc.label || label(env0), result });
   }
 
   const v = els.view;

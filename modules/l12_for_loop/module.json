@@ -4,6 +4,7 @@
   "icon": "🍦",
   "description": "Lesson 12 — Learn Python for loops by serving scoops at Bear's Ice Cream Academy.",
   "commands": ["scoop", "topping", "sauce"],
+  "allowedSyntax": ["print", "strings", "variables", "for_range", "int", "arithmetic"],
   "labels": {
     "scoop": "serve a scoop of ice cream",
     "topping": "shake a topping onto the sundae",

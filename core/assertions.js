@@ -1,5 +1,11 @@
 export function checkWant(want, calls) {
   if (want == null) return true;
+  if (Array.isArray(want)) {
+    const sigs = calls;
+    const sigStr = typeof sigs[0] === "string" ? s => s : s => s.f + "()";
+    const sigs2 = sigs.map(s => typeof s === "string" ? s : (s.a !== undefined ? s.f + "(" + s.a + ")" : s.f + "()"));
+    return want.length === sigs2.length && want.every((w, i) => w === sigs2[i]);
+  }
   const w = String(want);
   let m;
   if (m = w.match(/^([a-z_]+)\*\s*(\d+)$/))
@@ -10,11 +16,13 @@ export function checkWant(want, calls) {
 }
 
 function tallyCalls(calls) {
-  return calls.reduce((a, c) => ((a[c] = (a[c] || 0) + 1), a), {});
+  const cmds = calls.map(c => typeof c === "string" ? c : c.f);
+  return cmds.reduce((a, c) => ((a[c] = (a[c] || 0) + 1), a), {});
 }
 
 export function describeWant(want) {
   if (want == null) return "free play";
+  if (Array.isArray(want)) return want.length ? want.join(" \u2192 ") : "nothing";
   const w = String(want);
   let m;
   if (m = w.match(/^([a-z_]+)\*\s*(\d+)$/)) return m[1] + "() \u00d7 " + m[2];
@@ -94,7 +102,8 @@ export function checkAll(want, calls, expect, constraints, ast, events, env, ctx
   const expectResult = checkExpect(expect, events, env, ctx);
   const constraintsResult = checkConstraints(constraints, ast, calls);
   const allOk = wantResult && expectResult.ok && constraintsResult.ok;
-  const allFailures = (wantResult ? [] : ["want: expected " + describeWant(want) + " but got " + (calls.length ? calls.join(", ") : "nothing")])
+  const callDesc = calls && calls.length ? (typeof calls[0] === "string" ? calls.join(", ") : calls.map(c => c.f).join(", ")) : "nothing";
+  const allFailures = (wantResult ? [] : ["want: expected " + describeWant(want) + " but got " + callDesc])
     .concat(expectResult.ok ? [] : expectResult.failures)
     .concat(constraintsResult.ok ? [] : constraintsResult.failures);
   return { ok: allOk, failures: allFailures, want: wantResult, expect: expectResult.ok, constraints: constraintsResult.ok };
