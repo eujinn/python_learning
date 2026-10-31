@@ -1,0 +1,52 @@
+{
+  "id": "l14_list",
+  "name": "List — Adventure Backpack",
+  "icon": "🎒",
+  "description": "Lesson 14 — Master Python lists: store items, access elements by index, swap gear, and pack your adventure backpack.",
+  "commands": ["print"],
+  "allowedSyntax": ["print", "strings", "variables", "lists", "int"],
+  "labels": {
+    "print": "inspects and announces an item from the backpack"
+  },
+  "legend": "🎒 <b>inventory = [a, b, c]</b> creates a list · <b>inventory[0]</b> reads index 0 · <b>inventory[1] = val</b> updates a slot · Click any slot to inspect!",
+  "idleText": "Your Adventure Backpack is ready! Follow the instructions to inspect and insert your own items.",
+  "css": "modules/l14_list/scene.css",
+  "userIdea": "Adventure Backpack: students experience using python lists from following commands to inserting their own items with interactive slots and smooth graphics",
+  "badges": [
+    {
+      "id": "pack_opened",
+      "title": "Pack Opened",
+      "desc": "Create your first list and inspect item at index 0",
+      "levels": [0],
+      "badge": "🎒 Pack Pioneer"
+    },
+    {
+      "id": "custom_gear",
+      "title": "Custom Gear",
+      "desc": "Insert your own custom item into the list",
+      "levels": [1],
+      "badge": "🧭 Gear Crafter"
+    },
+    {
+      "id": "pocket_master",
+      "title": "Pocket Master",
+      "desc": "Access multiple slots using indices 0, 1, and 2",
+      "levels": [2],
+      "badge": "🔍 Index Scout"
+    },
+    {
+      "id": "gear_swapper",
+      "title": "Gear Swapper",
+      "desc": "Update an existing item using index assignment",
+      "levels": [3],
+      "badge": "🏮 Master Swapper"
+    },
+    {
+      "id": "treasure_hoarder",
+      "title": "Treasure Hoarder",
+      "desc": "Append a treasure to your list and check pack length",
+      "levels": [4],
+      "badge": "💎 Treasure Champion"
+    }
+  ]
+}
