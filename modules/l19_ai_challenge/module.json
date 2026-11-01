@@ -27,6 +27,7 @@
     "for_range"
   ],
   "labels": {
+    "input": "prompts human user for input text and captures response",
     "ai_boot": "initializes NOVA-19 neural core and sensor arrays",
     "ai_think": "activates synaptic neural network to process human query",
     "ai_scan": "deploys sensor sweep to analyze environment and intent",

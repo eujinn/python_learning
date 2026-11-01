@@ -601,6 +601,18 @@ export async function play(cmd, args = [], ctx = {}) {
   const setBubble = ctx.setBubble || (() => {});
 
   switch (cmd) {
+    case "input": {
+      pulsePipelineNode("pipe-perceive");
+      const promptText = args[0] || "input()";
+      setStatusBadge("● PROMPTING", "processing");
+      setAvatarEmotion("thinking");
+      setBubble(`⌨️ input: "${promptText}"`);
+      setSpeechBubble(`Prompting user: "${promptText}"`);
+      playClickSound();
+      await sleep(550);
+      break;
+    }
+
     case "ai_boot": {
       pulsePipelineNode("pipe-perceive");
       setStatusBadge("● AWAKENING", "processing");
