@@ -195,10 +195,10 @@ class Parser {
     if (this.check("OPERATOR", ".")) {
       this.next();
       const attrTok = this.expect("IDENT");
-      if (this.check("BRACKET", "(")) return this.parseMethodCall(idTok.value, attrTok.value);
+      if (this.check("BRACKET", "(")) return this.parseMethodCall(idTok.value, attrTok.value, idTok.line);
       return { t: "ident", v: idTok.value + "." + attrTok.value, n: idTok.line };
     }
-    if (this.check("BRACKET", "(")) return this.parseCall(idTok.value);
+    if (this.check("BRACKET", "(")) return this.parseCall(idTok.value, idTok.line);
     return { t: "ident", v: idTok.value, n: idTok.line };
   }
 
@@ -312,7 +312,7 @@ class Parser {
     return null;
   }
 
-  parseCall(name) {
+  parseCall(name, line) {
     this.expect("BRACKET", "(");
     const args = [];
     if (!this.check("BRACKET", ")")) {
@@ -320,10 +320,10 @@ class Parser {
       while (this.check("OPERATOR", ",")) { this.next(); args.push(this.parseExpr()); }
     }
     this.expect("BRACKET", ")");
-    return { t: "call", f: name, args, n: name === "range" ? (args.length ? args[0].n : this.peek().line) : this.peek().line };
+    return { t: "call", f: name, args, n: line !== undefined ? line : (this.peek() ? this.peek().line : 0) };
   }
 
-  parseMethodCall(obj, method) {
+  parseMethodCall(obj, method, line) {
     this.expect("BRACKET", "(");
     const args = [];
     if (!this.check("BRACKET", ")")) {
@@ -331,7 +331,7 @@ class Parser {
       while (this.check("OPERATOR", ",")) { this.next(); args.push(this.parseExpr()); }
     }
     this.expect("BRACKET", ")");
-    return { t: "method_call", obj, method, args, n: this.peek() ? this.peek().line : 0 };
+    return { t: "method_call", obj, method, args, n: line !== undefined ? line : (this.peek() ? this.peek().line : 0) };
   }
 
   back() { this.pos--; }
