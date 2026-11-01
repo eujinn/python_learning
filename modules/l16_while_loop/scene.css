@@ -1,0 +1,543 @@
+/* =========================================================================
+   Lesson 16 — While Loop: Astro-Bot Power Core Scene Styles
+   Argon Arcade Theme · Cyber-Clean, Tactile, High-Tech & Smooth Animations
+   ========================================================================= */
+
+.wb-stage {
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at 50% 15%, #f0f9ff 0%, #e0f2fe 55%, #dbeafe 100%);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  color: var(--ink-main, #0f172a);
+}
+
+/* Background high-tech circuit grid effect */
+.wb-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Stage Header */
+.wb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wb-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wb-icon-badge {
+  font-size: 1.5rem;
+  background: #ffffff;
+  border: 2px solid #38bdf8;
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #0284c7;
+}
+
+.wb-title {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  color: #0369a1;
+}
+
+.wb-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 2px solid #bae6fd;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
+}
+
+.wb-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* Speech bubble */
+.wb-stage .bubble {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  background: #ffffff;
+  color: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 14px;
+  padding: 6px 14px;
+  z-index: 10;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.18);
+  max-width: 80%;
+  transition: all 0.25s ease;
+}
+
+/* Main Display Area: Robot + Reactor Column */
+.wb-main-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  background: #ffffff;
+  border: 2px solid #7dd3fc;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08), 0 3px 0 #38bdf8;
+  position: relative;
+  z-index: 2;
+  min-height: 190px;
+}
+
+/* Astro-Bot Robot Container */
+.wb-bot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wb-bot-container.hovering {
+  animation: bot-idle-hover 3s infinite ease-in-out;
+}
+
+@keyframes bot-idle-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.wb-bot-container.charging-burst {
+  animation: bot-charge-burst 0.4s ease;
+}
+
+@keyframes bot-charge-burst {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px #38bdf8); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 16px #38bdf8); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px #38bdf8); }
+}
+
+.wb-bot-container.launched {
+  transform: translateY(-90px) scale(0.9) !important;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wb-bot-svg {
+  width: 140px;
+  height: 160px;
+  overflow: visible;
+}
+
+/* Rocket Thruster Flames */
+.wb-thruster-flame {
+  opacity: 0;
+  transform-origin: center top;
+  transition: opacity 0.2s ease;
+}
+
+.wb-bot-container.launched .wb-thruster-flame,
+.wb-bot-container.thrusting .wb-thruster-flame {
+  opacity: 1;
+  animation: thruster-fire 0.25s infinite alternate ease-in-out;
+}
+
+@keyframes thruster-fire {
+  0% { transform: scaleY(0.9) scaleX(0.9); }
+  100% { transform: scaleY(1.3) scaleX(1.1); filter: drop-shadow(0 4px 10px #f59e0b); }
+}
+
+/* Plasma Reactor Chamber Column */
+.wb-reactor-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.wb-reactor-tube-outer {
+  width: 68px;
+  height: 150px;
+  background: #f8fafc;
+  border: 3px solid #0284c7;
+  border-radius: 34px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(2, 132, 199, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Glass reflection shine */
+.wb-reactor-tube-outer::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 12px;
+  height: 136px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Reactor Fluid / Plasma */
+.wb-reactor-fluid {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #38bdf8 0%, #2563eb 60%, #1d4ed8 100%);
+  border-radius: 0 0 30px 30px;
+  transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+}
+
+.wb-reactor-fluid.supercharged {
+  background: linear-gradient(180deg, #f59e0b 0%, #ef4444 80%, #b91c1c 100%);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+}
+
+/* Plasma surface glow wave */
+.wb-reactor-fluid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 4px #ffffff);
+}
+
+/* Tick marks on reactor */
+.wb-reactor-ticks {
+  position: absolute;
+  right: 6px;
+  top: 15px;
+  bottom: 15px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.wb-tick {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #64748b;
+  font-family: "JetBrains Mono", monospace;
+  line-height: 1;
+}
+
+.wb-reactor-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wb-reactor-val {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #0369a1;
+}
+
+.wb-reactor-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Cognitive Visualizer: Live While Condition Radar */
+.wb-condition-radar {
+  background: #ffffff;
+  border: 2px solid #bae6fd;
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+  position: relative;
+  z-index: 2;
+}
+
+.wb-radar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0369a1;
+}
+
+.wb-cycle-pill {
+  background: #f0f9ff;
+  border: 1.5px solid #7dd3fc;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.76rem;
+  font-family: "JetBrains Mono", monospace;
+  color: #0284c7;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wb-cycle-icon {
+  display: inline-block;
+  animation: rotate-cycle 3s linear infinite;
+}
+
+@keyframes rotate-cycle {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.wb-radar-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: #f8fafc;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wb-radar-expr {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.wb-radar-eval {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wb-radar-badge {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.wb-radar-badge.true {
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid #10b981;
+  color: #34d399;
+}
+
+.wb-radar-badge.false {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid #ef4444;
+  color: #f87171;
+}
+
+.wb-radar-badge.idle {
+  background: rgba(148, 163, 184, 0.2);
+  border: 1px solid #64748b;
+  color: #94a3b8;
+}
+
+.wb-radar-footer {
+  font-size: 0.78rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Student Interaction Deck */
+.wb-interact-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 12px;
+  z-index: 2;
+}
+
+.wb-interact-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Tactile Clickable Energy Value Nodes */
+.wb-node-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wb-node-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.wb-val-chip {
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 0 #94a3b8;
+}
+
+.wb-val-chip:hover {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0284c7;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #0284c7;
+}
+
+.wb-val-chip:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #0284c7;
+}
+
+.wb-val-chip.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+  box-shadow: 0 2px 0 #075985;
+}
+
+/* Quick Action / Snippet Buttons */
+.wb-snippet-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wb-snippet-btn {
+  background: #f8fafc;
+  border: 1.5px solid #bae6fd;
+  border-radius: 10px;
+  padding: 4px 9px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #0369a1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 0 #7dd3fc;
+}
+
+.wb-snippet-btn:hover {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  transform: translateY(-1px);
+}
+
+.wb-snippet-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #7dd3fc;
+}
+
+/* Interactive Inspector Output */
+.wb-inspector-bar {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  background: #f0f9ff;
+  border-left: 3px solid #0284c7;
+  border-radius: 6px;
+  color: #0c4a6e;
+  line-height: 1.4;
+}
+
+.wb-inspector-bar code {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  color: #2563eb;
+  background: #e0f2fe;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+/* Particle sparks for animations */
+.wb-spark-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #facc15;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 0 10px #facc15;
+  animation: spark-fly 0.5s ease-out forwards;
+}
+
+@keyframes spark-fly {
+  0% { transform: scale(1) translate(0, 0); opacity: 1; }
+  100% { transform: scale(0) translate(var(--dx, 20px), var(--dy, -30px)); opacity: 0; }
+}
