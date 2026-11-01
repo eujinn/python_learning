@@ -1,0 +1,80 @@
+{
+  "id": "l19_ai_challenge",
+  "name": "Python AI Challenge — Cyber Core NOVA-19",
+  "icon": "🧠",
+  "description": "Lesson 19 — Master the Python AI Challenge: prompt your AI companion, classify human intents, evaluate confidence thresholds, and program autonomous actions from following starter commands to creating your own.",
+  "commands": [
+    "ai_boot",
+    "ai_think",
+    "ai_scan",
+    "power_boost",
+    "activate_shield",
+    "celebrate",
+    "synthesize_speech",
+    "print"
+  ],
+  "allowedSyntax": [
+    "print",
+    "strings",
+    "variables",
+    "int",
+    "arithmetic",
+    "comparisons",
+    "booleans",
+    "if",
+    "input",
+    "lists",
+    "for_range"
+  ],
+  "labels": {
+    "ai_boot": "initializes NOVA-19 neural core and sensor arrays",
+    "ai_think": "activates synaptic neural network to process human query",
+    "ai_scan": "deploys sensor sweep to analyze environment and intent",
+    "power_boost": "diverts auxiliary plasma energy to turbo thrusters",
+    "activate_shield": "projects shimmering hexagonal plasma defense barrier",
+    "celebrate": "triggers victory light sequence and joyful robotic cheer",
+    "synthesize_speech": "speaks synthesized vocal response through comms channel",
+    "print": "outputs diagnostic telemetry to terminal console"
+  },
+  "legend": "🧠 <b>ai_boot()</b> wake AI · <b>query = input(\"...\")</b> capture human input · <b>ai_think(query)</b> neural process · <b>if action == \"boost\":</b> intent branch · <b>int(input())</b> confidence score",
+  "idleText": "NOVA-19 Cyber Core is on standby. Write Python code to awaken the neural network, classify commands, and deploy autonomous agent subroutines!",
+  "css": "modules/l19_ai_challenge/scene.css",
+  "userIdea": "Python AI Challenge: students experience how to use python AI Challenge from following the command to inserting their own, with interactive NOVA-19 AI Companion, smooth animated neural core, live pipeline visualization, and interactive quick-test controls.",
+  "badges": [
+    {
+      "id": "neural_initiator",
+      "title": "Neural Initiator",
+      "desc": "Follow starter commands to awaken NOVA-19 and establish a human-to-AI neural link with input()",
+      "levels": [0],
+      "badge": "⚡ Neural Link Online"
+    },
+    {
+      "id": "prompt_engineer",
+      "title": "Prompt Engineer",
+      "desc": "Insert your own customized prompt string into input() to guide AI sensor queries",
+      "levels": [1],
+      "badge": "💬 Prompt Architect"
+    },
+    {
+      "id": "intent_classifier",
+      "title": "Intent Classifier",
+      "desc": "Insert conditional branching with if/else to classify user commands and decide AI actions",
+      "levels": [2],
+      "badge": "🎯 Intent Strategist"
+    },
+    {
+      "id": "confidence_calibrator",
+      "title": "Confidence Calibrator",
+      "desc": "Convert text inputs into integers with int(input()) to evaluate AI defense confidence thresholds",
+      "levels": [3],
+      "badge": "🛡️ Quantum Shield Commander"
+    },
+    {
+      "id": "autonomous_ai_master",
+      "title": "Autonomous AI Master",
+      "desc": "Construct your own multi-command interactive AI Companion in the Free Play Sandbox",
+      "levels": [4],
+      "badge": "👑 Lead AI Architect"
+    }
+  ]
+}
