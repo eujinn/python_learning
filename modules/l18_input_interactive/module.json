@@ -1,0 +1,58 @@
+{
+  "id": "l18_input_interactive",
+  "name": "Input + Interactive Program — Cyber Terminal & Bot",
+  "icon": "🤖",
+  "description": "Lesson 18 — Master Python input() and interactive programs: chat with your AI Bot, follow starter commands, and insert your own interactive prompts, choices, and inputs.",
+  "commands": ["login", "patrol", "boost", "shield", "celebrate", "say", "print"],
+  "allowedSyntax": ["print", "strings", "variables", "int", "arithmetic", "comparisons", "booleans", "if", "input"],
+  "labels": {
+    "login": "authenticates cadet user on the Cyber Terminal",
+    "say": "AI Bot synthesizes voice and displays holographic speech",
+    "patrol": "activates hover thrusters to scan and patrol the sector",
+    "boost": "engages overdrive turbo boost with neon particle trail",
+    "shield": "activates holographic plasma energy shield",
+    "celebrate": "triggers festive victory light show and robotic cheer",
+    "print": "outputs telemetry text to terminal console"
+  },
+  "legend": "💬 <b>name = input(\"Enter name: \")</b> prompt user · <b>print(\"Hi\", name)</b> display response · <b>if cmd == \"boost\":</b> interactive branch · <b>int(input())</b> convert to number",
+  "idleText": "Cyber Bot A.E.X.-18 is online on the command deck. Write interactive Python programs to chat, decide actions, and calibrate shields!",
+  "css": "modules/l18_input_interactive/scene.css",
+  "userIdea": "Input + Interactive Program: students experience how to use python Input and Interactive Programs from following the command to inserting their own prompts, choices, and inputs, with smooth interactive graphics and visual condition/variable understanding",
+  "badges": [
+    {
+      "id": "cadet_identifier",
+      "title": "Cadet Identifier",
+      "desc": "Follow the starter command and authenticate your cadet name with input()",
+      "levels": [0],
+      "badge": "🔑 Cadet Verified"
+    },
+    {
+      "id": "prompt_architect",
+      "title": "Prompt Architect",
+      "desc": "Insert your own customized prompt string to guide the navigation computer",
+      "levels": [1],
+      "badge": "🧭 Waypoint Navigator"
+    },
+    {
+      "id": "interactive_strategist",
+      "title": "Interactive Strategist",
+      "desc": "Insert custom action commands to let the cadet choose bot behaviors with if/elif",
+      "levels": [2],
+      "badge": "⚡ Dynamic Decision Maker"
+    },
+    {
+      "id": "power_calibrator",
+      "title": "Power Calibrator",
+      "desc": "Convert user input into an integer using int(input()) to calibrate defense shields",
+      "levels": [3],
+      "badge": "🛡️ Plasma Shield Commander"
+    },
+    {
+      "id": "terminal_master",
+      "title": "Terminal Master",
+      "desc": "Build your own interactive multi-command AI terminal program in the Sandbox",
+      "levels": [4],
+      "badge": "👑 Cyber Terminal Architect"
+    }
+  ]
+}
