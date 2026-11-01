@@ -1,0 +1,56 @@
+{
+  "id": "l17_while_challenge",
+  "name": "While Loop Challenge — Cyber Rover Harvester",
+  "icon": "🤖",
+  "description": "Lesson 17 — Master Python while loop challenges: program the Cyber Rover from following starter commands to inserting custom limits, actions, and beacons.",
+  "commands": ["collect", "drill", "scan", "beacon", "print"],
+  "allowedSyntax": ["print", "strings", "variables", "int", "arithmetic", "comparisons", "booleans", "while"],
+  "labels": {
+    "collect": "scoops a glowing energy crystal into the rover's cargo bay",
+    "drill": "activates the sonic laser drill to break down crystal geodes",
+    "scan": "emits a sweeping radar pulse to analyze planetary terrain",
+    "beacon": "fires the orbital light beacon to signal mission complete!",
+    "print": "outputs telemetry data and counter status to console"
+  },
+  "legend": "🤖 <b>crystals = 0</b> start counter · <b>while crystals &lt; 3:</b> loop while True · <b>crystals = crystals + 1</b> step counter · Click stage buttons to test rover systems!",
+  "idleText": "Cyber Rover Lumina-9 is on standby. Write while loops to harvest crystals and deploy the beacon!",
+  "css": "modules/l17_while_challenge/scene.css",
+  "userIdea": "While Loop Challenge: students experience using python while loops from following the command to inserting their own conditions and commands, with smooth interactive graphics and visual condition understanding",
+  "badges": [
+    {
+      "id": "harvester_rookie",
+      "title": "Harvester Rookie",
+      "desc": "Follow the starter command and harvest your first 3 crystals",
+      "levels": [0],
+      "badge": "💎 Crystal Collector"
+    },
+    {
+      "id": "quota_commander",
+      "title": "Quota Commander",
+      "desc": "Insert your own condition target to harvest 5 crystals for the shield",
+      "levels": [1],
+      "badge": "🎯 Quota Master"
+    },
+    {
+      "id": "drill_engineer",
+      "title": "Drill Engineer",
+      "desc": "Insert custom drill actions and telemetry inside the while loop body",
+      "levels": [2],
+      "badge": "⚡ Sonic Drill Pro"
+    },
+    {
+      "id": "beacon_navigator",
+      "title": "Beacon Navigator",
+      "desc": "Run a fuel countdown while loop and fire the orbital beacon after the loop",
+      "levels": [3],
+      "badge": "📡 Orbital Beacon"
+    },
+    {
+      "id": "arena_master",
+      "title": "Arena Master",
+      "desc": "Create your own while loop mission in the Lumina-9 Sandbox Arena",
+      "levels": [4],
+      "badge": "🪐 Lumina Explorer"
+    }
+  ]
+}
