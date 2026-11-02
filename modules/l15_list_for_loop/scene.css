@@ -1,0 +1,626 @@
+/* ==========================================================================
+   List + For Loop — Bento Express: Sushi & Snack Conveyor Theme
+   Smooth graphics, tactile interactions, and clear loop visualizer
+   ========================================================================== */
+
+:root {
+  --bento-gold: #f59e0b;
+  --bento-gold-light: #fef3c7;
+  --bento-gold-dark: #b45309;
+  --bento-amber: #d97706;
+  --bento-track-bg: #1e293b;
+  --bento-track-metal: #334155;
+  --bento-accent-red: #ef4444;
+  --bento-accent-green: #10b981;
+  --bento-tray-border: #ea580c;
+}
+
+.bento-stage {
+  background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 60%, #fde68a 100%);
+  border: 3px solid #f59e0b;
+  border-radius: var(--radius-md, 14px);
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-main, "Fredoka", sans-serif);
+}
+
+/* --------------------------------------------------------------------------
+   Header Bar
+   -------------------------------------------------------------------------- */
+.bento-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+  padding: 6px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.bento-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-sign-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.shop-title-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-shop-name {
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #78350f;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.bento-shop-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.bento-bell-btn {
+  background: linear-gradient(180deg, #fef08a 0%, #facc15 100%);
+  border: 2px solid #ca8a04;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #713f12;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 0 #a16207;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.bento-bell-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #a16207;
+}
+.bento-bell-btn:active, .bento-bell-btn.ring {
+  transform: translateY(1px);
+  box-shadow: 0 0 0 #a16207;
+  animation: bellJiggle 0.45s ease;
+}
+@keyframes bellJiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-14deg) scale(1.05); }
+  75% { transform: rotate(14deg) scale(1.05); }
+}
+
+.bell-emoji {
+  display: inline-block;
+  transform-origin: top center;
+}
+
+.bento-status-pill {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1.5px solid #fde68a;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Arena: Chef + Conveyor Track + Bento Serving Tray
+   -------------------------------------------------------------------------- */
+.bento-arena {
+  display: grid;
+  grid-template-columns: 100px 1fr 115px;
+  gap: 8px;
+  align-items: stretch;
+  min-height: 180px;
+  position: relative;
+}
+
+/* Chef Kuma Zone */
+.bento-chef-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.chef-kuma-svg {
+  width: 95px;
+  height: 110px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.kuma-bounce {
+  animation: kumaServe 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes kumaServe {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-12px) scale(1.08); }
+  70% { transform: translateY(2px) scale(0.97); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.chef-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  background: #ea580c;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: -6px;
+  z-index: 2;
+  box-shadow: 0 2px 0 #9a3412;
+}
+
+/* Conveyor Track Zone */
+.bento-track-zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+  position: relative;
+}
+
+.track-label-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.track-tag {
+  color: #64748b;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.track-code-name {
+  font-family: var(--font-code, "JetBrains Mono", monospace);
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid #bfdbfe;
+}
+
+.track-count-badge {
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+/* Conveyor Container & Belts */
+.conveyor-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.conveyor-rail {
+  height: 4px;
+  background: linear-gradient(90deg, #94a3b8, #cbd5e1, #94a3b8);
+  border-radius: 2px;
+}
+.top-rail { margin-bottom: 2px; }
+.btm-rail { margin-top: 2px; }
+
+.conveyor-belt {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  position: relative;
+  overflow-x: auto;
+  min-height: 88px;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.35);
+  scrollbar-width: thin;
+}
+
+/* Moving slats visual texture */
+.conveyor-belt::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 6px, transparent 6px, transparent 18px);
+  pointer-events: none;
+}
+
+.empty-track-msg {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Individual Bento Plate Card
+   -------------------------------------------------------------------------- */
+.bento-plate {
+  flex: 0 0 auto;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  user-select: none;
+  min-width: 62px;
+}
+
+.bento-plate:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: #3b82f6;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+}
+
+.bento-plate.active {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 0 0 3px #fef08a, 0 8px 12px rgba(245, 158, 11, 0.3);
+  animation: platePulse 1.2s infinite alternate;
+}
+@keyframes platePulse {
+  from { transform: translateY(-6px) scale(1.08); }
+  to { transform: translateY(-8px) scale(1.12); }
+}
+
+.bento-plate.served {
+  opacity: 0.65;
+  filter: grayscale(0.25);
+  border-style: dashed;
+}
+
+.bento-plate.plate-click-glow {
+  animation: plateClick 0.4s ease;
+}
+@keyframes plateClick {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+
+.plate-idx {
+  font-family: var(--font-code, "JetBrains Mono", monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+.bento-plate.active .plate-idx {
+  color: #b45309;
+  background: #fde68a;
+}
+
+.plate-icon {
+  font-size: 1.55rem;
+  line-height: 1.1;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+.plate-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1e293b;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Active Loop Pointer Indicator Bar
+   -------------------------------------------------------------------------- */
+.loop-pointer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #7c2d12;
+  background: #ffedd5;
+  border: 1.5px solid #fed7aa;
+  border-radius: 8px;
+  padding: 3px 8px;
+  margin-top: 4px;
+  transition: all 0.25s ease;
+}
+.loop-spin-icon {
+  display: inline-block;
+  font-size: 0.85rem;
+}
+
+.pointer-pulse {
+  background: #fef08a;
+  border-color: #facc15;
+  color: #713f12;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.3);
+  animation: pointerBlink 0.8s ease infinite alternate;
+}
+@keyframes pointerBlink {
+  from { opacity: 0.85; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1.03); }
+}
+
+/* --------------------------------------------------------------------------
+   Customer Serving Tray (Output Area)
+   -------------------------------------------------------------------------- */
+.bento-tray-zone {
+  background: #ffffff;
+  border: 2px solid #ea580c;
+  border-radius: 14px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(234, 88, 12, 0.1);
+}
+
+.tray-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #c2410c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1.5px dashed #fed7aa;
+  padding-bottom: 4px;
+}
+
+.tray-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  overflow-y: auto;
+  max-height: 105px;
+  padding: 4px 0;
+  scrollbar-width: thin;
+}
+
+.served-card {
+  background: #fff7ed;
+  border: 1.5px solid #fdba74;
+  border-radius: 8px;
+  padding: 3px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #9a3412;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  animation: popServed 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.04);
+}
+@keyframes popServed {
+  0% { transform: scale(0.4) translateY(20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.served-icon { font-size: 1rem; }
+.served-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-code, "JetBrains Mono", monospace);
+}
+
+.tray-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-align: right;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Chef's Pantry Bar (Quick-Insert Helpers)
+   -------------------------------------------------------------------------- */
+.pantry-bar {
+  background: #ffffff;
+  border: 2px solid #fde68a;
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.pantry-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.pantry-sparkle { font-size: 0.85rem; }
+
+.pantry-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.pantry-chip {
+  flex: 0 0 auto;
+  background: #fffbeb;
+  border: 1.5px solid #fcd34d;
+  border-radius: 16px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #78350f;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.pantry-chip:hover {
+  background: #fef08a;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(245, 158, 11, 0.2);
+}
+.pantry-chip:active, .pantry-chip.chip-bounce {
+  transform: scale(0.92);
+}
+
+.pantry-icon { font-size: 0.85rem; }
+.pantry-name { font-family: var(--font-code, "JetBrains Mono", monospace); }
+
+/* --------------------------------------------------------------------------
+   Interactive Speech Bubble
+   -------------------------------------------------------------------------- */
+#bubble {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 2.5px solid #78350f;
+  border-radius: 14px;
+  padding: 5px 14px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #78350f;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  transition: all 0.25s ease;
+  pointer-events: none;
+  max-width: 85%;
+  text-align: center;
+}
+#bubble:empty {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Plate Inspector Popup
+   -------------------------------------------------------------------------- */
+.plate-inspect-popup {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #f8fafc;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 25;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  animation: inspectSlide 0.25s ease;
+  border: 1px solid #475569;
+  max-width: 90%;
+}
+@keyframes inspectSlide {
+  from { transform: translateX(-50%) translateY(10px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.inspect-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inspect-icon {
+  font-size: 1.4rem;
+}
+
+.inspect-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.inspect-line1 {
+  font-weight: 700;
+  font-family: var(--font-code, "JetBrains Mono", monospace);
+  color: #fde047;
+}
+
+.inspect-line1 code {
+  color: #93c5fd;
+}
+
+.inspect-line1 .val-str {
+  color: #86efac;
+}
+
+.inspect-line2 {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.inspect-close {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #cbd5e1;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.inspect-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}

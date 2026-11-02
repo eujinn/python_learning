@@ -1,0 +1,52 @@
+{
+  "id": "l15_list_for_loop",
+  "name": "List + For Loop — Bento Express",
+  "icon": "🍱",
+  "description": "Lesson 15 — Experience looping through Python lists and printing items on the Bento Express sushi train.",
+  "commands": ["print"],
+  "allowedSyntax": ["print", "strings", "variables", "for_range", "lists"],
+  "labels": {
+    "print": "announces and serves the item from the list"
+  },
+  "legend": "🍱 <b>for item in my_list:</b> steps through every element · <b>print(item)</b> announces each item · Click plates or pantry to inspect!",
+  "idleText": "Chef Kuma's Bento Express is ready! Write a for loop and print items to serve hungry guests.",
+  "css": "modules/l15_list_for_loop/scene.css",
+  "userIdea": "Bento Express sushi train: students experience printing list items from following commands to inserting their own",
+  "badges": [
+    {
+      "id": "first_express_loop",
+      "title": "First Express Loop",
+      "desc": "Run your first for loop over a list and print each dish",
+      "levels": [0],
+      "badge": "🍱 Express Runner"
+    },
+    {
+      "id": "menu_customizer",
+      "title": "Menu Customizer",
+      "desc": "Insert your own snacks into the Python list",
+      "levels": [1],
+      "badge": "🍡 Snack Creator"
+    },
+    {
+      "id": "announcer_pro",
+      "title": "Bento Announcer",
+      "desc": "Print custom announcement messages with loop items",
+      "levels": [2],
+      "badge": "📢 Master Announcer"
+    },
+    {
+      "id": "loop_builder",
+      "title": "Loop Architect",
+      "desc": "Write a for-in loop from scratch over a list",
+      "levels": [3],
+      "badge": "🔁 Loop Master"
+    },
+    {
+      "id": "head_chef",
+      "title": "Head Chef",
+      "desc": "Create a custom list and print every item with your own loop",
+      "levels": [4],
+      "badge": "👨‍🍳 Bento Chef"
+    }
+  ]
+}
