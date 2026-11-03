@@ -1,105 +1,13 @@
-/* ==========================================================================
-   For Loop — Ice Cream Machine: ice-cream "parlor" theme.
-   Overrides the shared Argon shell tokens + ports the repo's Cognitive
-   Visualizer stage (order ticket, Bear, bowl stack, HUD). Module-scoped:
-   only this module's page carries these overrides.
-   ========================================================================== */
+/* =========================================================================
+   For Loop — Ice Cream Machine: scene visuals only.
+   The shared shell keeps the core light-grey + dark-blue theme; only the
+   right-pane shop (Bear, bowl, scoops, HUD, memory boxes) is themed here.
+   ========================================================================= */
 :root {
-  /* Parlor palette (from the ice-cream repo's variables.css) */
-  --bg-app: #fff6ec;
-  --bg-card: #ffffff;
-  --bg-subtle: #fff6ec;
-  --ink-main: #3d2214;
-  --ink-muted: #7d5a48;
-  --border-line: #f3c4d2;
-  --border-strong: #f9a8d4;
-  --primary: #ff5d8f;
-  --primary-dark: #d83a6c;
-  --success: #10b981;
-  --success-dark: #059669;
-  --warning: #f59e0b;
-  --warning-dark: #b45309;
-  --danger: #ef4444;
-  --danger-dark: #b91c1c;
-  --purple: #8b5cf6;
-  --code-bg: #231626;
-  --code-gutter: #36223b;
-  --code-ink: #fdf2f8;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
 }
-
-html, body {
-  background-color: #fff6ec;
-  background-image: radial-gradient(#ffe4ee 2px, transparent 2px);
-  background-size: 22px 22px;
-  background-attachment: fixed;
-}
-
-header {
-  background: linear-gradient(180deg, #ff7aa2 0%, #ff5d8f 100%);
-  border-bottom: 0;
-  color: #fff;
-  box-shadow: 0 4px 0 rgba(216, 58, 108, 0.35);
-}
-
-.brand-title { color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); }
-.brand-badge { background: rgba(255,255,255,0.22); color: #fff; border-color: rgba(255,255,255,0.5); }
-
-.btn-3d {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
-}
-.btn-3d:hover { background: rgba(255, 255, 255, 0.35); }
-.btn-3d.btn-teacher { border-color: #fff; background: rgba(255,255,255,0.2); color: #fff; box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
-.btn-3d.btn-teacher.unlocked { background: #f59e0b; border-color: #b45309; color: #fff; }
-.btn-3d.btn-journey { border-color: #fff; background: rgba(255,255,255,0.2); color: #fff; box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
-
-.module-select { border-color: #fff; color: var(--ink-main); background: #fff; }
-
-.progress-pill { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); color: #fff; }
-.progress-track { background: rgba(255,255,255,0.4); border: 1.5px solid #fff; }
-.progress-fill { background: linear-gradient(90deg, #fde047, #22c55e); }
-
-.level-tab {
-  border-color: rgba(255,255,255,0.65);
-  background: rgba(255,255,255,0.9);
-  color: var(--ink-main);
-  box-shadow: 0 2px 0 rgba(0,0,0,0.12);
-}
-.level-tab.active { background: var(--ink-main); color: #fff; border-color: #fde047; transform: translateY(-1px) scale(1.03); }
-.level-tab.completed:not(.active) { background: #dcfce7; border-color: #22c55e; color: #065f46; }
-
-.card-panel {
-  background: var(--panel-bg, #fff);
-  border-color: #f3c4d2;
-  box-shadow: 0 6px 0 rgba(243, 196, 210, 0.55);
-}
-
-.concept-badge { background: #ffe4ee; color: #d83a6c; border-color: #f9a8d4; }
-.mission-story { background: #fff5f0; border-left-color: #ff5d8f; }
-.learn-drawer { background: #fff6ec; border-color: #f3c4d2; }
-.q6-item { border-left-color: #f9a8d4; }
-.vocab-pill { background: #fff; border-color: #f3c4d2; color: var(--ink-main); }
-.vocab-pill:hover, .vocab-pill.active { background: #ffe4ee; border-color: #ff5d8f; color: #d83a6c; }
-.info-pop { background: #fffbeb; border-color: #fde68a; color: #78350f; }
-.btn-3d#hintBtn, .hint-trig { background: #fff; color: var(--ink-main); border-color: #f3c4d2; box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
-.editor-shell { border-color: #4a3052; }
-.syntax-keys button { background: #fff; border-color: #f3c4d2; color: var(--ink-main); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-.syntax-keys button:hover { background: #ffe4ee; }
-
-.sec { background: #fff; border-color: #f3c4d2; color: var(--ink-main); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-.expl { background: #fffbeb; border: 2px solid #fde68a; color: #78350f; }
-.pill { background: #fff; border-color: #f3c4d2; color: #7d5a48; }
-.legend { color: var(--ink-muted); }
-
-.modal-box { border-color: #f3c4d2; }
-.badge-chip { background: #fff6ec; border-color: #f3c4d2; }
-.badge-chip.earned { background: #dcfce7; color: #14532d; border-color: #86efac; }
-.t-drawer { background: #fffbeb; border-color: #f59e0b; color: #78350f; }
 
 /* ---- Ice-cream shop stage (ported from the repo's stage.css) ----------- */
 .shop {
@@ -298,16 +206,3 @@ header {
   50% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
-
-/* Test result chips (pass/fail) */
-#res { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-.chip {
-  padding: 5px 10px;
-  border-radius: 8px;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  font: 500 0.8rem "Fira Code", Consolas, monospace;
-  overflow-wrap: anywhere;
-}
-.chip.pass { background: #f0fdf4; border-color: #86efac; color: #14532d; }
-.chip.fail { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }

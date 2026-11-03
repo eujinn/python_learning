@@ -194,7 +194,7 @@ function renderMemoryBoxes(env) {
   const V = document.getElementById("vars");
   if (!V) return;
   V.innerHTML = "";
-  const entries = Object.entries(env).filter(([k]) => k !== "_want");
+  const entries = Object.entries(env).filter(([k]) => k !== "_want" && k !== "pc" && k !== "want" && k !== "label");
   if (!entries.length) return;
   entries.forEach(([k, v]) => {
     const box = document.createElement("span");
@@ -225,10 +225,10 @@ export function reset() {
   if (bubble) bubble.textContent = "Serving your order…";
 }
 
-export async function play(name, arg, { setBubble } = {}) {
+export async function play(name, { setBubble, out } = {}) {
   const bubbleSet = setBubble || (t => { const b = $("#bubble"); if (b) b.textContent = t; });
   const bowl = $("#bowl");
-  const a = arg === undefined || arg === null ? "" : String(arg);
+  const a = out === undefined || out === null ? "" : String(out);
   if (name == "scoop") {
     bubbleSet("🍨 scoop(" + a + ")!");
     setBearMood("happy");
