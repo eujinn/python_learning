@@ -239,10 +239,12 @@ function run() {
     const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [] };
     try { tr(prog, env, ev, ctx); }
     catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); showAphorism(); return; }
-    const calls = ev.filter(x => x.k == "call").map(c => c.f);
+    const callEvents = ev.filter(x => x.k == "call");
+    const calls = callEvents.map(c => c.f);
+    const sigs = callEvents.map(c => c.args && c.args.length ? c.f + "(" + c.args.map(a => a === undefined || a === null ? "None" : String(a)).join(", ") + ")" : c.f + "()");
     const got = calls[calls.length - 1];
-    const result = checkAll(sc.want, calls, sc.expect, sc.constraints, prog, ev, env, ctx);
-    T.push({ sc, env0, ev, got, calls, good: L.free || result.ok, lab: sc.label || label(env0), result });
+    const result = checkAll(sc.want, sigs, sc.expect, sc.constraints, prog, ev, env, ctx);
+    T.push({ sc, env0, ev, got, calls, sigs, good: L.free || result.ok, lab: sc.label || label(env0), result });
   }
 
   const v = els.view;

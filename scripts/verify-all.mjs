@@ -39,8 +39,9 @@ async function run() {
           const env = Object.assign({}, env0), ev = [];
           const ctx = { gates, commands, stdout: [] };
           tr(ast, env, ev, ctx);
-          const calls = ev.filter(x => x.k == "call").map(c => c.f);
-          const result = checkAll(sc.want, calls, sc.expect, sc.constraints, ast, ev, env, ctx);
+          const callEvents = ev.filter(x => x.k == "call");
+          const sigs = callEvents.map(c => c.args && c.args.length ? c.f + "(" + c.args.map(a => a === undefined || a === null ? "None" : String(a)).join(", ") + ")" : c.f + "()");
+          const result = checkAll(sc.want, sigs, sc.expect, sc.constraints, ast, ev, env, ctx);
 
           if (!result.ok) {
             lessonPassed = false;

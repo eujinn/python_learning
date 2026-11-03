@@ -1,20 +1,41 @@
+/* Normalise a recorded call to its command name and signature.
+   Callers may pass names ("go"), signature strings ("scoop(vanilla)"),
+   or event objects ({ f, args }). */
+function nameOf(c) {
+  return typeof c === "string" ? c.replace(/\(.*$/, "") : c.f;
+}
+function sigOf(c) {
+  if (typeof c === "string") return c.includes("(") ? c : c + "()";
+  const args = (c.args && c.args.length)
+    ? c.args.map(a => a === undefined || a === null ? "None" : String(a)).join(", ")
+    : "";
+  return c.f + "(" + args + ")";
+}
+
 export function checkWant(want, calls) {
   if (want == null) return true;
+  if (Array.isArray(want)) {
+    const sigs = calls.map(sigOf);
+    return want.length === sigs.length && want.every((w, i) => w === sigs[i]);
+  }
   const w = String(want);
   let m;
   if (m = w.match(/^([a-z_]+)\*\s*(\d+)$/))
     return (tallyCalls(calls)[m[1]] || 0) === +m[2];
   if (m = w.match(/^([a-z_]+)\+$/))
     return (tallyCalls(calls)[m[1]] || 0) >= 1;
-  return calls[calls.length - 1] === w;
+  if (!calls.length) return false;
+  const last = calls[calls.length - 1];
+  return nameOf(last) === w || sigOf(last) === w;
 }
 
 function tallyCalls(calls) {
-  return calls.reduce((a, c) => ((a[c] = (a[c] || 0) + 1), a), {});
+  return calls.reduce((a, c) => ((a[nameOf(c)] = (a[nameOf(c)] || 0) + 1), a), {});
 }
 
 export function describeWant(want) {
   if (want == null) return "free play";
+  if (Array.isArray(want)) return want.length ? want.join(" \u2192 ") : "nothing";
   const w = String(want);
   let m;
   if (m = w.match(/^([a-z_]+)\*\s*(\d+)$/)) return m[1] + "() \u00d7 " + m[2];
