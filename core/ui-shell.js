@@ -282,13 +282,16 @@ async function step() {
     setBubble("🔁 " + e.var + " = " + py(e.val));
     X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
   } else {
-    if (e.out !== undefined) {
-      const shown = e.out.length > 40 ? e.out.slice(0, 40) + "…" : e.out;
+    const callOut = (e.args && e.args.length)
+      ? e.args.map(a => a === undefined || a === null ? "None" : String(a)).join(" ")
+      : undefined;
+    if (callOut !== undefined) {
+      const shown = callOut.length > 40 ? callOut.slice(0, 40) + "…" : callOut;
       X.textContent = "Cast " + e.f + "() → “" + shown + "”! " + (labels[e.f] || "");
     } else {
       X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
     }
-    if (st.api.play) await st.api.play(e.f, { setBubble, out: e.out });
+    if (st.api.play) await st.api.play(e.f, { setBubble, out: callOut });
     else setBubble("▶ " + e.f + "()");
   }
 
