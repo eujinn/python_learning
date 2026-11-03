@@ -1,27 +1,178 @@
+/* Input + Interactive Program — Cyber Terminal & Bot (Lesson 18)
+   20-exercise backbone:
+     recap 1-4  → Lesson 17 while-loop refresher
+     basic 5-10 → input(), prompts, decisions, int(input())
+     debug 11-15→ repair input/if syntax
+     challenge 16-18 → interactive programs
+     advanced 19-20 → comment-guided missions */
+
 export const LESSONS = [
+  /* ============================ RECAP (1–4) ============================ */
   {
     id: 1,
-    title: "Challenge 1: Follow the Command — First Interactive Program",
-    storyProblem: "Meet A.E.X.-18, the Starbase AI Companion Bot! A.E.X. is standing by at the main command terminal and needs to know who is operating the console. In Python, input(\"Enter cadet name: \") pauses the program, displays a prompt on the screen, and waits for the cadet to type a response! Whatever text is typed gets returned as a string and stored inside variable name. Then login(name) authenticates the cadet on the station! Click ▶ Run to follow the commands and watch the terminal interact with you!",
-    concept: "Using input() to receive user text and store it in a variable",
+    tier: "recap",
+    title: "Recap: While Count",
+    storyProblem: "Warm up with Lesson 17's while loop. Print 0, 1, 2 with i = 0 while i < 3.",
+    concept: "while recap",
     learnFirst: {
-      problem: "The terminal needs to identify the cadet operating the console.",
-      knownInfo: "input(prompt) displays the prompt message and captures user keystrokes as a string.",
-      pythonQuestion: "How does Python ask a user for text and save their answer?",
-      whyPath: "name = input(\"...\") waits for the user's keystrokes and saves the resulting string into variable name for our program to use!",
-      action: "Click ▶ Run and watch the Live Input Pipeline display prompt, input text, and variable storage.",
-      learned: "input() pauses program execution, prompts the user, and captures their typed response as a string variable."
+      problem: "Repeat a print three times with while.",
+      knownInfo: "while i < 3: repeats.",
+      pythonQuestion: "What does print(i) show?",
+      whyPath: "i takes 0,1,2.",
+      action: "Print and increase i inside the loop.",
+      learned: "A while loop repeats while True."
+    },
+    vocabulary: [{ term: "while", meaning: "Repeat while a condition is True." }],
+    hints: [
+      "Concept Clue: increase i inside the loop.",
+      "Structure Guide:\ni = 0\nwhile i < 3:\n    print(i)\n    i = i + 1",
+      "Guided Correction: Don't forget the increment."
+    ],
+    starterCode: `i = 0
+while i < 3:
+    print(i)
+    i = i + 1`,
+    solution: `i = 0
+while i < 3:
+    print(i)
+    i = i + 1`,
+    variables: ["i"],
+    base: {},
+    tests: [{ environment: {}, want: "print*3", expect: { stdout: "0\n1\n2", vars: { i: 3 } }, label: "count 0-2" }],
+    teacherExplanation: "Recap while counters.",
+    commonMistakes: ["No increment", "Missing colon"],
+    studentReflection: "I remember while loops."
+  },
+  {
+    id: 2,
+    tier: "recap",
+    title: "Recap: Patrol Twice",
+    storyProblem: "Patrol twice with a while loop: scans = 0 while scans < 2.",
+    concept: "while with a command",
+    learnFirst: {
+      problem: "Repeat patrol twice.",
+      knownInfo: "while scans < 2 repeats twice.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "scans reaches 2.",
+      action: "patrol and increase inside.",
+      learned: "A command can repeat in while."
+    },
+    vocabulary: [{ term: "count", meaning: "How many times." }],
+    hints: [
+      "Concept Clue: while scans < 2.",
+      "Structure Guide:\nwhile scans < 2:\n    patrol()\n    scans = scans + 1",
+      "Guided Correction: Increase scans."
+    ],
+    starterCode: `scans = 0
+while scans < 2:
+    patrol()
+    scans = scans + 1`,
+    solution: `scans = 0
+while scans < 2:
+    patrol()
+    scans = scans + 1`,
+    variables: ["scans"],
+    base: {},
+    tests: [{ environment: {}, want: "patrol*2", expect: { vars: { scans: 2 } }, label: "patrol twice" }],
+    teacherExplanation: "Recap a command inside while.",
+    commonMistakes: ["No increment"],
+    studentReflection: "I can repeat a command with while."
+  },
+  {
+    id: 3,
+    tier: "recap",
+    title: "Recap: Countdown",
+    storyProblem: "Print 3, 2, 1 with fuel = 3 while fuel > 0.",
+    concept: "decrement recap",
+    learnFirst: {
+      problem: "Count down to 0.",
+      knownInfo: "Subtract 1 each pass.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "fuel reaches 0.",
+      action: "Print fuel, then subtract.",
+      learned: "A counter can count down."
+    },
+    vocabulary: [{ term: "decrement", meaning: "Subtract 1." }],
+    hints: [
+      "Concept Clue: fuel = fuel - 1 inside.",
+      "Structure Guide:\nwhile fuel > 0:\n    print(fuel)\n    fuel = fuel - 1",
+      "Guided Correction: Subtract inside."
+    ],
+    starterCode: `fuel = 3
+while fuel > 0:
+    print(fuel)
+    fuel = fuel - 1`,
+    solution: `fuel = 3
+while fuel > 0:
+    print(fuel)
+    fuel = fuel - 1`,
+    variables: ["fuel"],
+    base: {},
+    tests: [{ environment: {}, want: "print*3", expect: { stdout: "3\n2\n1", vars: { fuel: 0 } }, label: "countdown" }],
+    teacherExplanation: "Recap decrement.",
+    commonMistakes: ["Adding instead"],
+    studentReflection: "I can count down with while."
+  },
+  {
+    id: 4,
+    tier: "recap",
+    title: "Recap: Loop Then Celebrate",
+    storyProblem: "Patrol twice in a while loop, then celebrate() after the loop.",
+    concept: "loop + finale recap",
+    learnFirst: {
+      problem: "Repeat, then finish once.",
+      knownInfo: "Un-indented lines run after the loop.",
+      pythonQuestion: "Where is celebrate()?",
+      whyPath: "After the loop.",
+      action: "Loop patrol twice, then celebrate().",
+      learned: "Finish a loop with one command."
+    },
+    vocabulary: [{ term: "post-loop", meaning: "Commands after the loop." }],
+    hints: [
+      "Concept Clue: celebrate() is not indented.",
+      "Structure Guide:\nwhile i < 2:\n    patrol()\n    i = i + 1\ncelebrate()",
+      "Guided Correction: Put celebrate at the left edge."
+    ],
+    starterCode: `i = 0
+while i < 2:
+    patrol()
+    i = i + 1`,
+    solution: `i = 0
+while i < 2:
+    patrol()
+    i = i + 1
+celebrate()`,
+    variables: ["i"],
+    base: {},
+    tests: [{ environment: {}, want: "celebrate", expect: { vars: { i: 2 } }, label: "loop then celebrate" }],
+    teacherExplanation: "Recap post-loop commands.",
+    commonMistakes: ["Indenting celebrate"],
+    studentReflection: "I can finish a loop with celebrate."
+  },
+
+  /* ============================ BASIC (5–10) =========================== */
+  {
+    id: 5,
+    tier: "basic",
+    title: "First Interactive Program",
+    storyProblem: "Ask for the cadet's name with input(), greet them, then log in.",
+    concept: "input() basics",
+    learnFirst: {
+      problem: "Ask the user for text.",
+      knownInfo: "input(\"prompt\") returns what the user types.",
+      pythonQuestion: "What does input return?",
+      whyPath: "A string of what was typed.",
+      action: "Store input, print a welcome, then login(name).",
+      learned: "input() pauses and returns typed text."
     },
     vocabulary: [
-      { term: "input()", meaning: "A built-in Python function that displays a prompt, pauses execution, and returns user-typed text." },
-      { term: "prompt", meaning: "The question or message shown inside input(\"...\") to tell the user what to type." },
-      { term: "interactive program", meaning: "A program that actively communicates with a human user by requesting input and responding dynamically." },
-      { term: "string", meaning: "Textual data surrounded by quotes (such as 'Astra' or 'Nova') returned by input()." }
+      { term: "input()", meaning: "Asks the user and returns their text." },
+      { term: "prompt", meaning: "The message shown while asking." }
     ],
     hints: [
-      "Concept Clue: Look at line 1. 'name = input(\"Enter cadet name: \")' asks for your name and stores it in variable 'name'.",
-      "Structure Guide:\nname = input(\"Enter cadet name: \")\nprint(\"Welcome to Starbase,\", name)\nlogin(name)\nThe code is already complete! Press ▶ Run to see it in action.",
-      "Guided Correction: Leave the starter code intact, press ▶ Run, and watch the Live Input Pipeline on the right display the prompt and response!"
+      "Concept Clue: name = input(\"...\") stores the answer.",
+      "Structure Guide:\nname = input(\"Enter cadet name: \")\nprint(\"Welcome to Starbase,\", name)\nlogin(name)",
+      "Guided Correction: The code is complete — press Run."
     ],
     starterCode: `name = input("Enter cadet name: ")
 print("Welcome to Starbase,", name)
@@ -32,138 +183,66 @@ login(name)`,
     variables: ["name"],
     base: {},
     tests: [
-      {
-        environment: {},
-        inputs: ["Astra"],
-        want: "login",
-        label: "Test 1: cadet enters 'Astra' -> logs in",
-        expect: {
-          vars: {
-            name: "Astra"
-          },
-          stdout: "Welcome to Starbase, Astra"
-        },
-        constraints: {
-          mustUse: ["input", "login"]
-        }
-      },
-      {
-        environment: {},
-        inputs: ["Nova"],
-        want: "login",
-        label: "Test 2: cadet enters 'Nova' -> logs in",
-        expect: {
-          vars: {
-            name: "Nova"
-          },
-          stdout: "Welcome to Starbase, Nova"
-        },
-        constraints: {
-          mustUse: ["input", "login"]
-        }
-      }
+      { environment: {}, inputs: ["Astra"], want: "login", expect: { vars: { name: "Astra" }, stdout: "Welcome to Starbase, Astra" }, constraints: { mustUse: ["input", "login"] }, label: "Astra logs in" },
+      { environment: {}, inputs: ["Nova"], want: "login", expect: { vars: { name: "Nova" }, stdout: "Welcome to Starbase, Nova" }, constraints: { mustUse: ["input", "login"] }, label: "Nova logs in" }
     ],
-    teacherExplanation: "Challenge 1 introduces Python's input() function. Emphasize that input() halts execution until the user provides text. The value returned is always a string ('str'), assigned here to variable 'name' and passed to login().",
-    commonMistakes: [
-      "Forgetting to assign the result of input() to a variable (e.g. just writing input() without name =)",
-      "Omitting quotes inside the input() prompt message",
-      "Misspelling the variable name when printing or logging in"
-    ],
-    studentReflection: "I observed how input() lets Python ask the user a question and store their response in a variable to personalize the program."
+    teacherExplanation: "Introduce input(); the returned value is a string.",
+    commonMistakes: ["Forgetting to assign input", "Missing prompt quotes"],
+    studentReflection: "I can ask for a name with input()."
   },
   {
-    id: 2,
-    title: "Challenge 2: Prompt Customization — Insert Your Own Prompt Message",
-    storyProblem: "Starbase sensors have detected multiple planetary signals! A.E.X.-18 is ready to plot a patrol flight path, but the navigation terminal is missing its prompt instruction! Look at line 1 in the code: destination = input(\"____\"). Replace the placeholder \"____\" with your own prompt string: \"Enter destination: \". When the pilot enters \"Mars\" or \"Europa\", the program prints the confirmation and commands the bot with patrol()! Replace \"____\" and click ▶ Run.",
-    concept: "Customizing prompt messages inside input()",
+    id: 6,
+    tier: "basic",
+    title: "Prompt Customization",
+    storyProblem: "Write your own prompt message, store the answer, then log in.",
+    concept: "Custom prompt",
     learnFirst: {
-      problem: "Line 1 has an empty placeholder '____' inside the input() function.",
-      knownInfo: "The string inside input(\"...\") provides clear instructions so users know what information to enter.",
-      pythonQuestion: "What prompt string should we place inside input()?",
-      whyPath: "Putting \"Enter destination: \" inside input() clearly guides the pilot on what waypoint to type.",
-      action: "Replace '____' with Enter destination: (keep the quotes), then click ▶ Run.",
-      learned: "A clear prompt message makes interactive programs easy and intuitive for users to navigate."
+      problem: "Choose the prompt text.",
+      knownInfo: "input(\"your message\") shows your message.",
+      pythonQuestion: "Does the prompt change the answer?",
+      whyPath: "The prompt is just a message.",
+      action: "Write input with your own prompt, then login.",
+      learned: "The prompt is your choice."
     },
-    vocabulary: [
-      { term: "prompt string", meaning: "The descriptive text placed inside quotes within input(...) that guides the user." },
-      { term: "argument", meaning: "A value passed inside the parentheses of a function, such as the prompt string in input(\"...\")." },
-      { term: "patrol()", meaning: "Commands A.E.X.-18 to ignite hover thrusters and patrol the planetary coordinates." }
-    ],
+    vocabulary: [{ term: "prompt", meaning: "The asking message." }],
     hints: [
-      "Concept Clue: Look at line 1. Replace '____' with 'Enter destination: ' inside the quotes.",
-      "Structure Guide:\ndestination = input(\"Enter destination: \")\nprint(\"Plotting course to\", destination)\npatrol()",
-      "Guided Correction: Make sure line 1 reads destination = input(\"Enter destination: \") and keep patrol() on line 3, then press ▶ Run."
+      "Concept Clue: put your message inside input().",
+      "Structure Guide:\nname = input(\"Who is piloting? \")\nlogin(name)",
+      "Guided Correction: Keep the quotes around the prompt."
     ],
-    starterCode: `destination = input("____")
-print("Plotting course to", destination)
-patrol()`,
-    solution: `destination = input("Enter destination: ")
-print("Plotting course to", destination)
-patrol()`,
-    variables: ["destination"],
+    starterCode: `name = input("Enter cadet name: ")
+login(name)`,
+    solution: `name = input("Who is piloting? ")
+login(name)`,
+    variables: ["name"],
     base: {},
     tests: [
-      {
-        environment: {},
-        inputs: ["Mars"],
-        want: "patrol",
-        label: "Test 1: pilot enters 'Mars' -> course plotted to Mars",
-        expect: {
-          vars: {
-            destination: "Mars"
-          },
-          stdout: "Plotting course to Mars"
-        },
-        constraints: {
-          mustUse: ["input", "patrol"]
-        }
-      },
-      {
-        environment: {},
-        inputs: ["Europa"],
-        want: "patrol",
-        label: "Test 2: pilot enters 'Europa' -> course plotted to Europa",
-        expect: {
-          vars: {
-            destination: "Europa"
-          },
-          stdout: "Plotting course to Europa"
-        },
-        constraints: {
-          mustUse: ["input", "patrol"]
-        }
-      }
+      { environment: {}, inputs: ["Mars"], want: "login", expect: { vars: { name: "Mars" } }, constraints: { mustUse: ["input", "login"] }, label: "Mars" },
+      { environment: {}, inputs: ["Europa"], want: "login", expect: { vars: { name: "Europa" } }, constraints: { mustUse: ["input", "login"] }, label: "Europa" }
     ],
-    teacherExplanation: "Challenge 2 focuses on user experience and prompt design. Students learn that the string argument to input() gives human context before capturing input.",
-    commonMistakes: [
-      "Leaving the placeholder ____ inside the quotes",
-      "Accidentally deleting the quotes around the prompt string",
-      "Altering the print() format string or patrol() function call"
-    ],
-    studentReflection: "I can customize the prompt string inside input() to give clear guidance to anyone using my program."
+    teacherExplanation: "Open-ended prompt; any quoted prompt works.",
+    commonMistakes: ["Removing the prompt quotes"],
+    studentReflection: "I can customize the input prompt."
   },
   {
-    id: 3,
-    title: "Challenge 3: Interactive Decision Maker — Insert Your Own Command",
-    storyProblem: "Time to give users real control! An interactive program doesn't just ask for names — it makes choices based on what the user types. Here, A.E.X. asks: action = input(\"Enter mode (patrol/boost): \"). If the cadet enters 'patrol', the bot calls patrol(). If the cadet enters 'boost', we want the bot to engage overdrive with boost()! Look at line 5: replace '____' with boost() so that when 'boost' is chosen, the thrusters flare! Replace '____' and click ▶ Run.",
-    concept: "Branching execution with if/elif based on user input",
+    id: 7,
+    tier: "basic",
+    title: "Interactive Decision Maker",
+    storyProblem: "Ask for a mode (patrol or boost), then use if/elif to run the right command.",
+    concept: "input + if/elif",
     learnFirst: {
-      problem: "Line 5 has a placeholder '____' under the elif action == \"boost\": branch.",
-      knownInfo: "Interactive programs compare user input strings with == to trigger different commands.",
-      pythonQuestion: "What command should run when action equals \"boost\"?",
-      whyPath: "When action == \"boost\" is True, calling boost() activates A.E.X.'s overdrive turbo thrusters!",
-      action: "Replace '____' on line 5 with boost(), then press ▶ Run.",
-      learned: "Combining input() with if and elif statements allows programs to respond dynamically to user commands."
+      problem: "Decide based on the typed answer.",
+      knownInfo: "input returns a string; compare with ==.",
+      pythonQuestion: "Is action == \"patrol\"?",
+      whyPath: "True runs patrol, elif runs boost.",
+      action: "Ask, then branch.",
+      learned: "input values can drive if/elif."
     },
-    vocabulary: [
-      { term: "branching", meaning: "Directing program flow along different paths based on conditions like user input." },
-      { term: "equality ==", meaning: "Checks if the string typed by the user matches an expected target word." },
-      { term: "boost()", meaning: "Activates A.E.X.-18's high-speed overdrive thrusters and particle exhaust trail." }
-    ],
+    vocabulary: [{ term: "==", meaning: "Compare two values." }],
     hints: [
-      "Concept Clue: Look at line 5 under 'elif action == \"boost\":'. Replace '____' with 'boost()'.",
+      "Concept Clue: action = input(...) then if action == \"patrol\":",
       "Structure Guide:\naction = input(\"Enter mode (patrol/boost): \")\nif action == \"patrol\":\n    patrol()\nelif action == \"boost\":\n    boost()",
-      "Guided Correction: Indent boost() with 4 spaces under 'elif action == \"boost\":' and do not forget the parentheses ()!"
+      "Guided Correction: Add boost() under elif."
     ],
     starterCode: `action = input("Enter mode (patrol/boost): ")
 if action == "patrol":
@@ -178,65 +257,32 @@ elif action == "boost":
     variables: ["action"],
     base: {},
     tests: [
-      {
-        environment: {},
-        inputs: ["patrol"],
-        want: "patrol",
-        label: "Test 1: input 'patrol' -> calls patrol()",
-        expect: {
-          vars: {
-            action: "patrol"
-          }
-        },
-        constraints: {
-          mustUse: ["input", "if", "patrol"]
-        }
-      },
-      {
-        environment: {},
-        inputs: ["boost"],
-        want: "boost",
-        label: "Test 2: input 'boost' -> calls boost()",
-        expect: {
-          vars: {
-            action: "boost"
-          }
-        },
-        constraints: {
-          mustUse: ["input", "if", "boost"]
-        }
-      }
+      { environment: {}, inputs: ["patrol"], want: "patrol", constraints: { mustUse: ["input", "if", "patrol"] }, label: "patrol" },
+      { environment: {}, inputs: ["boost"], want: "boost", constraints: { mustUse: ["input", "if", "boost"] }, label: "boost" }
     ],
-    teacherExplanation: "Challenge 3 connects input() with decision making. Students see how interactive software operates: prompt -> capture string -> conditional comparison -> specific action.",
-    commonMistakes: [
-      "Using single = instead of comparison == in condition checks",
-      "Forgetting to include empty parentheses () after the function call boost",
-      "Incorrect indentation under elif"
-    ],
-    studentReflection: "I can use if and elif statements to evaluate user input and execute different commands for different choices."
+    teacherExplanation: "Branch on a typed choice.",
+    commonMistakes: ["Using = instead of ==", "Forgetting a branch"],
+    studentReflection: "I can choose a command from input."
   },
   {
-    id: 4,
-    title: "Challenge 4: Number Conversion — int(input(...))",
-    storyProblem: "Crucial secret of Python: input() ALWAYS gives you a string ('str') with quotes! If a user types 80, Python sees \"80\" (letters, not numbers). You cannot compare \"80\" >= 50 directly! To use user input for calculations or power thresholds, we wrap it in int(): power = int(input(\"Enter shield power: \")). On line 1, replace '____' with int(input(\"Enter shield power: \")). When power is at least 50, A.E.X. raises the plasma force field with shield(power)! Replace '____' and click ▶ Run.",
-    concept: "Type casting user input from string to integer with int()",
+    id: 8,
+    tier: "basic",
+    title: "Number Conversion — int(input(...))",
+    storyProblem: "Ask for shield power, convert the text to a number with int(), then shield(power) when it is at least 50.",
+    concept: "int(input())",
     learnFirst: {
-      problem: "Line 1 has a blank '____'. We need to capture numerical power units from the cadet.",
-      knownInfo: "input() returns text ('str'). Wrapping input() inside int() transforms that text into an integer number.",
-      pythonQuestion: "How do we get an integer number directly from user input?",
-      whyPath: "int(input(\"...\")) takes the string from input() and converts it immediately into a numerical integer.",
-      action: "Replace '____' with int(input(\"Enter shield power: \")), then click ▶ Run.",
-      learned: "Use int(input(...)) whenever your interactive program expects numbers for comparisons or math."
+      problem: "Use a typed number in a comparison.",
+      knownInfo: "input returns text; int() converts it.",
+      pythonQuestion: "Is power >= 50?",
+      whyPath: "int(input()) makes a real number.",
+      action: "Wrap input in int(), then compare.",
+      learned: "int(input()) turns typed text into a number."
     },
-    vocabulary: [
-      { term: "int()", meaning: "A built-in function that converts a string containing digits into an integer number." },
-      { term: "type conversion", meaning: "Transforming data from one type (such as string \"80\") into another type (such as integer 80)." },
-      { term: "shield()", meaning: "Generates a shimmering plasma force field around A.E.X.-18 calibrated to the power level." }
-    ],
+    vocabulary: [{ term: "int()", meaning: "Converts text to a whole number." }],
     hints: [
-      "Concept Clue: Wrap input() inside int() like this: int(input(\"Enter shield power: \")).",
-      "Structure Guide:\npower = int(input(\"Enter shield power: \"))\nprint(\"Calibrated shield to\", power)\nif power >= 50:\n    shield(power)",
-      "Guided Correction: On line 1, make sure both closing parentheses are present: one for input() and one for int()!"
+      "Concept Clue: power = int(input(...)).",
+      "Structure Guide:\npower = int(input(\"Enter shield power: \"))\nif power >= 50:\n    shield(power)",
+      "Guided Correction: Keep both closing parentheses."
     ],
     starterCode: `power = ____
 print("Calibrated shield to", power)
@@ -249,108 +295,442 @@ if power >= 50:
     variables: ["power"],
     base: {},
     tests: [
-      {
-        environment: {},
-        inputs: ["80"],
-        want: "shield+",
-        label: "Test 1: input '80' converted to int 80 >= 50 -> shield active",
-        expect: {
-          vars: {
-            power: 80
-          },
-          stdout: "Calibrated shield to 80"
-        },
-        constraints: {
-          mustUse: ["input", "int", "shield"]
-        }
-      },
-      {
-        environment: {},
-        inputs: ["100"],
-        want: "shield+",
-        label: "Test 2: input '100' converted to int 100 >= 50 -> shield active",
-        expect: {
-          vars: {
-            power: 100
-          },
-          stdout: "Calibrated shield to 100"
-        },
-        constraints: {
-          mustUse: ["input", "int", "shield"]
-        }
-      }
+      { environment: {}, inputs: ["80"], want: "shield+", expect: { vars: { power: 80 }, stdout: "Calibrated shield to 80" }, constraints: { mustUse: ["input", "int", "shield"] }, label: "80" },
+      { environment: {}, inputs: ["100"], want: "shield+", expect: { vars: { power: 100 }, stdout: "Calibrated shield to 100" }, constraints: { mustUse: ["input", "int", "shield"] }, label: "100" }
     ],
-    teacherExplanation: "Challenge 4 addresses one of the most common beginner stumbling blocks: input() always produces a string. Demonstrating int(input()) equips students to safely handle numbers in interactive programs.",
-    commonMistakes: [
-      "Missing the second closing parenthesis: int(input(...) without the final )",
-      "Trying to compare string \"80\" with integer 50 without calling int()",
-      "Writing int = input(...) instead of power = int(input(...))"
-    ],
-    studentReflection: "I discovered that input() always returns text, and wrapping it in int(input()) turns it into a real number I can use for math and conditions."
+    teacherExplanation: "input always yields a string; int() converts it for comparisons.",
+    commonMistakes: ["Missing final )", "Comparing a string to 50"],
+    studentReflection: "I can convert input into a number."
   },
   {
-    id: 5,
-    title: "Challenge 5: Free Play Sandbox — Interactive Cyber Terminal",
-    storyProblem: "Welcome to the Free Play Sandbox Commander! You now have full clearance over the A.E.X.-18 Cyber Terminal. Design your own interactive Python program! Ask for pilot names, prompt for custom flight modes, test shield power, or trigger celebrate()! You can use login(), patrol(), boost(), shield(power), say(\"...\"), celebrate(), and print(). Experiment with your own prompts and watch your AI bot respond in real time!",
-    concept: "Open-ended interactive program development",
+    id: 9,
+    tier: "basic",
+    title: "Say the Call Sign",
+    storyProblem: "Ask for a call sign with input(), then say(call) to greet the bot.",
+    concept: "input + say",
     learnFirst: {
-      problem: "You are the lead architect of this Starbase terminal. Build any interactive program you desire!",
-      knownInfo: "You have learned input(), prompt strings, if/elif branching, and int() number conversions.",
-      pythonQuestion: "How will you combine inputs and commands into an interactive terminal experience?",
-      whyPath: "Creative programming in the sandbox solidifies your understanding of interactive Python programs.",
-      action: "Modify the code below, enter inputs, and press ▶ Run to test your custom creations!",
-      learned: "Interactive programs allow endless possibilities for user communication, games, tools, and robotics."
+      problem: "Store input and pass it to say.",
+      knownInfo: "say(text) speaks text.",
+      pythonQuestion: "What does say receive?",
+      whyPath: "The typed call sign.",
+      action: "call = input(...); say(call).",
+      learned: "Pass input directly to a command."
     },
-    vocabulary: [
-      { term: "free play", meaning: "An open sandbox environment to explore and combine everything you have learned." },
-      { term: "celebrate()", meaning: "Triggers an energetic victory dance, light show, and celebratory fanfare!" },
-      { term: "say()", meaning: "Displays speech text directly in A.E.X.'s holographic voice bubble." }
-    ],
+    vocabulary: [{ term: "say()", meaning: "Makes the bot speak." }],
     hints: [
-      "Concept Clue: Feel free to change questions, add print() greetings, or test commands like celebrate(), boost(), or patrol().",
-      "Structure Guide:\nname = input(\"Enter pilot name: \")\nlogin(name)\ncommand = input(\"Choose action: \")\nif command == \"boost\":\n    boost()\nelif command == \"celebrate\":\n    celebrate()\nelse:\n    patrol()",
-      "Guided Correction: In Sandbox mode, any valid Python program runs freely. Have fun creating your own bot terminal!"
+      "Concept Clue: say(call) after input.",
+      "Structure Guide:\ncall = input(\"Call sign? \")\nsay(call)",
+      "Guided Correction: No quotes around call."
     ],
-    free: true,
-    starterCode: `name = input("Enter pilot name: ")
-login(name)
-command = input("Choose action (patrol/boost/shield/celebrate): ")
-if command == "patrol":
-    patrol()
-elif command == "boost":
+    starterCode: `call = input("Call sign? ")
+say(____)`,
+    solution: `call = input("Call sign? ")
+say(call)`,
+    variables: ["call"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["Alex"], want: "say", expect: { vars: { call: "Alex" } }, constraints: { mustUse: ["input", "say"] }, label: "say call sign" }],
+    teacherExplanation: "Pass an input value to a command.",
+    commonMistakes: ["Quoting the variable", "Not assigning input"],
+    studentReflection: "I can pass input to a command."
+  },
+  {
+    id: 10,
+    tier: "basic",
+    title: "Boost or Patrol",
+    storyProblem: "Ask for a choice; if it is boost call boost(), otherwise call patrol().",
+    concept: "input + if/else",
+    learnFirst: {
+      problem: "Two-way choice from input.",
+      knownInfo: "if/else picks one branch.",
+      pythonQuestion: "Is choice == \"boost\"?",
+      whyPath: "True boosts; else patrols.",
+      action: "Ask, then if/else.",
+      learned: "else handles every other answer."
+    },
+    vocabulary: [{ term: "else", meaning: "Runs when if is False." }],
+    hints: [
+      "Concept Clue: if choice == \"boost\": boost() else: patrol().",
+      "Structure Guide:\nchoice = input(\"boost or patrol? \")\nif choice == \"boost\":\n    boost()\nelse:\n    patrol()",
+      "Guided Correction: Keep else un-indented."
+    ],
+    starterCode: `choice = input("boost or patrol? ")
+if choice == "boost":
+    boost()`,
+    solution: `choice = input("boost or patrol? ")
+if choice == "boost":
     boost()
-elif command == "celebrate":
-    celebrate()
 else:
-    shield(100)
-print("Mission ready for", name)`,
-    solution: `name = input("Enter pilot name: ")
-login(name)
-command = input("Choose action (patrol/boost/shield/celebrate): ")
-if command == "patrol":
-    patrol()
-elif command == "boost":
-    boost()
-elif command == "celebrate":
-    celebrate()
-else:
-    shield(100)
-print("Mission ready for", name)`,
-    variables: ["name", "command"],
+    patrol()`,
+    variables: ["choice"],
     base: {},
     tests: [
-      {
-        environment: {},
-        inputs: ["Alex", "celebrate"],
-        want: null,
-        label: "Sandbox interactive session"
-      }
+      { environment: {}, inputs: ["boost"], want: "boost", label: "boost" },
+      { environment: {}, inputs: ["patrol"], want: "patrol", label: "patrol" }
     ],
-    teacherExplanation: "The sandbox encourages student autonomy. They can combine multiple input calls, nested conditionals, or custom output messages to build interactive text adventures or bot controllers.",
-    commonMistakes: [
-      "Mismatched quotes in strings",
-      "Indentation errors in if/elif blocks"
+    teacherExplanation: "Two-way interactive branch.",
+    commonMistakes: ["Missing else", "Using ="],
+    studentReflection: "I can use if/else with input."
+  },
+
+  /* ============================ DEBUG (11–15) ========================== */
+  {
+    id: 11,
+    tier: "debug",
+    title: "Missing Prompt Quotes",
+    storyProblem: "The prompt is not in quotes. Add quotes so input() can show it.",
+    concept: "Fix prompt quotes",
+    learnFirst: {
+      problem: "The prompt needs quotes.",
+      knownInfo: "input(\"text\") needs a string.",
+      pythonQuestion: "What is missing around the prompt?",
+      whyPath: "Quotes make it a string.",
+      action: "Add quotes around the prompt.",
+      learned: "Prompts are strings."
+    },
+    vocabulary: [{ term: "string", meaning: "Text in quotes." }],
+    hints: [
+      "Concept Clue: wrap the prompt in quotes.",
+      "Structure Guide:\nname = input(\"Enter name: \")\nlogin(name)",
+      "Guided Correction: Add \" around the prompt."
     ],
-    studentReflection: "I can build complete interactive Python programs that ask questions, make decisions based on user answers, and control animated systems."
+    starterCode: `# Bug: prompt not quoted
+name = input(Enter name: )
+login(name)`,
+    solution: `name = input("Enter name: ")
+login(name)`,
+    variables: ["name"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["Astra"], want: "login", expect: { vars: { name: "Astra" } }, label: "fixed prompt" }],
+    teacherExplanation: "Debug an unquoted prompt.",
+    commonMistakes: ["Quoting only one side"],
+    studentReflection: "I know prompts need quotes."
+  },
+  {
+    id: 12,
+    tier: "debug",
+    title: "Missing Parentheses",
+    storyProblem: "input is written without brackets. Add ( ) around the prompt.",
+    concept: "Fix input brackets",
+    learnFirst: {
+      problem: "The call has no brackets.",
+      knownInfo: "input(\"text\") uses brackets.",
+      pythonQuestion: "What is missing?",
+      whyPath: "Add ( ) after input.",
+      action: "Wrap the prompt in brackets.",
+      learned: "Commands need brackets."
+    },
+    vocabulary: [{ term: "brackets", meaning: "The ( ) after a command." }],
+    hints: [
+      "Concept Clue: input(\"Name: \").",
+      "Structure Guide:\nname = input(\"Name: \")\nlogin(name)",
+      "Guided Correction: Add ( and )."
+    ],
+    starterCode: `# Bug: missing brackets
+name = input "Name: "
+login(name)`,
+    solution: `name = input("Name: ")
+login(name)`,
+    variables: ["name"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["Nova"], want: "login", expect: { vars: { name: "Nova" } }, label: "fixed brackets" }],
+    teacherExplanation: "Debug missing call brackets.",
+    commonMistakes: ["Adding only one bracket"],
+    studentReflection: "I know commands need brackets."
+  },
+  {
+    id: 13,
+    tier: "debug",
+    title: "Missing int()",
+    storyProblem: "power is text, so comparing it to 50 fails. Wrap input in int() to make it a number.",
+    concept: "Fix int(input())",
+    learnFirst: {
+      problem: "The typed number is text.",
+      knownInfo: "int() converts text to a number.",
+      pythonQuestion: "How do we compare power to 50?",
+      whyPath: "int(input(...)) makes a number.",
+      action: "Wrap input in int().",
+      learned: "Convert input before numeric comparisons."
+    },
+    vocabulary: [{ term: "int()", meaning: "Converts text to a number." }],
+    hints: [
+      "Concept Clue: power = int(input(...)).",
+      "Structure Guide:\npower = int(input(\"n: \"))\nif power >= 50:\n    shield(power)",
+      "Guided Correction: Add int( around input and one more )."
+    ],
+    starterCode: `# Bug: power is text
+power = input("n: ")
+if power >= 50:
+    shield(power)`,
+    solution: `power = int(input("n: "))
+if power >= 50:
+    shield(power)`,
+    variables: ["power"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["80"], want: "shield+", expect: { vars: { power: 80 } }, label: "fixed int" }],
+    teacherExplanation: "Debug a missing int() conversion.",
+    commonMistakes: ["Missing the final )", "Using float incorrectly"],
+    studentReflection: "I convert input before comparing numbers."
+  },
+  {
+    id: 14,
+    tier: "debug",
+    title: "One Equals in the If",
+    storyProblem: "The if uses = instead of ==. Fix it so the comparison works.",
+    concept: "Fix = vs ==",
+    learnFirst: {
+      problem: "The condition assigns instead of comparing.",
+      knownInfo: "== compares.",
+      pythonQuestion: "Which sign asks a question?",
+      whyPath: "== compares two values.",
+      action: "Change = to ==.",
+      learned: "Conditions use ==."
+    },
+    vocabulary: [{ term: "==", meaning: "Comparison." }],
+    hints: [
+      "Concept Clue: change = to ==.",
+      "Structure Guide:\nif action == \"patrol\":\n    patrol()",
+      "Guided Correction: Two equals signs."
+    ],
+    starterCode: `# Bug: = in a condition
+action = input("mode? ")
+if action = "patrol":
+    patrol()`,
+    solution: `action = input("mode? ")
+if action == "patrol":
+    patrol()`,
+    variables: ["action"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["patrol"], want: "patrol", label: "fixed ==" }],
+    teacherExplanation: "Debug = vs ==.",
+    commonMistakes: ["Changing the branch"],
+    studentReflection: "I know conditions use ==."
+  },
+  {
+    id: 15,
+    tier: "debug",
+    title: "Missing Indentation",
+    storyProblem: "The if body is not indented. Indent patrol() so it belongs to the if.",
+    concept: "Fix if indentation",
+    learnFirst: {
+      problem: "The body is outside the if.",
+      knownInfo: "Indented lines belong to the if.",
+      pythonQuestion: "Which line is inside?",
+      whyPath: "patrol is indented.",
+      action: "Indent patrol().",
+      learned: "Indentation defines the if body."
+    },
+    vocabulary: [{ term: "indent", meaning: "Spaces showing block membership." }],
+    hints: [
+      "Concept Clue: indent patrol() under the if.",
+      "Structure Guide:\nif action == \"patrol\":\n    patrol()",
+      "Guided Correction: Add 4 spaces."
+    ],
+    starterCode: `# Bug: body outside the if
+action = input("mode? ")
+if action == "patrol":
+patrol()`,
+    solution: `action = input("mode? ")
+if action == "patrol":
+    patrol()`,
+    variables: ["action"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["patrol"], want: "patrol", label: "fixed indent" }],
+    teacherExplanation: "Debug missing if indentation.",
+    commonMistakes: ["Indenting the if line"],
+    studentReflection: "I can indent an if body."
+  },
+
+  /* =========================== CHALLENGE (16–18) ======================= */
+  {
+    id: 16,
+    tier: "challenge",
+    title: "Login and Patrol",
+    storyProblem: "Ask for a name, log in, then patrol once.",
+    concept: "input + two commands",
+    learnFirst: {
+      problem: "Ask, log in, then patrol.",
+      knownInfo: "input then two commands.",
+      pythonQuestion: "What order?",
+      whyPath: "input, login, patrol.",
+      action: "Write the three lines.",
+      learned: "Combine input with commands."
+    },
+    vocabulary: [{ term: "login()", meaning: "Logs the cadet in." }],
+    hints: [
+      "Concept Clue: input, login, patrol in order.",
+      "Structure Guide:\nname = input(\"Name? \")\nlogin(name)\npatrol()",
+      "Guided Correction: Keep the order."
+    ],
+    starterCode: `# Your turn: input, login, patrol
+`,
+    solution: `name = input("Name? ")
+login(name)
+patrol()`,
+    variables: ["name"],
+    base: {},
+    tests: [{ environment: {}, inputs: ["Astra"], want: "patrol", expect: { vars: { name: "Astra" } }, constraints: { mustUse: ["input", "login", "patrol"] }, label: "login then patrol" }],
+    teacherExplanation: "Independent input + commands.",
+    commonMistakes: ["Wrong order", "Not assigning input"],
+    studentReflection: "I can combine input with several commands."
+  },
+  {
+    id: 17,
+    tier: "challenge",
+    title: "Shield Check",
+    storyProblem: "Ask for power with int(input()). If it is at least 50, shield(power); otherwise boost().",
+    concept: "int input + if/else",
+    learnFirst: {
+      problem: "Choose shield or boost from a number.",
+      knownInfo: "int(input()) and if/else.",
+      pythonQuestion: "Is power >= 50?",
+      whyPath: "True shields; else boosts.",
+      action: "Convert, compare, branch.",
+      learned: "Numbers from input can drive decisions."
+    },
+    vocabulary: [{ term: "int()", meaning: "Convert text to number." }],
+    hints: [
+      "Concept Clue: if power >= 50: shield(power) else: boost().",
+      "Structure Guide:\npower = int(input(\"power? \"))\nif power >= 50:\n    shield(power)\nelse:\n    boost()",
+      "Guided Correction: Convert with int()."
+    ],
+    starterCode: `# Your turn: shield if >= 50 else boost
+`,
+    solution: `power = int(input("power? "))
+if power >= 50:
+    shield(power)
+else:
+    boost()`,
+    variables: ["power"],
+    base: {},
+    tests: [
+      { environment: {}, inputs: ["80"], want: "shield+", expect: { vars: { power: 80 } }, constraints: { mustUse: ["int", "shield"] }, label: "80 shields" },
+      { environment: {}, inputs: ["20"], want: "boost", expect: { vars: { power: 20 } }, constraints: { mustUse: ["int", "boost"] }, label: "20 boosts" }
+    ],
+    teacherExplanation: "Independent numeric interactive branch.",
+    commonMistakes: ["Missing int()", "Using ="],
+    studentReflection: "I can decide from a typed number."
+  },
+  {
+    id: 18,
+    tier: "challenge",
+    title: "Celebrate if Yes",
+    storyProblem: "Ask yes/no. If the answer is yes, celebrate(); otherwise print Standing by.",
+    concept: "input + if/else with print",
+    learnFirst: {
+      problem: "Celebrate only on yes.",
+      knownInfo: "Compare answer to yes.",
+      pythonQuestion: "Is answer == \"yes\"?",
+      whyPath: "True celebrates; else stands by.",
+      action: "Ask, then branch.",
+      learned: "Text answers can drive branches."
+    },
+    vocabulary: [{ term: "else", meaning: "Fallback branch." }],
+    hints: [
+      "Concept Clue: if answer == \"yes\": celebrate().",
+      "Structure Guide:\nanswer = input(\"Celebrate? \")\nif answer == \"yes\":\n    celebrate()\nelse:\n    print(\"Standing by\")",
+      "Guided Correction: Keep else."
+    ],
+    starterCode: `# Your turn: celebrate on yes
+`,
+    solution: `answer = input("Celebrate? ")
+if answer == "yes":
+    celebrate()
+else:
+    print("Standing by")`,
+    variables: ["answer"],
+    base: {},
+    tests: [
+      { environment: {}, inputs: ["yes"], want: "celebrate", label: "yes celebrates" },
+      { environment: {}, inputs: ["no"], want: "print", expect: { stdout: "Standing by" }, label: "no stands by" }
+    ],
+    teacherExplanation: "Independent text-driven branch.",
+    commonMistakes: ["Missing else", "Using ="],
+    studentReflection: "I can branch on a yes/no answer."
+  },
+
+  /* ============================ ADVANCED (19–20) ======================= */
+  {
+    id: 19,
+    tier: "advanced",
+    title: "Mission Briefing",
+    storyProblem: "Follow the comments: ask for a name and log in, then ask for a mode and run patrol or boost.",
+    concept: "Comment-guided interactive program",
+    learnFirst: {
+      problem: "Build a two-step interactive program from comments.",
+      knownInfo: "Input name, login; input mode, branch.",
+      pythonQuestion: "What order?",
+      whyPath: "The comments give the order.",
+      action: "Follow the comments.",
+      learned: "I can build an interactive program from a plan."
+    },
+    vocabulary: [{ term: "comment", meaning: "A note starting with #." }],
+    hints: [
+      "Concept Clue: follow the comments in order.",
+      "Structure Guide:\n# input name -> login; input mode -> if/else patrol/boost",
+      "Guided Correction: Keep both inputs."
+    ],
+    starterCode: `# 1) name = input("Name? ")
+# 2) login(name)
+# 3) mode = input("mode? ")
+# 4) if mode == "patrol": patrol() else: boost()`,
+    solution: `name = input("Name? ")
+login(name)
+mode = input("mode? ")
+if mode == "patrol":
+    patrol()
+else:
+    boost()`,
+    variables: ["name", "mode"],
+    base: {},
+    tests: [
+      { environment: {}, inputs: ["Astra", "patrol"], want: "patrol", expect: { vars: { name: "Astra", mode: "patrol" } }, label: "patrol mission" },
+      { environment: {}, inputs: ["Nova", "boost"], want: "boost", expect: { vars: { name: "Nova", mode: "boost" } }, label: "boost mission" }
+    ],
+    teacherExplanation: "Advanced: two inputs and a branch from comments.",
+    commonMistakes: ["Wrong order", "Missing second input"],
+    studentReflection: "I can build a two-step interactive program."
+  },
+  {
+    id: 20,
+    tier: "advanced",
+    title: "Full Interactive Mission",
+    storyProblem: "Follow the comments: input a name and log in, input power as a number, shield or boost, then celebrate.",
+    concept: "Full interactive mission",
+    learnFirst: {
+      problem: "Build a full interactive mission from comments.",
+      knownInfo: "Two inputs, int conversion, branch, finale.",
+      pythonQuestion: "What runs last?",
+      whyPath: "celebrate() after the branch.",
+      action: "Follow the comments.",
+      learned: "I can compose a complete interactive program."
+    },
+    vocabulary: [{ term: "mission", meaning: "A sequence of commands." }],
+    hints: [
+      "Concept Clue: follow the comments in order.",
+      "Structure Guide:\n# name -> login; power = int(input); if >=50 shield else boost; celebrate",
+      "Guided Correction: celebrate is not indented."
+    ],
+    starterCode: `# 1) name = input("Name? ")
+# 2) login(name)
+# 3) power = int(input("power? "))
+# 4) if power >= 50: shield(power) else: boost()
+# 5) celebrate()`,
+    solution: `name = input("Name? ")
+login(name)
+power = int(input("power? "))
+if power >= 50:
+    shield(power)
+else:
+    boost()
+celebrate()`,
+    variables: ["name", "power"],
+    base: {},
+    tests: [
+      { environment: {}, inputs: ["Astra", "80"], want: "celebrate", expect: { vars: { name: "Astra", power: 80 } }, label: "shield mission" },
+      { environment: {}, inputs: ["Nova", "20"], want: "celebrate", expect: { vars: { name: "Nova", power: 20 } }, label: "boost mission" }
+    ],
+    teacherExplanation: "Advanced: full interactive mission with conversion, branch, and finale.",
+    commonMistakes: ["Missing int()", "Indenting celebrate"],
+    studentReflection: "I can compose a full interactive program."
   }
 ];

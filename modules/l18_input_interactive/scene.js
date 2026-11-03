@@ -802,14 +802,15 @@ export function reset() {
 }
 
 /* ---- Exported API: play ---------------------------------------------- */
-export async function play(cmd, args, ctx) {
+export async function play(cmd, ctx = {}) {
   initAudio();
-  const context = (args && args.setBubble) ? args : (ctx || {});
-  const argList = Array.isArray(args) ? args : [];
+  const context = ctx;
+  const outText = (ctx.out !== undefined && ctx.out !== null) ? String(ctx.out) : undefined;
+  const firstArg = outText !== undefined ? outText : (Array.isArray(ctx.args) ? ctx.args[0] : undefined);
 
   switch (cmd) {
     case "login": {
-      const name = argList[0] || currentCadetName;
+      const name = firstArg || currentCadetName;
       if (context.setBubble) context.setBubble(`🔑 Authenticated: ${name}`);
       await animateLogin(name);
       break;
@@ -828,7 +829,7 @@ export async function play(cmd, args, ctx) {
     }
 
     case "shield": {
-      const lvl = argList[0] !== undefined ? argList[0] : 80;
+      const lvl = firstArg !== undefined ? firstArg : 80;
       if (context.setBubble) context.setBubble(`🛡️ Plasma Shield Active (${lvl}%)`);
       await animateShield(lvl);
       break;
@@ -841,7 +842,7 @@ export async function play(cmd, args, ctx) {
     }
 
     case "say": {
-      const msg = argList[0] || "Hello Commander!";
+      const msg = firstArg || "Hello Commander!";
       playBotChirp();
       if (context.setBubble) context.setBubble(`💬 A.E.X.: "${msg}"`);
       updateHoloBubble(msg);
@@ -852,7 +853,7 @@ export async function play(cmd, args, ctx) {
     }
 
     case "input": {
-      const promptText = argList[0] || "input()";
+      const promptText = firstArg || "input()";
       playKeyClick();
       updateStatus(`Prompting: ${promptText}`, "prompting");
       updateHoloBubble(`⌨️ ${promptText}`);
@@ -866,7 +867,7 @@ export async function play(cmd, args, ctx) {
     }
 
     case "print": {
-      const printed = argList.join(" ");
+      const printed = outText !== undefined ? outText : "";
       playKeyClick();
       if (context.setBubble) context.setBubble(`🖨️ ${printed}`);
       updateHoloBubble(printed);
