@@ -94,6 +94,7 @@ function collectConstructs(node) {
   if (Array.isArray(node)) return node.flatMap(collectConstructs);
   const types = [];
   if (node.t) types.push(node.t);
+  if (node.f) types.push(node.f);
   if (node.br) types.push(...node.br.flatMap(b => collectConstructs(b.c).concat(collectConstructs(b.b))));
   if (node.b) types.push(...collectConstructs(node.b));
   if (node.els) types.push(...collectConstructs(node.els));
