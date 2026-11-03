@@ -277,7 +277,8 @@ The scene is the only interactive surface owned by the module — the engine dri
 | `hints.js` | 3-tier state machine: concept clue → structure guide (code block) → guided correction (+ `commonMistakes` warning). |
 | `vocabulary.js` | Renders Learn First 6-question guide and tappable vocab pills with popup. |
 | `progress.js` | Per-module record in `localStorage` key `plp_<moduleId>_record` → `{completed[], earnedBadges[], updatedAt}`; drives header pill, Journey/learning-record modal, badge grid, next-skill banner. |
-| `teacher.js` | Offline-auth via a pure-JS SHA-256 implementation compared to a stored passcode hash; 5 functions: reveal solution (load into editor), teaching notes, demonstrate step execution, expected test results table, reset student view. |
+| `teacher.js` | Offline-auth via a pure-JS SHA-256 implementation compared to a stored passcode hash; classroom tools: reveal solution, teaching notes, demonstrate step execution, expected test results, reset student view, and per-module guided-typing exercise selection (`plp_gt_<id>`). |
+| `typing-guide.js` | Character-by-character guided typing: compares editor input against the lesson solution, renders correct/pending/current states, emits kid-friendly syntax clues, and blocks paste. |
 
 ## 9. Branch model & module authoring (extensible engine)
 

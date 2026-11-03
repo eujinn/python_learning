@@ -13,7 +13,7 @@ A modular platform for teaching Python through interactive, visual lessons. Each
 
 ```
 core/     shared engine + UI (editor.js gutter, ui-shell, engine, progress, hints, vocabulary, teacher)
-css/      shared design system: base (tokens + .btn-3d), layout, editor, stage, modals
+css/      shared design system: base (tokens + .btn-3d), layout, editor, typing-guide, stage, modals
 assets/   shared static assets (logos, images) — e.g. assets/tzuchi_logo.png
 docs/theme/  Kindness_City_Theme_Guide.md — canonical scene + value guide
 modules/  one folder per module (module.json + data.js + scene.js [+ scene.css])

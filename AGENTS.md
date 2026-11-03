@@ -21,7 +21,8 @@ core/                shared engine and UI (do not couple to one module's scene)
   progress.js        per-module localStorage progress + badges + Learning Record modal
   hints.js           3-tier hint system
   vocabulary.js      Learn First 6-question guide + vocab pills
-  teacher.js         teacher auth (SHA-256) + 5 classroom functions (disabled)
+  teacher.js         teacher auth (SHA-256) + classroom tools + guided-typing selection
+  typing-guide.js    guided typing: char matching, kid-friendly syntax clues, target from solution
   aphorisms.js       loads Jing Si Aphorisms from assets/aphorisms.md for the error overlay
 scripts/
   verify-all.mjs     CLI verifier: loads all modules, runs every solution against every test
@@ -29,6 +30,7 @@ css/                 shared design system (light grey + dark blue base)
   base.css           design tokens, reset, body gradient, .btn-3d (tactile buttons)
   layout.css         header, .module-select, .level-tabs, .progress-pill, .workspace-grid/.card-panel
   editor.css         mission header, .learn-drawer, vocab, hints, .editor-shell/.editor-gutter, .syntax-keys, .action-row, #run/#next, .msg
+  typing-guide.css   guided typing overlay, cursor/clue card, teacher exercise checklist
   stage.css          output panel: scene shell, shared #bubble, #view trace, #stepbar, .vars/.pill, #res/.chip, .legend
   modals.css         .modal-bg/.modal-box/.modal-x, learning record, badges, teacher drawer + auth
 modules/<id>/        one folder per module
@@ -201,6 +203,7 @@ The scaffold's UI base is a **light-grey surface with a dark-blue brand tone** a
 
 - **Theme:** light only. No dark-mode rules; do not add `prefers-color-scheme` blocks.
 - **Tokens** (`css/base.css`): `--bg-app #eef1f5`, `--bg-card #ffffff`, `--bg-subtle #f4f6f9`, `--ink-main #10233f`, `--ink-muted #52627a`, `--border-line #d3dae4`, `--border-strong #b7c3d4`; accents `--primary #1e3a8a` (dark blue), `--primary-dark #16295e`, `--success #16a34a`, `--warning #f59e0b`, `--danger #ef4444`, `--purple #7c3aed`; code `--code-bg #0f172a / --code-gutter #1e293b / --code-ink #f8fafc`. Scene tokens `--sky1/--sky2/--grass/--road/--sun` stay scenario-owned.
+- **Guided typing:** for exercises enabled by the teacher (Exercises 5–6 by default), the editor offers a Free/Guided toggle; guided mode overlays the canonical solution with per-character feedback and a syntax clue. Selection is stored per module (`plp_gt_<id>`).
 - **Class conventions:** tactile `.btn-3d` buttons (+ `.btn-teacher`, `.btn-journey`, `.unlocked`), `.level-tab` with `.active`/`.completed`/`.locked` states, `.brand-title`/`.brand-badge`, `.header-logo`, `.module-select`, `.progress-pill`/`.progress-track`/`.progress-fill`, `.workspace-grid`/`.card-panel`, `.concept-badge`, `.mission-title`/`.mission-story`, `.learn-drawer` (collapsible via `.closed`) + `.q6-item`, `.vocab-pill`/`.info-pop`, `.editor-shell`/`.editor-gutter`, `.syntax-keys`, `.action-row`, `.modal-bg`/`.modal-box`/`.modal-x`, `.badge-chip`(+`.earned`), `.t-drawer`/`.t-act`/`.t-out`, bottom `.ticker`/`.ticker-track` ad board, `.stage-panel` + `.aphorism-overlay` error overlay.
 - **Narrative theme:** the shared visual story is **Kindness City** — self-love, love for others, and care for the environment — with per-lesson scenes as places/citizens inside it. Read [`docs/theme/Kindness_City_Theme_Guide.md`](docs/theme/Kindness_City_Theme_Guide.md) before designing any scene; scenario colors should reinforce the lesson without fighting the grey/navy base.
 - **Fonts:** user-visible text uses Fredoka (set on `:root`); code, pills, trace, keys, and gutter use `"JetBrains Mono", monospace`.

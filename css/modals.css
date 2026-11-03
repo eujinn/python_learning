@@ -153,3 +153,15 @@
 #teacherPwdInput:focus-visible { outline: 3px solid #fbbf24; outline-offset: 1px; }
 #teacherAuthError { color: var(--danger-dark); font-size: 0.9rem; font-weight: 700; margin-top: 8px; }
 #teacherAuthError[hidden] { display: none; }
+/* Teacher controls overlay (shown after authentication) */
+.teacher-panel-box {
+  max-width: 620px;
+}
+.teacher-panel-box .t-drawer-hdr {
+  color: var(--primary);
+  margin-bottom: 10px;
+  padding-right: 26px;
+}
+.teacher-panel-box .t-actions {
+  gap: 6px;
+}

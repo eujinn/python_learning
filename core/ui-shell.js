@@ -14,8 +14,12 @@ import { renderGutter } from "./editor.js";
 import { initEditorScrollSync } from "./editor.js";
 import { loadAphorisms, randomAphorism } from "./aphorisms.js";
 import {
+  setTypingLesson, getTargetCode, renderTypingDisplay, evaluateTyping, setGuidedMode, getGuidedMode
+} from "./typing-guide.js";
+import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
-  demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
+  demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive,
+  isGuidedExercise, renderGuidedTypingPanel
 } from "./teacher.js";
 
 /* ---- DOM elements ----------------------------------------------------- */
@@ -31,6 +35,7 @@ const els = {
   task: document.getElementById("task"),
   teacherBtn: document.getElementById("teacherBtn"),
   teacherDrawer: document.getElementById("teacherDrawer"),
+  closeTeacherPanelBtn: document.getElementById("closeTeacherPanelBtn"),
   lockTeacherBtn: document.getElementById("lockTeacherBtn"),
   teacherOut: document.getElementById("teacherOut"),
   tRevealBtn: document.getElementById("tRevealBtn"),
@@ -59,6 +64,19 @@ const els = {
   next: document.getElementById("next"),
   msg: document.getElementById("msg"),
   reflBox: document.getElementById("reflBox"),
+  editorShell: document.getElementById("editorShell"),
+  modeBar: document.getElementById("modeBar"),
+  freeModeBtn: document.getElementById("freeModeBtn"),
+  guidedModeBtn: document.getElementById("guidedModeBtn"),
+  tgProgressPill: document.getElementById("tgProgressPill"),
+  tgClueCard: document.getElementById("tgClueCard"),
+  tgClueText: document.getElementById("tgClueText"),
+  tgDisplay: document.getElementById("tgDisplay"),
+  tgExerciseList: document.getElementById("tgExerciseList"),
+  tgSelectAll: document.getElementById("tgSelectAll"),
+  tgClearAll: document.getElementById("tgClearAll"),
+  tgApply: document.getElementById("tgApply"),
+  tgApplyMsg: document.getElementById("tgApplyMsg"),
   sceneRoot: document.getElementById("module-scene"),
   legend: document.getElementById("legend"),
   view: document.getElementById("view"),
@@ -110,8 +128,19 @@ const showAphorism = () => {
 
 /* ---- Editor helpers (Tab, smart Enter, virtual keys) ------------------ */
 const ta = els.code;
-function ins(t) { ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); }
-ta.addEventListener("input", () => { renderGutter(); hideAphorism(); });
+function ins(t) {
+  ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end");
+  ta.focus();
+  if (getGuidedMode()) updateTypingUI();
+}
+ta.addEventListener("input", () => { renderGutter(); hideAphorism(); if (getGuidedMode()) updateTypingUI(); });
+ta.addEventListener("paste", e => {
+  if (getGuidedMode()) {
+    e.preventDefault();
+    if (els.tgClueCard) els.tgClueCard.hidden = false;
+    if (els.tgClueText) els.tgClueText.textContent = "🛡️ Type it by hand, never copy-paste! Muscle memory builds real skill.";
+  }
+});
 ta.addEventListener("keydown", e => {
   if (e.key == "Tab") { e.preventDefault(); ins("    "); }
   else if (e.key == "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -132,6 +161,50 @@ els.keys.addEventListener("click", e => {
 });
 els.peek.onclick = () => { els.ex.hidden = !els.ex.hidden; };
 if (els.aphorismOverlay) els.aphorismOverlay.onclick = hideAphorism;
+if (els.freeModeBtn) els.freeModeBtn.onclick = () => switchEditorMode(false);
+if (els.guidedModeBtn) els.guidedModeBtn.onclick = () => switchEditorMode(true);
+if (els.tgDisplay) els.tgDisplay.onclick = () => els.code.focus();
+
+/* ---- Guided Typing controller ----------------------------------------- */
+function updateTypingUI() {
+  const isGuided = getGuidedMode();
+  if (els.freeModeBtn) els.freeModeBtn.classList.toggle("active", !isGuided);
+  if (els.guidedModeBtn) els.guidedModeBtn.classList.toggle("active", isGuided);
+  if (els.editorShell) els.editorShell.classList.toggle("guided", isGuided);
+
+  if (isGuided) {
+    const target = getTargetCode();
+    const res = evaluateTyping(target, els.code.value);
+    if (els.tgDisplay) { els.tgDisplay.hidden = false; renderTypingDisplay(els.tgDisplay, target, els.code.value); }
+    if (els.tgProgressPill) { els.tgProgressPill.hidden = false; els.tgProgressPill.textContent = res.progress + " / " + res.total; }
+    if (els.tgClueCard) els.tgClueCard.hidden = false;
+    if (els.tgClueText) els.tgClueText.textContent = res.clue || (res.isMatch ? "✅ Perfect! Press ▶ Run step by step." : "Follow the glowing cursor and type each character.");
+  } else {
+    if (els.tgDisplay) els.tgDisplay.hidden = true;
+    if (els.tgProgressPill) els.tgProgressPill.hidden = true;
+    if (els.tgClueCard) els.tgClueCard.hidden = true;
+  }
+}
+
+function switchEditorMode(guided) {
+  setGuidedMode(guided);
+  updateTypingUI();
+  if (els.code) els.code.focus();
+}
+
+function forceFreeMode() { switchEditorMode(false); }
+
+/* Turn guided typing on/off for the current exercise based on teacher config.
+   `reset` clears the editor for a fresh follow-along (used when loading an
+   exercise); manual Free/Guided toggles keep the student's current code. */
+function applyGuidedForLesson(i, reset) {
+  const available = st.moduleInfo && isGuidedExercise(st.moduleInfo.id, i, st.LESSONS);
+  st.guidedAvailable = !!available;
+  if (els.modeBar) els.modeBar.hidden = !available;
+  if (!available) { setGuidedMode(false); updateTypingUI(); return; }
+  if (reset) { els.code.value = ""; renderGutter(); }
+  switchEditorMode(true);
+}
 
 /* ---- Step-through runner ---------------------------------------------- */
 function exitStep() {
@@ -362,8 +435,13 @@ function load(i) {
   renderLearnFirst(st.LESSONS[i]);
   resetHints(els);
   renderVocabulary(st.LESSONS[i]);
+  setTypingLesson(st.LESSONS[i]);
+  applyGuidedForLesson(i, true);
   updateProgressHeader(els, st.done, st.moduleInfo.badges || [], st.LESSONS);
-  if (isTeacherActive()) renderTeacherNotes(els, st);
+  if (isTeacherActive()) {
+    renderTeacherNotes(els, st);
+    renderGuidedTypingPanel(els, st, () => applyGuidedForLesson(st.cur));
+  }
   tabs();
 }
 
@@ -459,20 +537,37 @@ els.journeyBtn.onclick = () => {
 els.closeJourneyBtn.onclick = () => { els.journeyModal.hidden = true; };
 
 els.teacherBtn.onclick = () => {
-  msg("👩‍🏫 Teacher Mode coming soon — stay tuned!", "info");
+  if (isTeacherActive()) { els.teacherDrawer.hidden = false; return; }
+  els.teacherPwdInput.value = "";
+  els.teacherAuthError.hidden = true;
+  els.teacherModal.hidden = false;
+  els.teacherPwdInput.focus();
 };
 els.closeTeacherBtn.onclick = () => { els.teacherModal.hidden = true; };
-els.teacherAuthForm.onsubmit = () => { return false; };
-els.lockTeacherBtn.onclick = () => {};
-els.tRevealBtn.onclick = () => {};
-els.tNotesBtn.onclick = () => {};
-els.tDemoBtn.onclick = () => {};
-els.tTestsBtn.onclick = () => {};
-els.tResetBtn.onclick = () => {};
+els.teacherAuthForm.onsubmit = (e) => {
+  if (e) e.preventDefault();
+  if (verifyTeacherPassword(els.teacherPwdInput.value)) {
+    els.teacherModal.hidden = true;
+    setTeacherMode(true, els, st);
+    renderGuidedTypingPanel(els, st, () => applyGuidedForLesson(st.cur));
+  } else {
+    els.teacherAuthError.hidden = false;
+    els.teacherPwdInput.select();
+  }
+  return false;
+};
+els.lockTeacherBtn.onclick = () => { setTeacherMode(false, els, st); };
+els.closeTeacherPanelBtn.onclick = () => { setTeacherMode(false, els, st); };
+els.tRevealBtn.onclick = () => renderTeacherSolution(els, st);
+els.tNotesBtn.onclick = () => renderTeacherNotes(els, st);
+els.tDemoBtn.onclick = () => demonstrateStepExecution(els, st);
+els.tTestsBtn.onclick = () => renderExpectedTestResults(els, st, py);
+els.tResetBtn.onclick = () => resetStudentView(els, st, load);
 
 /* Expose runner entry points to teacher module */
 st.exitStep = exitStep;
 st.run = run;
+st.forceFreeMode = forceFreeMode;
 
 /* Boot */
 initEditorScrollSync();

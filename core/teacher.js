@@ -64,7 +64,7 @@ function sha256Hex(ascii) {
 
 /* SHA-256 digest of the teacher passcode (stored as hash only).
    Replace the value below with sha256Hex("your-passcode") to set your own. */
-const TEACHER_PWD_HASH = "0c86f6fcae03526fb40c2b75d792577c7bae7143b0d8f058e237f8cacfbd8b51";
+const TEACHER_PWD_HASH = "925da08610a49f94c6bdea9b4c1dce35a72e773bbdb133266b3e4d957df7d2c4";
 
 let teacherModeActive = false;
 
@@ -90,7 +90,7 @@ export function setTeacherMode(active, els, state) {
 
 export function renderTeacherSolution(els, state) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
   out.textContent = "";
@@ -112,7 +112,7 @@ export function renderTeacherSolution(els, state) {
 
 export function renderTeacherNotes(els, state) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
   out.textContent = "";
@@ -134,15 +134,16 @@ export function renderTeacherNotes(els, state) {
 
 export function demonstrateStepExecution(els, state) {
   if (!teacherModeActive) return;
+  if (state.forceFreeMode) state.forceFreeMode();
   state.exitStep();
-  els.code.value = state.lessons[state.cur].solution;
+  els.code.value = state.LESSONS[state.cur].solution;
   renderGutter();
   state.run();
 }
 
 export function renderExpectedTestResults(els, state, py) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
   out.textContent = "";
@@ -188,3 +189,63 @@ export function resetStudentView(els, state, load) {
 }
 
 export function isTeacherActive() { return teacherModeActive; }
+/* =========================================================================
+   GUIDED TYPING SELECTION (teacher-controlled, per module)
+   Exercises 5 and 6 (0-based 4 and 5) are enabled by default for every
+   module; teachers can add or remove any exercise from the drawer.
+   ========================================================================= */
+
+const guidedKey = moduleId => "plp_gt_" + moduleId;
+const DEFAULT_GUIDED = [4, 5];
+
+export function getGuidedSet(moduleId, lessons) {
+  const max = Math.max(0, (lessons || []).length - 1);
+  let arr = null;
+  try {
+    const raw = localStorage.getItem(guidedKey(moduleId));
+    if (raw) arr = JSON.parse(raw);
+  } catch (e) { arr = null; }
+  if (!Array.isArray(arr)) arr = DEFAULT_GUIDED.slice();
+  return new Set(arr.filter(i => typeof i === "number" && i >= 0 && i <= max));
+}
+
+export function saveGuidedSet(moduleId, set) {
+  try {
+    localStorage.setItem(guidedKey(moduleId), JSON.stringify([...set].sort((a, b) => a - b)));
+  } catch (e) { /* storage blocked */ }
+}
+
+export function isGuidedExercise(moduleId, index, lessons) {
+  return getGuidedSet(moduleId, lessons).has(index);
+}
+
+export function renderGuidedTypingPanel(els, state, onApply) {
+  if (!teacherModeActive) return;
+  const list = els.tgExerciseList;
+  if (!list) return;
+  const moduleId = state.moduleInfo && state.moduleInfo.id;
+  const set = getGuidedSet(moduleId, state.LESSONS);
+  list.innerHTML = "";
+  (state.LESSONS || []).forEach((L, i) => {
+    const lab = document.createElement("label");
+    lab.className = "tg-check";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = String(i);
+    cb.checked = set.has(i);
+    const span = document.createElement("span");
+    span.textContent = "Ex " + (i + 1) + (L.tier ? " · " + L.tier : "");
+    lab.append(cb, span);
+    list.appendChild(lab);
+  });
+  if (els.tgApplyMsg) els.tgApplyMsg.textContent = "";
+  if (els.tgSelectAll) els.tgSelectAll.onclick = () => list.querySelectorAll("input").forEach(c => { c.checked = true; });
+  if (els.tgClearAll) els.tgClearAll.onclick = () => list.querySelectorAll("input").forEach(c => { c.checked = false; });
+  if (els.tgApply) els.tgApply.onclick = () => {
+    const next = new Set();
+    list.querySelectorAll("input:checked").forEach(c => next.add(Number(c.value)));
+    saveGuidedSet(moduleId, next);
+    if (els.tgApplyMsg) els.tgApplyMsg.textContent = "Saved — guided typing set for " + next.size + " exercise(s).";
+    if (onApply) onApply();
+  };
+}
