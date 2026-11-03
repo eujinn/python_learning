@@ -20,6 +20,7 @@
       </div>
       <button class="btn-3d btn-journey" id="journeyBtn">📋 Learning Record</button>
       <button class="btn-3d btn-teacher" id="teacherBtn" disabled style="opacity:0.4">👩‍🏫 Teacher Mode (Coming Soon)</button>
+      <img class="header-logo" src="./assets/tzuchi_logo.png" alt="Tzu Chi logo" width="75" height="40">
     </div>
   </div>
   <div class="header-sub">
@@ -101,7 +102,15 @@
 </section>
 
 <!-- RIGHT COLUMN: SIMULATION, THINKING TRACE, AND NEXT STEP CONTROLS -->
-<section class="card-panel">
+<section class="card-panel stage-panel" id="stagePanel">
+  <!-- Aphorism overlay: shown when the student's code has a syntax/runtime error -->
+  <div class="aphorism-overlay" id="aphorismOverlay" hidden>
+    <div class="aphorism-box">
+      <div class="aphorism-label">静思语 · Jing Si Aphorism</div>
+      <p class="aphorism-text" id="aphorismText"></p>
+      <div class="aphorism-hint">Fix the code on the left, then run again.</div>
+    </div>
+  </div>
   <!-- Module injects its scene DOM here -->
   <div id="module-scene"></div>
   <div class="legend" id="legend"></div>
@@ -126,6 +135,15 @@
   <div id="res"></div>
 </section>
 </main>
+
+<!-- Bottom advertisement board: slow left-to-right ticker -->
+<div class="ticker" role="marquee" aria-label="知识要用心体会，才能变成自己的智慧。 Knowledge must be truly felt to become your own wisdom.">
+  <div class="ticker-track">
+    <span class="ticker-item">知识要用心体会，才能变成自己的智慧。</span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">Knowledge must be truly felt to become your own wisdom.</span>
+  </div>
+</div>
 
 <!-- Learning Record Modal -->
 <div class="modal-bg" id="journeyModal" hidden>

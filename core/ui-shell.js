@@ -7,11 +7,12 @@
 import { PyErr, parse, tr, py } from "./engine.js";
 import { adaptLesson, label, exprOf, used, describeWant } from "./lessons.js";
 import { checkWant, checkExpect, checkConstraints, checkAll } from "./assertions.js";
-import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal } from "./progress.js";
+import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal, isUnlocked } from "./progress.js";
 import { resetHints, advanceHint } from "./hints.js";
 import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
 import { renderGutter } from "./editor.js";
 import { initEditorScrollSync } from "./editor.js";
+import { loadAphorisms, randomAphorism } from "./aphorisms.js";
 import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
   demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
@@ -68,6 +69,8 @@ const els = {
   edit: document.getElementById("edit"),
   vars: document.getElementById("vars"),
   res: document.getElementById("res"),
+  aphorismOverlay: document.getElementById("aphorismOverlay"),
+  aphorismText: document.getElementById("aphorismText"),
   journeyBtn: document.getElementById("journeyBtn"),
   journeyModal: document.getElementById("journeyModal"),
   closeJourneyBtn: document.getElementById("closeJourneyBtn"),
@@ -97,10 +100,18 @@ const setBubble = txt => {
 const msg = (t, c) => { const m = els.msg; m.className = "msg " + c; m.textContent = t; };
 const hl = n => els.view.querySelectorAll(".ln").forEach(d => d.classList.toggle("hl", +d.dataset.n === n));
 
+/* ---- Aphorism overlay (shown on a code error) ------------------------- */
+const hideAphorism = () => { if (els.aphorismOverlay) els.aphorismOverlay.hidden = true; };
+const showAphorism = () => {
+  if (!els.aphorismOverlay) return;
+  if (els.aphorismText) els.aphorismText.textContent = randomAphorism();
+  els.aphorismOverlay.hidden = false;
+};
+
 /* ---- Editor helpers (Tab, smart Enter, virtual keys) ------------------ */
 const ta = els.code;
 function ins(t) { ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); }
-ta.addEventListener("input", renderGutter);
+ta.addEventListener("input", () => { renderGutter(); hideAphorism(); });
 ta.addEventListener("keydown", e => {
   if (e.key == "Tab") { e.preventDefault(); ins("    "); }
   else if (e.key == "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -119,6 +130,7 @@ els.keys.addEventListener("click", e => {
   if (b.dataset.i == "()") ta.setSelectionRange(ta.selectionStart - 1, ta.selectionStart - 1);
 });
 els.peek.onclick = () => { els.ex.hidden = !els.ex.hidden; };
+if (els.aphorismOverlay) els.aphorismOverlay.onclick = hideAphorism;
 
 /* ---- Step-through runner ---------------------------------------------- */
 function exitStep() {
@@ -137,11 +149,12 @@ function run() {
   els.res.innerHTML = "";
   els.next.hidden = true;
   msg("", "");
+  hideAphorism();
   let prog;
   try {
     prog = parse(els.code.value, L.names, st.moduleInfo.commands || [], st.moduleInfo.allowedSyntax || []);
   } catch (e) {
-    if (e instanceof PyErr) { msg("🐞 " + e.message, "bad"); return; }
+    if (e instanceof PyErr) { msg("🐞 " + e.message, "bad"); showAphorism(); return; }
     throw e;
   }
   const T = [];
@@ -151,7 +164,7 @@ function run() {
     const env = Object.assign({}, env0), ev = [];
     const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [] };
     try { tr(prog, env, ev, ctx); }
-    catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); return; }
+    catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); showAphorism(); return; }
     const calls = ev.filter(x => x.k == "call").map(c => c.f);
     const got = calls[calls.length - 1];
     const result = checkAll(sc.want, calls, sc.expect, sc.constraints, prog, ev, env, ctx);
@@ -221,7 +234,7 @@ function finish() {
     tabs();
     msg("🎉 Every test passed!", "ok");
     if (st.cur < st.LV.length - 1) els.next.hidden = false;
-    saveProgress(st.moduleInfo.id, st.done, st.moduleInfo.badges || []);
+    saveProgress(st.moduleInfo.id, st.done, st.moduleInfo.badges || [], st.LESSONS);
     updateProgressHeader(els, st.done, st.moduleInfo.badges || [], st.LESSONS);
     els.reflBox.hidden = false;
     els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[st.cur].studentReflection}"`;
@@ -290,16 +303,30 @@ function tabs() {
   st.LV.forEach((L, i) => {
     const b = document.createElement("button");
     b.className = "level-tab";
+    const open = isUnlocked(st.LESSONS, st.done, i);
     if (i == st.cur) b.classList.add("active");
     if (st.done.has(i)) b.classList.add("completed");
-    b.title = L.t;
-    b.textContent = i == st.LV.length - 1 ? "🎮" : (i + 1);
-    b.onclick = () => { if (!st.running) load(i); };
+    if (!open) {
+      b.classList.add("locked");
+      b.disabled = true;
+      b.setAttribute("aria-disabled", "true");
+      b.title = `Locked — pass Exercise ${i} to unlock`;
+    } else {
+      b.title = (L.tier ? L.tier + " · " : "") + L.t;
+      b.onclick = () => { if (!st.running) load(i); };
+    }
+    b.textContent = L.free ? "🎮" : (i + 1);
     els.tabs.appendChild(b);
   });
 }
 
 function load(i) {
+  if (i < 0 || i >= st.LV.length) return;
+  if (!isUnlocked(st.LESSONS, st.done, i)) {
+    msg(`🔒 Exercise ${i + 1} is locked. Pass the previous exercise first.`, "info");
+    return;
+  }
+  hideAphorism();
   exitStep();
   st.cur = i;
   const L = st.LV[i];
@@ -377,7 +404,7 @@ async function loadModule(id) {
     load(0);
   } catch (err) {
     console.error("Failed to load module", id, err);
-    els.sceneRoot.innerHTML = "<p style='color:var(--bad)'>Failed to load module “" + id + "”. Check the module files.</p>";
+    els.sceneRoot.innerHTML = "<p style='color:var(--danger)'>Failed to load module “" + id + "”. Check the module files.</p>";
   }
 }
 
@@ -440,4 +467,5 @@ st.run = run;
 
 /* Boot */
 initEditorScrollSync();
+loadAphorisms();
 buildPicker();

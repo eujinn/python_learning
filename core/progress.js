@@ -1,6 +1,32 @@
-/* Per-module learning record: progress, badges, and the Journey modal. */
+/* Per-module learning record: progress, gated unlocking, badges, Journey modal.
+   Access model (20-exercise modules):
+     - indices 0..RECAP_COUNT-1  → recap, always freely selectable
+     - indices RECAP_COUNT..N-1  → sequential; passing n unlocks n+1           */
 
 const storageKey = moduleId => "plp_" + moduleId + "_record";
+
+export const RECAP_COUNT = 4;
+
+/* How many leading exercises are free-select recap (clamped to module size). */
+export function recapCountFor(lessons) {
+  return Math.min(RECAP_COUNT, lessons.length);
+}
+
+/* Highest gated index that is open. Equals the first not-yet-completed gated
+   index (so that index is open), and equals lessons.length when all are done. */
+export function unlockedThrough(lessons, done) {
+  const total = lessons.length;
+  let u = recapCountFor(lessons);
+  while (u < total && done.has(u)) u++;
+  return u;
+}
+
+/* Recap is always free-select; a gated exercise is open up to the unlock point. */
+export function isUnlocked(lessons, done, i) {
+  if (i < 0 || i >= lessons.length) return false;
+  if (i < recapCountFor(lessons)) return true;
+  return i <= unlockedThrough(lessons, done);
+}
 
 export function loadSavedProgress(moduleId, done) {
   try {
@@ -15,35 +41,44 @@ export function loadSavedProgress(moduleId, done) {
   } catch (e) { /* ignore corrupted storage */ }
 }
 
-export function saveProgress(moduleId, done, badges) {
+export function saveProgress(moduleId, done, badges, lessons) {
   try {
     const completed = Array.from(done);
     const earnedBadges = badges
       .filter(c => c.levels.every(l => done.has(l)))
       .map(c => c.id);
-    localStorage.setItem(storageKey(moduleId), JSON.stringify({ completed, earnedBadges, updatedAt: Date.now() }));
+    const payload = {
+      schemaVersion: 2,
+      completed,
+      earnedBadges,
+      updatedAt: Date.now()
+    };
+    if (Array.isArray(lessons)) payload.unlockedThrough = unlockedThrough(lessons, done);
+    localStorage.setItem(storageKey(moduleId), JSON.stringify(payload));
   } catch (e) { /* storage full / blocked */ }
 }
 
+/* Gated exercises are the ones that count toward mastery (recap is warm-up). */
 export function challengeCount(lessons) {
-  const freeIdx = lessons.findIndex(l => l.free);
-  return freeIdx >= 0 ? freeIdx : lessons.length;
+  return lessons.length - recapCountFor(lessons);
 }
 
 export function updateProgressHeader(els, done, badges, lessons) {
+  const recap = recapCountFor(lessons);
   const count = challengeCount(lessons);
-  const completed = Array.from(done).filter(i => i < count).length;
-  const pct = Math.round((completed / count) * 100);
+  const completed = Array.from(done).filter(i => i >= recap && i < lessons.length).length;
+  const pct = count ? Math.round((completed / count) * 100) : 0;
   const earnedCount = badges.filter(c => c.levels.every(l => done.has(l))).length;
-  if (els.progText) els.progText.textContent = `Progress: ${completed} / ${count} Challenges (${pct}%)`;
+  if (els.progText) els.progText.textContent = `Progress: ${completed} / ${count} Exercises (${pct}%)`;
   if (els.progFill) els.progFill.style.width = pct + "%";
   if (els.badgeSummary) els.badgeSummary.textContent = `🏅 ${earnedCount} / ${badges.length} Badges`;
 }
 
 export function renderLearningRecordModal(els, done, badges, lessons) {
+  const recap = recapCountFor(lessons);
   const count = challengeCount(lessons);
-  const completed = Array.from(done).filter(i => i < count).length;
-  els.journeySummary.textContent = `⭐ ${completed} of ${count} Challenge Levels Completed`;
+  const completed = Array.from(done).filter(i => i >= recap && i < lessons.length).length;
+  els.journeySummary.textContent = `⭐ ${completed} of ${count} Gated Exercises Completed`;
 
   els.skillList.innerHTML = "";
   els.badgeGrid.innerHTML = "";
@@ -65,7 +100,7 @@ export function renderLearningRecordModal(els, done, badges, lessons) {
     const sep = document.createTextNode(" — ");
     desc.appendChild(sep);
     const detail = document.createElement("span");
-    detail.style.cssText = "color:var(--muted)";
+    detail.style.cssText = "color:var(--ink-muted)";
     detail.textContent = comp.desc;
     desc.appendChild(detail);
     row.appendChild(desc);

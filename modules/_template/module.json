@@ -1,24 +1,53 @@
 {
   "id": "_template",
-  "name": "Module Template",
+  "name": "Module Template — 20-Exercise Backbone",
   "icon": "🧩",
-  "description": "Scaffold starter for building new Python teaching modules. Copy this folder to modules/<your-id>/ and fill in the pieces.",
+  "description": "Reference scaffold for the 20-exercise backbone: 4 free recap exercises, then 16 sequentially unlocked exercises across basic, debug, challenge and advanced tiers. Copy this folder to modules/<your-id>/ and replace the content.",
   "commands": ["go", "stop"],
   "allowedSyntax": [],
   "labels": {
     "go": "the program drives on",
     "stop": "the program stops"
   },
-  "legend": "📜 <b>go()</b> advance · <b>stop()</b> halt",
-  "idleText": "This is a stub module. Switch to a module branch (e.g. module/traffic-light) for a full lesson set.",
+  "legend": "📜 <b>go()</b> advance · <b>stop()</b> halt — exercises unlock as you pass them",
+  "idleText": "Pick a recap exercise freely, or work through the unlocked chain from Exercise 5.",
   "css": "modules/_template/scene.css",
+  "userIdea": "Reference stub for the 20-exercise backbone and Kindness City scene conventions",
   "badges": [
     {
-      "id": "starter",
-      "title": "Module Runner",
-      "desc": "Confirm the module system boots and runs your first lesson",
-      "levels": [0],
-      "badge": "🧩 Scaffold Runner"
+      "id": "recap",
+      "title": "Warm-Up Complete",
+      "desc": "Finish the four free recap exercises",
+      "levels": [0, 1, 2, 3],
+      "badge": "🔁 Recap Star"
+    },
+    {
+      "id": "basics",
+      "title": "Basics Builder",
+      "desc": "Solve the basic exercises 5–10",
+      "levels": [4, 5, 6, 7, 8, 9],
+      "badge": "🧱 Basics Builder"
+    },
+    {
+      "id": "debugger",
+      "title": "Bug Hunter",
+      "desc": "Fix the debug exercises 11–15",
+      "levels": [10, 11, 12, 13, 14],
+      "badge": "🐞 Bug Hunter"
+    },
+    {
+      "id": "challenge",
+      "title": "Challenge Champion",
+      "desc": "Beat the intermediate challenges 16–18",
+      "levels": [15, 16, 17],
+      "badge": "🏅 Challenge Champion"
+    },
+    {
+      "id": "advanced",
+      "title": "Advanced Achiever",
+      "desc": "Complete the advanced exercises 19–20",
+      "levels": [18, 19],
+      "badge": "🏆 City Hero"
     }
   ]
 }

@@ -22,9 +22,10 @@ core/                shared engine and UI (do not couple to one module's scene)
   hints.js           3-tier hint system
   vocabulary.js      Learn First 6-question guide + vocab pills
   teacher.js         teacher auth (SHA-256) + 5 classroom functions (disabled)
+  aphorisms.js       loads Jing Si Aphorisms from assets/aphorisms.md for the error overlay
 scripts/
   verify-all.mjs     CLI verifier: loads all modules, runs every solution against every test
-css/                 shared design system (Argon-derived base)
+css/                 shared design system (light grey + dark blue base)
   base.css           design tokens, reset, body gradient, .btn-3d (tactile buttons)
   layout.css         header, .module-select, .level-tabs, .progress-pill, .workspace-grid/.card-panel
   editor.css         mission header, .learn-drawer, vocab, hints, .editor-shell/.editor-gutter, .syntax-keys, .action-row, #run/#next, .msg
@@ -36,6 +37,8 @@ modules/<id>/        one folder per module
   scene.js           `export init/render/reset/play`
   scene.css          optional module-scene styles
 modules/_template/   canonical example of a module (minimal)
+assets/              shared static assets (logos, images) — e.g. assets/tzuchi_logo.png; assets/aphorisms.md is the editable JSY feed
+docs/theme/          Kindness_City_Theme_Guide.md — canonical scene/narrative brief for all modules
 modules.json         root manifest: array of module ids present on this branch
 index.html           shell (module picker, lesson tab, code pane, output pane)
 ```
@@ -93,12 +96,18 @@ A future developer (or a user) requests a lesson in plain language, e.g.:
 
 Resolve and build without asking for the branch name:
 
+> **Scene theme is fixed.** Every module lives in **Kindness City** with the core values
+> **爱自己 / 爱别人 / 爱地球** (love yourself / others / the Earth). If the request gives no
+> scene details, design the right-panel scene from
+> [`docs/theme/Kindness_City_Theme_Guide.md`](docs/theme/Kindness_City_Theme_Guide.md) —
+> never invent a different theme.
+
 1. **Match the lesson number/title to the canonical table above** → branch `module/l<NN>_<slug>`. If the lesson is not listed, confirm it is a genuinely new curriculum lesson, append a row to the table (`l<NN>_<snake_slug>`), and use that id. Never shadow an existing id.
 2. **Scaffold from `main`**: `git checkout main -b module/l<NN>_<slug>`, copy `modules/_template/` → `modules/<id>/`.
 3. **Fold the user's idea into the module contents** — the idea drives:
-   - `module.json` → description, `commands`, `allowedSyntax`, `labels`, `badges`
+   - `module.json` → description, `commands`, `allowedSyntax`, `labels`, `badges`, and `userIdea`
    - `data.js` → storyProblem, learnFirst, vocabulary, hints; `tests` may use `want`, `expect` (stdout/vars), and `constraints` (mustUse/forbid)
-   - `scene.js`/`scene.css` → the visual right-pane for the idea's theme
+   - `scene.js`/`scene.css` → the Kindness City place/citizen that fits the idea (see the theme guide §2–§4)
 4. **Set `allowedSyntax` in `module.json`** to enable only the Python constructs this lesson needs (see syntax gates table in `docs/architecture/ARCHITECTURE.md`). **Zero engine work** — `main`'s engine already supports everything. Do not fork `core/engine.js`.
 5. **Register** the id in `modules.json`, run `node scripts/verify-all.mjs` (every `solution` must pass every `tests` entry), commit, and push the branch.
 6. **Preserve the user's idea**: keep a `userIdea` field in `module.json` (e.g. `"userIdea": "hula-hoop counter robot"`) so the design intent stays traceable, and mirror the idea in the scene + story.
@@ -125,6 +134,7 @@ Resolve and build without asking for the branch name:
   "legend": "HTML shown under the scene",
   "idleText": "Shown in the #vars row before any run",
   "css": "modules/<id>/scene.css",
+  "userIdea": "Original plain-language idea from the requester, kept for traceability",
   "badges": [ { "id": "unique", "title": "Name", "desc": "…", "levels": [0, 1], "badge": "🏅 Label" } ]
 }
 ```
@@ -133,6 +143,7 @@ Resolve and build without asking for the branch name:
 - `commands` = the exact function call names students may use. The interpreter rejects any other call.
 - `allowedSyntax` = array of syntax gates this lesson enables (e.g. `"print"`, `"strings"`, `"variables"`, `"for_range"`). Full gate list in `docs/architecture/ARCHITECTURE.md` §5.3.
 - `labels` maps each command to a short caption used in the trace explanation.
+- `userIdea` (optional) records the original request so the design intent stays traceable.
 - `badges[].levels` are 0-based lesson indices that must ALL be completed to earn the badge.
 
 ## `data.js` lesson schema
@@ -142,6 +153,7 @@ Resolve and build without asking for the branch name:
 | field | notes |
 |---|---|
 | `id` | 1-based integer |
+| `tier` | one of `recap`, `basic`, `debug`, `challenge`, `advanced` (drives gating + tab labels) |
 | `title`, `storyProblem`, `concept` | rendered lesson header |
 | `learnFirst` | object: `problem, knownInfo, pythonQuestion, whyPath, action, learned` |
 | `vocabulary` | `[{ term, meaning }]` → vocab pills |
@@ -152,7 +164,23 @@ Resolve and build without asking for the branch name:
 | `base` | default sensor values merged under every test |
 | `tests` | `[{ "environment": {...}, "want": "<command>", "label": "…" }]`; `environment` overrides `base`. Optional: `expect` can check `stdout`, `vars`, or `return` values; `constraints` can enforce `mustUse`/`forbid` constructs or `minCalls`/`maxCalls`/`exactCalls` |
 | `teacherExplanation`, `commonMistakes` (array), `studentReflection` | teacher-mode data |
-| `free` | optional `true`, only on the final sandbox lesson |
+| `free` | optional `true` on a sandbox exercise (renders a 🎮 tab and skips gating for that exercise) |
+
+### The 20-exercise backbone (unlock model)
+
+Every module ships **exactly 20 exercises** in five tiers:
+
+| Tier | Indices | Baseline `tier` | Rule |
+|---|---|---|---|
+| Recap | 0–3 | `recap` | **Always unlocked** — students may pick any of the four freely; these are warm-ups and are excluded from the mastery denominator. |
+| Basic | 4–9 | `basic` | Sequential. Exercise 5 is open from the start; passing n unlocks n+1. |
+| Debug | 10–14 | `debug` | Sequential; starter code is intentionally broken. |
+| Challenge | 15–17 | `challenge` | Sequential independent tasks. |
+| Advanced | 18–19 | `advanced` | Sequential stretch tasks. |
+
+- Gating lives in `core/progress.js` (`RECAP_COUNT = 4`, `isUnlocked`, `unlockedThrough`) and is enforced both in `tabs()` (locked tabs are `disabled` + `.locked`) and in `load(i)` (a locked index cannot be opened). `core/ui-shell.js` is the only caller.
+- Progress and badges count **gated exercises only** (5–20 = 16). `badges[].levels` are 0-based exercise indices.
+- Do not confuse **exercise gating** (per-index runtime access) with **syntax gating** (`allowedSyntax`, per-module legal Python). They are independent.
 
 ## `scene.js` API
 
@@ -167,13 +195,14 @@ export async function play(cmd, args, ctx)  // animate one command; cmd=name, ar
 - `play()` must resolve (async). Use `setBubble` (from the engine) or a local bubble element scoped to your scene.
 - Scene CSS goes in the module's own `scene.css`; do not add scene-specific rules to the shared `css/` files.
 
-## Design system (Argon-derived)
+## Design system (light grey + dark blue)
 
-The scaffold's UI/color base is extracted from the Argon "Pro Edition" style. Future modules **must** reuse it; do not introduce a second visual language.
+The scaffold's UI base is a **light-grey surface with a dark-blue brand tone** and tactile 3D controls. Future modules **must** reuse it; do not introduce a second visual language. Scenario/lesson accents may layer on top of the neutral base.
 
-- **Theme:** light arcade only. No dark-mode rules; do not add `prefers-color-scheme` blocks.
-- **Tokens** (`css/base.css`): `--bg-app #e0f2fe`, `--bg-card #ffffff`, `--bg-subtle #f0f9ff`, `--ink-main #0f172a`, `--ink-muted #475569`, `--border-line #bae6fd`, `--border-strong #7dd3fc`; accents `--primary #2563eb`, `--success #16a34a`, `--warning #f59e0b`, `--danger #ef4444`, `--purple #7c3aed`; code `--code-bg #0f172a / --code-gutter #1e293b / --code-ink #f8fafc`. Scene tokens `--sky1/--sky2/--grass/--road/--sun` are back-compat for module scene.css files.
-- **Class conventions:** tactile `.btn-3d` buttons (+ `.btn-teacher`, `.btn-journey`, `.unlocked`), `.level-tab` with `.active`/`.completed` states, `.brand-title`/`.brand-badge`, `.module-select`, `.progress-pill`/`.progress-track`/`.progress-fill`, `.workspace-grid`/`.card-panel`, `.concept-badge`, `.mission-title`/`.mission-story`, `.learn-drawer` (collapsible via `.closed`) + `.q6-item`, `.vocab-pill`/`.info-pop`, `.editor-shell`/`.editor-gutter`, `.syntax-keys`, `.action-row`, `.modal-bg`/`.modal-box`/`.modal-x`, `.badge-chip`(+`.earned`), `.t-drawer`/`.t-act`/`.t-out`.
+- **Theme:** light only. No dark-mode rules; do not add `prefers-color-scheme` blocks.
+- **Tokens** (`css/base.css`): `--bg-app #eef1f5`, `--bg-card #ffffff`, `--bg-subtle #f4f6f9`, `--ink-main #10233f`, `--ink-muted #52627a`, `--border-line #d3dae4`, `--border-strong #b7c3d4`; accents `--primary #1e3a8a` (dark blue), `--primary-dark #16295e`, `--success #16a34a`, `--warning #f59e0b`, `--danger #ef4444`, `--purple #7c3aed`; code `--code-bg #0f172a / --code-gutter #1e293b / --code-ink #f8fafc`. Scene tokens `--sky1/--sky2/--grass/--road/--sun` stay scenario-owned.
+- **Class conventions:** tactile `.btn-3d` buttons (+ `.btn-teacher`, `.btn-journey`, `.unlocked`), `.level-tab` with `.active`/`.completed`/`.locked` states, `.brand-title`/`.brand-badge`, `.header-logo`, `.module-select`, `.progress-pill`/`.progress-track`/`.progress-fill`, `.workspace-grid`/`.card-panel`, `.concept-badge`, `.mission-title`/`.mission-story`, `.learn-drawer` (collapsible via `.closed`) + `.q6-item`, `.vocab-pill`/`.info-pop`, `.editor-shell`/`.editor-gutter`, `.syntax-keys`, `.action-row`, `.modal-bg`/`.modal-box`/`.modal-x`, `.badge-chip`(+`.earned`), `.t-drawer`/`.t-act`/`.t-out`, bottom `.ticker`/`.ticker-track` ad board, `.stage-panel` + `.aphorism-overlay` error overlay.
+- **Narrative theme:** the shared visual story is **Kindness City** — self-love, love for others, and care for the environment — with per-lesson scenes as places/citizens inside it. Read [`docs/theme/Kindness_City_Theme_Guide.md`](docs/theme/Kindness_City_Theme_Guide.md) before designing any scene; scenario colors should reinforce the lesson without fighting the grey/navy base.
 - **Fonts:** user-visible text uses Fredoka (set on `:root`); code, pills, trace, keys, and gutter use `"JetBrains Mono", monospace`.
 - **Editor gutter:** line numbers are rendered by `renderGutter()` from `core/editor.js` into `.editor-gutter`. Call it after programmatically setting `#code` value; the shell wires it on `input` automatically.
 
@@ -200,7 +229,7 @@ Each module enables only the constructs it needs via `allowedSyntax` in `module.
 ## UI conventions
 
 - `#module-scene` (right panel) is where `init(container)` binds; the engine injects `#view` (trace), `#expl`, `#stepbar`, `#vars`, `#res`, `#legend` automatically.
-- Lesson tabs are auto-generated from `LESSONS`; the last lesson shows `🎮` (intended for a `free: true` sandbox).
+- Exercise tabs are auto-generated from `LESSONS`; recap tabs (1–4) are always selectable, gated tabs show `.locked` until unlocked, and a `free: true` exercise renders a `🎮` tab.
 - id/name/title of each element in the shell (`index.html`) is fixed — see `core/ui-shell.js` `/els/`.
 - Avoid renaming shared ids; module-specific ids live inside the module's scene DOM.
 

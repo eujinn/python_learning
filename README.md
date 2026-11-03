@@ -7,13 +7,15 @@ A modular platform for teaching Python through interactive, visual lessons. Each
 - `main` branch — scaffolding, core engine, and a `_template` module stub
 - Each module = a separate long-lived branch (e.g. `module/traffic-light`, or curriculum `module/l12_for_loop`)
 - Each branch deploys independently to its own Netlify site
-- UI/color base (the "design system") is derived from the Argon Pro Edition style — see `AGENTS.md`
+- UI/color base (the "design system") is a light-grey surface with a dark-blue brand tone — see `AGENTS.md`
 
 ## Structure
 
 ```
 core/     shared engine + UI (editor.js gutter, ui-shell, engine, progress, hints, vocabulary, teacher)
 css/      shared design system: base (tokens + .btn-3d), layout, editor, stage, modals
+assets/   shared static assets (logos, images) — e.g. assets/tzuchi_logo.png
+docs/theme/  Kindness_City_Theme_Guide.md — canonical scene + value guide
 modules/  one folder per module (module.json + data.js + scene.js [+ scene.css])
 index.html
 ```
@@ -41,12 +43,12 @@ Then open the URL shown in your terminal. ES modules require an HTTP server; `fi
 1. Copy `modules/_template/` to `modules/<your-module-id>/`
 2. Update `module.json` with your module metadata and badges
 3. Write your lessons in `data.js`
-4. Write your scene + action callbacks in `scene.js`
+4. Write your scene + action callbacks in `scene.js` — every scene lives in **Kindness City** (see `docs/theme/Kindness_City_Theme_Guide.md`)
 5. Add your module id to `modules.json`
 6. Create a branch: `git checkout -b module/<your-module-id>`
-7. Read `AGENTS.md` — the module contracts and the Argon-derived design system are defined there
+7. Read `AGENTS.md` — the module contracts (including the 20-exercise backbone) and the light-grey/dark-blue design system are defined there
 
-**In plain words:** to request a new curriculum lesson, just describe it (e.g. "Lesson 12 — kids program a spinning robot with a hula-hoop counter for N times"). An agent reading `AGENTS.md` resolves the canonical branch name from the table, scaffolds the module from `modules/_template/`, and folds your idea into the scene, lessons, and commands.
+**In plain words:** to request a new curriculum lesson, just describe it (e.g. "Lesson 12 — kids program a spinning robot with a hula-hoop counter for N times"). An agent reading `AGENTS.md` resolves the canonical branch name from the table, scaffolds the module from `modules/_template/`, and folds your idea into the Kindness City scene, lessons, and commands.
 
 ## Deploy
 

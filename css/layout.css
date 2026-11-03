@@ -26,17 +26,17 @@ header {
   margin: 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: var(--primary);
   letter-spacing: -0.01em;
 }
 
 .brand-badge {
   font-size: 0.75rem;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #e3e9f2;
+  color: var(--primary);
   padding: 3px 9px;
   border-radius: 999px;
-  border: 1.5px solid #93c5fd;
+  border: 1.5px solid var(--border-strong);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -46,6 +46,23 @@ header {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* Keep the top-right controls on one consistent height */
+.header-controls .btn-3d {
+  height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Branding logo shown at the top-right of the header */
+.header-logo {
+  height: 40px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
 }
 
 /* Module selector dropdown */
@@ -61,20 +78,20 @@ header {
   font-family: inherit;
   font-weight: 700;
   font-size: 0.82rem;
-  padding: 4px 10px;
+  padding: 0 10px;
   border-radius: 10px;
   border: 2px solid var(--border-strong);
   background: var(--bg-card);
-  color: #1e3a8a;
+  color: var(--primary);
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   outline: none;
-  height: 32px;
+  height: 36px;
   transition: all 0.2s ease;
 }
 .module-select:hover, .module-select:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
 }
 
 /* Progress + level tabs bar */
@@ -143,7 +160,7 @@ header {
   flex-shrink: 0;
   transition: all 0.15s ease;
 }
-.level-tab:hover { border-color: #60a5fa; transform: translateY(-1px); }
+.level-tab:hover { border-color: #7f93b3; transform: translateY(-1px); }
 .level-tab.active {
   background: var(--primary);
   color: #ffffff;
@@ -155,6 +172,18 @@ header {
   border-color: #4ade80;
   color: #166534;
   box-shadow: 0 2px 0 #22c55e;
+}
+.level-tab.locked {
+  background: #edf0f4;
+  border-color: #c3ccd8;
+  color: #8a97a8;
+  border-style: dashed;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.level-tab.locked:hover {
+  border-color: #c3ccd8;
+  transform: none;
 }
 
 /* Main 2-column workspace */
@@ -194,4 +223,45 @@ header {
   overflow-y: auto;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
   scrollbar-width: thin;
+}
+
+/* Bottom advertisement board — slow left-to-right ticker */
+.ticker {
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: var(--primary);
+  color: #f8fafc;
+  border-top: 2px solid var(--primary-dark);
+  padding: 6px 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-lr 60s linear infinite;
+  will-change: transform;
+}
+.ticker-item { padding: 0 14px; }
+.ticker-sep { opacity: 0.6; }
+
+@keyframes ticker-lr {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker { white-space: normal; }
+  .ticker-track {
+    display: block;
+    animation: none;
+    transform: none;
+    white-space: normal;
+    text-align: center;
+    padding: 0 12px;
+  }
 }

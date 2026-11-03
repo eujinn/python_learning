@@ -5,6 +5,7 @@ import { py } from "./engine.js";
 export function adaptLesson(L) {
   return {
     t: L.title,
+    tier: L.tier || "",
     task: L.storyProblem,
     ex: L.solution,
     names: L.variables,

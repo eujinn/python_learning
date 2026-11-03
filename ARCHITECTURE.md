@@ -14,7 +14,7 @@ Each lesson is rendered as a **split-screen workspace**:
 ```
 ┌─────────────────────────────── shell (index.html) ───────────────────────────────┐
 │ header: brand · module picker · Learning Record · Teacher Mode                   │
-│ sub-header: progress pill (track + fill) · lesson tabs (1..N, last = 🎮 sandbox)  │
+│ sub-header: progress pill (track + fill) · exercise tabs (1..N; recap free, rest locked/unlocked) │
 ├─────────────────────────────── left card ───────────────┬───────────────────────┤
 │ concept · mission title · mission story                 │  #module-scene          │
 │ teacher drawer (hidden)                                 │  (module DOM: scene)    │
@@ -43,7 +43,7 @@ Each lesson is rendered as a **split-screen workspace**:
 │   ├── hints.js            3-tier hint state machine
 │   ├── vocabulary.js       Learn First 6-question guide + vocab pills
 │   └── teacher.js          offline SHA-256 auth + 5 classroom functions
-├── css/                    shared design system (Argon-derived, light theme only)
+├── css/                    shared design system (light grey + dark blue, light theme only)
 │   ├── base.css            tokens (:root), reset, body gradient, .btn-3d
 │   ├── layout.css          header, module select, tabs, progress pill, workspace grid
 │   ├── editor.css          mission header, learn drawer, vocab, hints, editor shell, keys
@@ -96,9 +96,11 @@ Each module exports `LESSONS`, an array of lesson documents (contract in `AGENTS
 | `base` | default environment merged under every test |
 | `tests` | `[{environment, want, label}]` — see `matchesWant` below |
 | `teacherExplanation`, `commonMistakes[]`, `studentReflection` | teacher mode + reflection banner |
-| `free` | optional `true` on the final sandbox lesson (🎮 tab) |
+| `free` | optional `true` on a sandbox exercise (renders a 🎮 tab and skips gating for that exercise) |
 
-`core/lessons.js::adaptLesson()` flattens this rich schema into the compact runtime shape: `{ t, task, ex, names, base, free, start, sc }` where `sc` = tests merged with `want`/`label`.
+The schema follows the **20-exercise backbone**: indices `0–3` are free-select `recap` warm-ups, and `4–19` are sequentially gated (`basic` 4–9, `debug` 10–14, `challenge` 15–17, `advanced` 18–19). Passing exercise n unlocks n+1; recap never blocks and is excluded from the mastery count. See `core/progress.js`.
+
+`core/lessons.js::adaptLesson()` flattens this rich schema into the compact runtime shape: `{ t, tier, task, ex, names, base, free, start, sc }` where `sc` = tests merged with `want`/`label`.
 
 ## 5. The interpreter (`core/engine.js` on main — complete 20-lesson subset)
 
@@ -265,7 +267,7 @@ Every module folder ships four files:
 
 The scene is the only interactive surface owned by the module — the engine drives it via `play()`, and it drives `render(env)` whenever sensor values change.
 
-**Design system** (`css/base.css`, Argon-pro-derived, light arcade theme, no dark mode): tokens for app/card/subtle backgrounds, ink colors, borders, accents (`--primary`, `--success`, `--warning`, `--danger`, `--purple`), code theme, and back-compat scene tokens `--sky1/--sky2/--grass/--road/--sun`. Tactile `.btn-3d` buttons, `.workspace-grid`/`.card-panel` layout, `.level-tab` states, `.learn-drawer`, `.vocab-pill`, `.editor-shell`, `.syntax-keys`, `.badge-chip`, modals. Fonts: Fredoka for UI text, JetBrains Mono for code/pills/trace/gutter.
+**Design system** (`css/base.css`, light-grey + dark-blue foundation, no dark mode): tokens for app/card/subtle backgrounds, ink colors, borders, accents (`--primary` dark blue, `--success`, `--warning`, `--danger`, `--purple`), code theme, and scenario-owned scene tokens `--sky1/--sky2/--grass/--road/--sun`. Tactile `.btn-3d` buttons, `.workspace-grid`/`.card-panel` layout, `.level-tab` states (`.active`/`.completed`/`.locked`), `.learn-drawer`, `.vocab-pill`, `.editor-shell`, `.syntax-keys`, `.badge-chip`, modals. The shared narrative theme is **Kindness City** (self-love, love for others, care for the environment). Fonts: Fredoka for UI text, JetBrains Mono for code/pills/trace/gutter.
 
 ## 8. Supporting subsystems
 
