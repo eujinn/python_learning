@@ -386,7 +386,15 @@ async function step() {
     st.S.testDone = true;
     addRow(st.S.si);
     hl(0);
-    X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing") + ".");
+    if (!st.S.L.free && !t.good) {
+      const failures = t.result && t.result.failures;
+      const why = failures && failures.length
+        ? failures.join("; ")
+        : "This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing");
+      X.textContent += "  ❌ " + why + ".";
+    } else if (!st.S.L.free) {
+      X.textContent += "  ✅ Test passed!";
+    }
   }
   st.running = false;
   els.step.disabled = false;

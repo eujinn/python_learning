@@ -49,19 +49,19 @@ export function checkExpect(expect, events, env, ctx) {
   if (expect.stdout !== undefined) {
     const actual = (ctx && ctx.stdout || []).join("\n");
     if (actual !== expect.stdout)
-      failures.push("stdout: expected " + JSON.stringify(expect.stdout) + " but got " + JSON.stringify(actual));
+      failures.push('I expected “' + expect.stdout + '” but saw “' + actual + '”');
   }
   if (expect.vars) {
     for (const [k, v] of Object.entries(expect.vars)) {
       const actual = env[k];
       if (JSON.stringify(actual) !== JSON.stringify(v))
-        failures.push(k + ": expected " + JSON.stringify(v) + " but got " + JSON.stringify(actual));
+        failures.push('“' + k + '” should be ' + JSON.stringify(v) + ' but is ' + JSON.stringify(actual));
     }
   }
   if (expect.return !== undefined) {
     const lastReturn = (ctx && ctx.returnValue);
     if (JSON.stringify(lastReturn) !== JSON.stringify(expect.return))
-      failures.push("return: expected " + JSON.stringify(expect.return) + " but got " + JSON.stringify(lastReturn));
+      failures.push('I expected the function to give back ' + JSON.stringify(expect.return) + ' but it gave ' + JSON.stringify(lastReturn));
   }
   return { ok: !failures.length, failures };
 }
