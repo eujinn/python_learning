@@ -81,6 +81,7 @@ export function render(env) {
     lb.textContent = "Test values:";
     V.appendChild(lb);
     Object.entries(env).forEach(([k, v]) => {
+      if (k === "pc" || k === "want" || k === "label") return;
       const e = document.createElement("span");
       e.className = "pill";
       e.textContent = k + " = " + py(v);

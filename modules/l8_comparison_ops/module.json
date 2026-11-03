@@ -2,9 +2,9 @@
   "id": "l8_comparison_ops",
   "name": "Comparison Operators — Traffic Light",
   "icon": "🚦",
-  "description": "Lesson 8 — Learn Python comparison operators (==, !=, >, <, <=, >=) by programming a self-driving car.",
+  "description": "Lesson 8 — Learn Python comparison operators (==, !=, >, <, <=, >=) by programming a self-driving car. 20 exercises: arithmetic recap, comparison basics, syntax debugging, combined-logic challenges, advanced decisions.",
   "commands": ["stop", "slow", "crawl", "go"],
-  "allowedSyntax": ["strings", "variables", "comparisons", "booleans", "if"],
+  "allowedSyntax": ["strings", "variables", "arithmetic", "int", "comparisons", "booleans", "if"],
   "labels": {
     "stop": "brake now",
     "slow": "slow down, then stop",
@@ -12,58 +12,14 @@
     "go": "drive on"
   },
   "legend": "📜 <b>stop()</b> brake now · <b>slow()</b> slow down, then stop · <b>crawl()</b> drive slowly · <b>go()</b> drive on",
-  "idleText": "The traffic light is waiting for your code.",
+  "idleText": "The traffic light is waiting for your code. Pick a recap exercise freely, or work from Exercise 5 onward.",
   "css": "modules/l8_comparison_ops/scene.css",
   "userIdea": "Traffic light theme: compare sensors to decide how the car should drive.",
   "badges": [
-    {
-      "id": "commands",
-      "title": "Commands",
-      "desc": "Calling car actions like go() and stop()",
-      "levels": [0],
-      "badge": "🚗 Ignition Starter"
-    },
-    {
-      "id": "variables",
-      "title": "Variables",
-      "desc": "Saving values inside memory boxes with =",
-      "levels": [1],
-      "badge": "📦 Memory Keeper"
-    },
-    {
-      "id": "if_eq",
-      "title": "if / ==",
-      "desc": "Asking True/False equality questions",
-      "levels": [2],
-      "badge": "🚦 Signal Reader"
-    },
-    {
-      "id": "else_elif",
-      "title": "else / elif",
-      "desc": "Choosing between two or three road branches",
-      "levels": [3, 4],
-      "badge": "🔀 Fork Navigator"
-    },
-    {
-      "id": "comparisons",
-      "title": "Comparisons",
-      "desc": "Checking !=, >, <, <=, ranges, and nested if",
-      "levels": [5, 6, 7, 8, 9, 10],
-      "badge": "📏 Safety Ranger"
-    },
-    {
-      "id": "and_or",
-      "title": "and / or",
-      "desc": "Joining two questions together",
-      "levels": [11, 12],
-      "badge": "🤝 Logic Linker"
-    },
-    {
-      "id": "booleans",
-      "title": "Boolean logic",
-      "desc": "Using True, False, not, and combined rules",
-      "levels": [13, 14],
-      "badge": "🧠 Autopilot Master"
-    }
+    { "id": "recap", "title": "Warm-Up Complete", "desc": "Finish the four arithmetic recap exercises", "levels": [0, 1, 2, 3], "badge": "🔁 Recap Star" },
+    { "id": "basics", "title": "Comparison Basics", "desc": "Solve basic exercises 5–10 (==, if/else/elif, !=, >, <)", "levels": [4, 5, 6, 7, 8, 9], "badge": "🧱 Signal Builder" },
+    { "id": "debugger", "title": "Bug Hunter", "desc": "Fix the debug exercises 11–15", "levels": [10, 11, 12, 13, 14], "badge": "🐞 Bug Hunter" },
+    { "id": "challenge", "title": "Logic Champion", "desc": "Beat intermediate challenges 16–18 (nested if, and, or)", "levels": [15, 16, 17], "badge": "🏅 Logic Champion" },
+    { "id": "advanced", "title": "Autopilot Master", "desc": "Complete the advanced exercises 19–20", "levels": [18, 19], "badge": "🧠 Autopilot Master" }
   ]
 }
