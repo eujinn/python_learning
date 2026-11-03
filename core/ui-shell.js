@@ -128,6 +128,7 @@ els.keys.addEventListener("click", e => {
   if (!b) return;
   ins(b.dataset.i);
   if (b.dataset.i == "()") ta.setSelectionRange(ta.selectionStart - 1, ta.selectionStart - 1);
+  else if (b.dataset.i == 'print("")') ta.setSelectionRange(ta.selectionStart - 2, ta.selectionStart - 2);
 });
 els.peek.onclick = () => { els.ex.hidden = !els.ex.hidden; };
 if (els.aphorismOverlay) els.aphorismOverlay.onclick = hideAphorism;
@@ -281,8 +282,13 @@ async function step() {
     setBubble("🔁 " + e.var + " = " + py(e.val));
     X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
   } else {
-    X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
-    if (st.api.play) await st.api.play(e.f, { setBubble });
+    if (e.out !== undefined) {
+      const shown = e.out.length > 40 ? e.out.slice(0, 40) + "…" : e.out;
+      X.textContent = "Cast " + e.f + "() → “" + shown + "”! " + (labels[e.f] || "");
+    } else {
+      X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
+    }
+    if (st.api.play) await st.api.play(e.f, { setBubble, out: e.out });
     else setBubble("▶ " + e.f + "()");
   }
 
