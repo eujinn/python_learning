@@ -2,51 +2,21 @@
   "id": "l14_list",
   "name": "List — Adventure Backpack",
   "icon": "🎒",
-  "description": "Lesson 14 — Master Python lists: store items, access elements by index, swap gear, and pack your adventure backpack.",
+  "description": "Lesson 14 — Master Python lists: store items, access elements by index, swap gear, append and count. 20 exercises: loop recap, list basics, syntax debugging, challenges, and advanced inventory work.",
   "commands": ["print"],
-  "allowedSyntax": ["print", "strings", "variables", "lists", "int"],
+  "allowedSyntax": ["print", "strings", "variables", "lists", "int", "for_range"],
   "labels": {
     "print": "inspects and announces an item from the backpack"
   },
-  "legend": "🎒 <b>inventory = [a, b, c]</b> creates a list · <b>inventory[0]</b> reads index 0 · <b>inventory[1] = val</b> updates a slot · Click any slot to inspect!",
-  "idleText": "Your Adventure Backpack is ready! Follow the instructions to inspect and insert your own items.",
+  "legend": "🎒 <b>inventory = [a, b, c]</b> creates a list · <b>inventory[0]</b> reads index 0 · <b>inventory[1] = val</b> updates a slot · <b>append</b> grows it · <b>len</b> counts it",
+  "idleText": "Your Adventure Backpack is ready! Pick a recap exercise freely, or work from Exercise 5 onward.",
   "css": "modules/l14_list/scene.css",
   "userIdea": "Adventure Backpack: students experience using python lists from following commands to inserting their own items with interactive slots and smooth graphics",
   "badges": [
-    {
-      "id": "pack_opened",
-      "title": "Pack Opened",
-      "desc": "Create your first list and inspect item at index 0",
-      "levels": [0],
-      "badge": "🎒 Pack Pioneer"
-    },
-    {
-      "id": "custom_gear",
-      "title": "Custom Gear",
-      "desc": "Insert your own custom item into the list",
-      "levels": [1],
-      "badge": "🧭 Gear Crafter"
-    },
-    {
-      "id": "pocket_master",
-      "title": "Pocket Master",
-      "desc": "Access multiple slots using indices 0, 1, and 2",
-      "levels": [2],
-      "badge": "🔍 Index Scout"
-    },
-    {
-      "id": "gear_swapper",
-      "title": "Gear Swapper",
-      "desc": "Update an existing item using index assignment",
-      "levels": [3],
-      "badge": "🏮 Master Swapper"
-    },
-    {
-      "id": "treasure_hoarder",
-      "title": "Treasure Hoarder",
-      "desc": "Append a treasure to your list and check pack length",
-      "levels": [4],
-      "badge": "💎 Treasure Champion"
-    }
+    { "id": "recap", "title": "Warm-Up Complete", "desc": "Finish the four loop recap exercises", "levels": [0, 1, 2, 3], "badge": "🔁 Recap Star" },
+    { "id": "basics", "title": "List Basics", "desc": "Solve basic exercises 5–10 (indexing, assignment, append, len)", "levels": [4, 5, 6, 7, 8, 9], "badge": "🎒 Pack Pioneer" },
+    { "id": "debugger", "title": "Bug Hunter", "desc": "Fix the debug exercises 11–15", "levels": [10, 11, 12, 13, 14], "badge": "🐞 Bug Hunter" },
+    { "id": "challenge", "title": "Index Champion", "desc": "Beat intermediate challenges 16–18", "levels": [15, 16, 17], "badge": "🔍 Index Champion" },
+    { "id": "advanced", "title": "Backpack Master", "desc": "Complete the advanced exercises 19–20", "levels": [18, 19], "badge": "🏆 Backpack Master" }
   ]
 }
