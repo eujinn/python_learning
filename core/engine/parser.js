@@ -266,6 +266,18 @@ class Parser {
   }
 
   parsePrimary() {
+    let node = this.parseAtom();
+    if (!node) return null;
+    while (this.check("BRACKET", "[")) {
+      this.next();
+      const idx = this.parseExpr();
+      this.expect("BRACKET", "]");
+      node = { t: "index", obj: node, idx, n: node.n };
+    }
+    return node;
+  }
+
+  parseAtom() {
     const t = this.peek();
     if (!t) return null;
 
