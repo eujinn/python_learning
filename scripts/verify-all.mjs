@@ -35,9 +35,10 @@ async function run() {
 
         for (const sc of (L.free ? [{}] : L.sc)) {
           const env0 = Object.assign({}, L.base || {}, sc);
-          delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints;
+          const testInputs = (sc.inputs || []).slice();
+          delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints; delete env0.inputs;
           const env = Object.assign({}, env0), ev = [];
-          const ctx = { gates, commands, stdout: [] };
+          const ctx = { gates, commands, stdout: [], inputs: testInputs };
           tr(ast, env, ev, ctx);
           const callEvents = ev.filter(x => x.k == "call");
           const sigs = callEvents.map(c => c.args && c.args.length ? c.f + "(" + c.args.map(a => a === undefined || a === null ? "None" : String(a)).join(", ") + ")" : c.f + "()");

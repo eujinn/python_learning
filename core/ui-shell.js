@@ -234,9 +234,10 @@ function run() {
   const T = [];
   for (const sc of (L.free ? [{}] : L.sc)) {
     const env0 = Object.assign({}, L.base || {}, sc);
-    delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints;
+    const testInputs = (sc.inputs || []).slice();
+    delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints; delete env0.inputs;
     const env = Object.assign({}, env0), ev = [];
-    const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [] };
+    const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [], inputs: testInputs };
     try { tr(prog, env, ev, ctx); }
     catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); showAphorism(); return; }
     const callEvents = ev.filter(x => x.k == "call");

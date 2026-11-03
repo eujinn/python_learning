@@ -16,6 +16,7 @@ export function adaptLesson(L) {
       const base = Object.assign({}, t.environment || {}, { want: t.want, label: t.label });
       if (t.expect) base.expect = t.expect;
       if (t.constraints) base.constraints = t.constraints;
+      if (t.inputs) base.inputs = t.inputs;
       return base;
     })
   };
