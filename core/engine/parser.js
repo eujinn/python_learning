@@ -88,7 +88,7 @@ class Parser {
       if (this.check("OPERATOR", "=")) return this.parseAssign(idTok);
       if (this.check("OPERATOR", "+=") || this.check("OPERATOR", "-=")) return this.parseAugAssign(idTok);
       if (this.check("BRACKET", "(")) { this.back(); return this.parseCallStmt(); }
-      if (this.check("BRACKET", "[")) { this.back(); return this.parseIndexAssign(idTok); }
+      if (this.check("BRACKET", "[")) return this.parseIndexAssign(idTok);
       if (this.check("OPERATOR", ".")) { this.back(); return this.parseCallStmt(); }
       this.back();
     }
