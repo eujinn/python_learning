@@ -1,55 +1,95 @@
 {
   "id": "l16_while_loop",
-  "name": "While Loop — Astro-Bot Power Core",
-  "icon": "⚡",
-  "description": "Lesson 16 — Master Python while loops: power up Astro-Bot, follow loop commands, insert custom limits and actions, and blast off!",
-  "commands": ["charge", "spark", "launch", "print"],
-  "allowedSyntax": ["print", "strings", "variables", "int", "arithmetic", "comparisons", "booleans", "while"],
+  "name": "While Loop \u2014 Astro-Bot Power Core",
+  "icon": "\u26a1",
+  "description": "Lesson 16 \u2014 Master Python while loops by powering Astro-Bot. 20 exercises: for-loop recap, while basics, syntax debugging, challenges, and comment-guided sequences.",
+  "commands": [
+    "charge",
+    "spark",
+    "launch",
+    "print"
+  ],
+  "allowedSyntax": [
+    "print",
+    "strings",
+    "variables",
+    "int",
+    "arithmetic",
+    "comparisons",
+    "booleans",
+    "while",
+    "for_range"
+  ],
   "labels": {
     "charge": "delivers an energy burst to Astro-Bot's power core",
     "spark": "releases an electric energy spark",
     "launch": "activates rocket thrusters for blastoff!",
     "print": "announces status or counter value to the console"
   },
-  "legend": "⚡ <b>energy = 0</b> start counter · <b>while energy &lt; 3:</b> loop while True · <b>energy = energy + 1</b> step counter · Click any button on stage to interact!",
+  "legend": "\u26a1 <b>energy = 0</b> start counter \u00b7 <b>while energy &lt; 3:</b> loop while True \u00b7 <b>energy = energy + 1</b> step counter \u00b7 Click any button on stage to interact!",
   "idleText": "Astro-Bot Power Core is online! Follow the loop commands or insert your own values to power up.",
   "css": "modules/l16_while_loop/scene.css",
   "userIdea": "Astro-Bot Power Core: students experience using python while loop from following the command to inserting their own, with interactive condition radar, reactor chamber, and smooth graphics",
   "badges": [
     {
-      "id": "core_ignited",
-      "title": "Core Ignited",
-      "desc": "Follow the starter command and run your first while loop",
-      "levels": [0],
-      "badge": "⚡ First Loop Spark"
+      "id": "recap",
+      "title": "Warm-Up Complete",
+      "desc": "Finish the four for-loop recap exercises",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "badge": "\ud83d\udd01 Recap Star"
     },
     {
-      "id": "target_setter",
-      "title": "Target Setter",
-      "desc": "Insert your own condition target to supercharge Astro-Bot to 5",
-      "levels": [1],
-      "badge": "🎯 Target Calibrator"
+      "id": "basics",
+      "title": "While Basics",
+      "desc": "Solve basic exercises 5\u201310 (counters, limits, countdown)",
+      "levels": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "badge": "\u26a1 Core Igniter"
     },
     {
-      "id": "loop_commander",
-      "title": "Loop Commander",
-      "desc": "Insert your own action and print status reports inside the loop",
-      "levels": [2],
-      "badge": "📣 Status Dispatcher"
+      "id": "debugger",
+      "title": "Bug Hunter",
+      "desc": "Fix the debug exercises 11\u201315",
+      "levels": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "badge": "\ud83d\udc1e Bug Hunter"
     },
     {
-      "id": "blastoff_master",
+      "id": "challenge",
+      "title": "Loop Champion",
+      "desc": "Beat intermediate challenges 16\u201318",
+      "levels": [
+        15,
+        16,
+        17
+      ],
+      "badge": "\ud83c\udfc5 Loop Champion"
+    },
+    {
+      "id": "advanced",
       "title": "Blastoff Master",
-      "desc": "Count down from 3 to 1 and launch Astro-Bot outside the loop",
-      "levels": [3],
-      "badge": "🚀 Blastoff Champion"
-    },
-    {
-      "id": "hyperdrive_engineer",
-      "title": "Hyperdrive Engineer",
-      "desc": "Experiment freely in the Astro-Bot sandbox lab",
-      "levels": [4],
-      "badge": "🪐 Hyperdrive Master"
+      "desc": "Complete the advanced exercises 19\u201320",
+      "levels": [
+        18,
+        19
+      ],
+      "badge": "\ud83d\ude80 Blastoff Master"
     }
   ]
 }

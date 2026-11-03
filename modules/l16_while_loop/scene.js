@@ -406,12 +406,12 @@ export function reset() {
   updateVisuals(0, 3, "energy", true);
 }
 
-export async function play(cmd, args, ctx) {
+export async function play(cmd, ctx = {}) {
   if (!root) return;
 
   const bot = root.querySelector("#wb-bot");
   const bubble = root.querySelector("#bubble");
-  const setBubble = (ctx && ctx.setBubble) ? ctx.setBubble : (msg => {
+  const setBubble = ctx.setBubble ? ctx.setBubble : (msg => {
     if (bubble) {
       bubble.textContent = msg;
       bubble.style.display = msg ? "block" : "none";
@@ -445,7 +445,7 @@ export async function play(cmd, args, ctx) {
     setBubble("🚀 3... 2... 1... Blastoff! Astro-Bot launches into orbit!");
     await new Promise(r => setTimeout(r, 650));
   } else if (cmd === "print") {
-    const text = (args && args.length) ? args.join(" ") : "status ok";
+    const text = ctx.out !== undefined && ctx.out !== null ? String(ctx.out) : "status ok";
     setBubble(`📢 ${text}`);
     await new Promise(r => setTimeout(r, 300));
   } else {
