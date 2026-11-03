@@ -1,8 +1,8 @@
 {
   "id": "l19_ai_challenge",
-  "name": "Python AI Challenge — Cyber Core NOVA-19",
-  "icon": "🧠",
-  "description": "Lesson 19 — Master the Python AI Challenge: prompt your AI companion, classify human intents, evaluate confidence thresholds, and program autonomous actions from following starter commands to creating your own.",
+  "name": "Python AI Challenge \u2014 Cyber Core NOVA-19",
+  "icon": "\ud83e\udde0",
+  "description": "Lesson 19 \u2014 Master the Python AI Challenge with Cyber Core NOVA-19. 20 exercises: input recap, AI boot/prompt/intent/confidence, debugging, autonomous sequences, and comment-guided missions.",
   "commands": [
     "ai_boot",
     "ai_think",
@@ -37,45 +37,70 @@
     "synthesize_speech": "speaks synthesized vocal response through comms channel",
     "print": "outputs diagnostic telemetry to terminal console"
   },
-  "legend": "🧠 <b>ai_boot()</b> wake AI · <b>query = input(\"...\")</b> capture human input · <b>ai_think(query)</b> neural process · <b>if action == \"boost\":</b> intent branch · <b>int(input())</b> confidence score",
+  "legend": "\ud83e\udde0 <b>ai_boot()</b> wake AI \u00b7 <b>query = input(\"...\")</b> capture human input \u00b7 <b>ai_think(query)</b> neural process \u00b7 <b>if action == \"boost\":</b> intent branch \u00b7 <b>int(input())</b> confidence score",
   "idleText": "NOVA-19 Cyber Core is on standby. Write Python code to awaken the neural network, classify commands, and deploy autonomous agent subroutines!",
   "css": "modules/l19_ai_challenge/scene.css",
   "userIdea": "Python AI Challenge: students experience how to use python AI Challenge from following the command to inserting their own, with interactive NOVA-19 AI Companion, smooth animated neural core, live pipeline visualization, and interactive quick-test controls.",
   "badges": [
     {
-      "id": "neural_initiator",
-      "title": "Neural Initiator",
-      "desc": "Follow starter commands to awaken NOVA-19 and establish a human-to-AI neural link with input()",
-      "levels": [0],
-      "badge": "⚡ Neural Link Online"
+      "id": "recap",
+      "title": "Warm-Up Complete",
+      "desc": "Finish the four input recap exercises",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "badge": "\ud83d\udd01 Recap Star"
     },
     {
-      "id": "prompt_engineer",
-      "title": "Prompt Engineer",
-      "desc": "Insert your own customized prompt string into input() to guide AI sensor queries",
-      "levels": [1],
-      "badge": "💬 Prompt Architect"
+      "id": "basics",
+      "title": "AI Basics",
+      "desc": "Solve basic exercises 5\u201310 (boot, prompt, intent, confidence)",
+      "levels": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "badge": "\ud83e\udde0 Core Cadet"
     },
     {
-      "id": "intent_classifier",
-      "title": "Intent Classifier",
-      "desc": "Insert conditional branching with if/else to classify user commands and decide AI actions",
-      "levels": [2],
-      "badge": "🎯 Intent Strategist"
+      "id": "debugger",
+      "title": "Bug Hunter",
+      "desc": "Fix the debug exercises 11\u201315",
+      "levels": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "badge": "\ud83d\udc1e Bug Hunter"
     },
     {
-      "id": "confidence_calibrator",
-      "title": "Confidence Calibrator",
-      "desc": "Convert text inputs into integers with int(input()) to evaluate AI defense confidence thresholds",
-      "levels": [3],
-      "badge": "🛡️ Quantum Shield Commander"
+      "id": "challenge",
+      "title": "AI Champion",
+      "desc": "Beat intermediate challenges 16\u201318",
+      "levels": [
+        15,
+        16,
+        17
+      ],
+      "badge": "\ud83c\udfc5 AI Champion"
     },
     {
-      "id": "autonomous_ai_master",
-      "title": "Autonomous AI Master",
-      "desc": "Construct your own multi-command interactive AI Companion in the Free Play Sandbox",
-      "levels": [4],
-      "badge": "👑 Lead AI Architect"
+      "id": "advanced",
+      "title": "NOVA Master",
+      "desc": "Complete the advanced exercises 19\u201320",
+      "levels": [
+        18,
+        19
+      ],
+      "badge": "\ud83c\udfc6 NOVA Master"
     }
   ]
 }

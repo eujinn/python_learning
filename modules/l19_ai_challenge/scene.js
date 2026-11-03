@@ -595,10 +595,12 @@ export function reset() {
 }
 
 /* ---- Engine Lifecycle: play ------------------------------------------ */
-export async function play(cmd, args = [], ctx = {}) {
+export async function play(cmd, ctx = {}) {
   if (!root) return;
   currentAction = cmd;
   const setBubble = ctx.setBubble || (() => {});
+  const outText = (ctx.out !== undefined && ctx.out !== null) ? String(ctx.out) : undefined;
+  const args = Array.isArray(ctx.args) ? ctx.args : (outText !== undefined ? [outText] : []);
 
   switch (cmd) {
     case "input": {
