@@ -706,7 +706,7 @@ export function reset() {
 }
 
 /* ---- Exported API: play ---------------------------------------------- */
-export async function play(cmd, args, ctx) {
+export async function play(cmd, ctx = {}) {
   initAudio();
   currentCycle++;
   const cycleElem = root ? root.querySelector("#wc-cycle-counter") : null;
@@ -742,8 +742,8 @@ export async function play(cmd, args, ctx) {
       break;
 
     case "print":
-      if (ctx && ctx.setBubble && args && args.length) {
-        ctx.setBubble(`Telemetry: ${args.join(" ")}`);
+      if (ctx && ctx.setBubble && ctx.out !== undefined) {
+        ctx.setBubble(`Telemetry: ${String(ctx.out)}`);
       }
       playTone(400, "sine", 0.08, 0.1);
       await sleep(150);

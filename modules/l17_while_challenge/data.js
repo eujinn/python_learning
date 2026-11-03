@@ -1,27 +1,175 @@
+/* While Loop Challenge — Cyber Rover Harvester (Lesson 17)
+   20-exercise backbone:
+     recap 1-4  → Lesson 16 while-loop refresher
+     basic 5-10 → harvesting while loops
+     debug 11-15→ repair while syntax/logic
+     challenge 16-18 → independent rover missions
+     advanced 19-20 → comment-guided missions */
+
 export const LESSONS = [
+  /* ============================ RECAP (1–4) ============================ */
   {
     id: 1,
-    title: "Challenge 1: Follow the Command — Harvester Protocol",
-    storyProblem: "Meet the Cyber Rover on planet Lumina-9! Its cargo bay is currently empty (0 crystals). To initiate the planetary survey, we must harvest 3 energy crystals. A while loop checks a condition each round: while crystals < 3: it repeats the indented commands. When crystals reaches 3, the condition becomes False and the loop stops! Click ▶ Run to follow the commands and watch the rover harvest 3 crystals!",
-    concept: "While loop condition check & increment counter",
+    tier: "recap",
+    title: "Recap: Count with while",
+    storyProblem: "Warm up with Lesson 16's while loop. Print 0, 1, 2 with i = 0 while i < 3.",
+    concept: "while recap",
     learnFirst: {
-      problem: "The Cyber Rover needs 3 energy crystals to complete Harvester Protocol.",
-      knownInfo: "A while loop tests a condition before each cycle. As long as the condition is True, all indented code inside runs.",
-      pythonQuestion: "How does Python repeat collect() until crystals reaches 3?",
-      whyPath: "while crystals < 3: tests crystals each time. Inside the loop, crystals = crystals + 1 counts up so the condition will eventually become False!",
-      action: "Click ▶ Run and use Step to watch crystals count from 0 to 3.",
-      learned: "A while loop continues executing as long as its condition is True, and halts as soon as the condition turns False."
+      problem: "Repeat a print three times with while.",
+      knownInfo: "while i < 3: repeats.",
+      pythonQuestion: "What does print(i) show?",
+      whyPath: "i takes 0,1,2.",
+      action: "Print and increase i inside the loop.",
+      learned: "A while loop repeats while its condition is True."
     },
-    vocabulary: [
-      { term: "while", meaning: "A Python loop that repeats a block of code as long as a condition evaluates to True." },
-      { term: "condition", meaning: "A comparison test (such as crystals < 3) checked before each repetition of the loop." },
-      { term: "counter", meaning: "A variable updated inside the loop (crystals = crystals + 1) to track how many times it has run." },
-      { term: "collect()", meaning: "Commands the Cyber Rover's mechanical arm to scoop a crystal into the cargo bay." }
-    ],
+    vocabulary: [{ term: "while", meaning: "Repeat while a condition is True." }],
     hints: [
-      "Concept Clue: Look at line 2. The loop condition is 'while crystals < 3:'. Inside the loop, collect() runs and crystals increases by 1.",
-      "Structure Guide:\ncrystals = 0\nwhile crystals < 3:\n    collect()\n    crystals = crystals + 1\nThe code is already complete! Just press ▶ Run.",
-      "Guided Correction: Leave the starter code intact, press ▶ Run, and watch the Live Condition Radar on the right show True and False!"
+      "Concept Clue: increase i inside the loop.",
+      "Structure Guide:\ni = 0\nwhile i < 3:\n    print(i)\n    i = i + 1",
+      "Guided Correction: Don't forget the increment."
+    ],
+    starterCode: `i = 0
+while i < 3:
+    print(i)
+    i = i + 1`,
+    solution: `i = 0
+while i < 3:
+    print(i)
+    i = i + 1`,
+    variables: ["i"],
+    base: {},
+    tests: [{ environment: {}, want: "print*3", expect: { stdout: "0\n1\n2", vars: { i: 3 } }, label: "count 0-2" }],
+    teacherExplanation: "Recap while counters.",
+    commonMistakes: ["No increment", "Missing colon"],
+    studentReflection: "I remember while loops."
+  },
+  {
+    id: 2,
+    tier: "recap",
+    title: "Recap: Loop a Command",
+    storyProblem: "Collect twice with a while loop: crystals = 0 while crystals < 2.",
+    concept: "while with a command",
+    learnFirst: {
+      problem: "Repeat collect twice.",
+      knownInfo: "while crystals < 2 repeats twice.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "crystals reaches 2.",
+      action: "collect and increase inside the loop.",
+      learned: "A command can repeat in a while loop."
+    },
+    vocabulary: [{ term: "count", meaning: "How many times." }],
+    hints: [
+      "Concept Clue: while crystals < 2.",
+      "Structure Guide:\nwhile crystals < 2:\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Increase crystals inside."
+    ],
+    starterCode: `crystals = 0
+while crystals < 2:
+    collect()
+    crystals = crystals + 1`,
+    solution: `crystals = 0
+while crystals < 2:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*2", expect: { vars: { crystals: 2 } }, label: "collect twice" }],
+    teacherExplanation: "Recap a command inside while.",
+    commonMistakes: ["No increment"],
+    studentReflection: "I can repeat a command with while."
+  },
+  {
+    id: 3,
+    tier: "recap",
+    title: "Recap: Countdown",
+    storyProblem: "Print 3, 2, 1 with fuel = 3 while fuel > 0, decreasing fuel.",
+    concept: "decrement recap",
+    learnFirst: {
+      problem: "Count down to 0.",
+      knownInfo: "Subtract 1 each pass.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "fuel reaches 0.",
+      action: "Print fuel, then subtract.",
+      learned: "A counter can count down."
+    },
+    vocabulary: [{ term: "decrement", meaning: "Subtract 1." }],
+    hints: [
+      "Concept Clue: fuel = fuel - 1 inside.",
+      "Structure Guide:\nwhile fuel > 0:\n    print(fuel)\n    fuel = fuel - 1",
+      "Guided Correction: Subtract inside the loop."
+    ],
+    starterCode: `fuel = 3
+while fuel > 0:
+    print(fuel)
+    fuel = fuel - 1`,
+    solution: `fuel = 3
+while fuel > 0:
+    print(fuel)
+    fuel = fuel - 1`,
+    variables: ["fuel"],
+    base: {},
+    tests: [{ environment: {}, want: "print*3", expect: { stdout: "3\n2\n1", vars: { fuel: 0 } }, label: "countdown" }],
+    teacherExplanation: "Recap decrement.",
+    commonMistakes: ["Adding instead"],
+    studentReflection: "I can count down with while."
+  },
+  {
+    id: 4,
+    tier: "recap",
+    title: "Recap: Loop Then Beacon",
+    storyProblem: "Collect twice in a while loop, then fire beacon() after the loop.",
+    concept: "loop + post action recap",
+    learnFirst: {
+      problem: "Repeat, then finish once.",
+      knownInfo: "Un-indented lines run after the loop.",
+      pythonQuestion: "Where is beacon()?",
+      whyPath: "After the loop.",
+      action: "Loop collect twice, then beacon().",
+      learned: "Finish a loop with a single command."
+    },
+    vocabulary: [{ term: "post-loop", meaning: "Commands after the loop." }],
+    hints: [
+      "Concept Clue: beacon() is not indented.",
+      "Structure Guide:\nwhile i < 2:\n    collect()\n    i = i + 1\nbeacon()",
+      "Guided Correction: Put beacon at the left edge."
+    ],
+    starterCode: `i = 0
+while i < 2:
+    collect()
+    i = i + 1`,
+    solution: `i = 0
+while i < 2:
+    collect()
+    i = i + 1
+beacon()`,
+    variables: ["i"],
+    base: {},
+    tests: [{ environment: {}, want: "beacon", expect: { vars: { i: 2 } }, label: "loop then beacon" }],
+    teacherExplanation: "Recap post-loop commands.",
+    commonMistakes: ["Indenting beacon"],
+    studentReflection: "I can finish a loop with beacon."
+  },
+
+  /* ============================ BASIC (5–10) =========================== */
+  {
+    id: 5,
+    tier: "basic",
+    title: "Harvester Protocol",
+    storyProblem: "Collect 3 crystals: crystals = 0 while crystals < 3, collecting and increasing each pass.",
+    concept: "while harvesting",
+    learnFirst: {
+      problem: "Collect until 3 crystals.",
+      knownInfo: "while crystals < 3 repeats.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "crystals reaches 3.",
+      action: "collect and increase inside.",
+      learned: "A while loop can repeat a rover command."
+    },
+    vocabulary: [{ term: "quota", meaning: "The target number." }],
+    hints: [
+      "Concept Clue: while crystals < 3.",
+      "Structure Guide:\nwhile crystals < 3:\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Increase crystals."
     ],
     starterCode: `crystals = 0
 while crystals < 3:
@@ -33,54 +181,33 @@ while crystals < 3:
     crystals = crystals + 1`,
     variables: ["crystals"],
     base: {},
-    tests: [
-      {
-        environment: {},
-        want: "collect*3",
-        label: "Test 1: collects 3 crystals until crystals is 3",
-        expect: {
-          vars: {
-            crystals: 3
-          }
-        },
-        constraints: {
-          mustUse: ["while"]
-        }
-      }
-    ],
-    teacherExplanation: "Challenge 1 reinforces while loop mechanics: initialization (crystals = 0), condition check (crystals < 3), action (collect()), and increment (crystals = crystals + 1). Emphasize that the condition is re-evaluated at the start of every cycle.",
-    commonMistakes: [
-      "Forgetting the colon : at the end of the while statement",
-      "Omitting crystals = crystals + 1 which would create an infinite loop",
-      "Wrong indentation for lines inside the loop"
-    ],
-    studentReflection: "I observed how a while loop re-checks its condition before every round and automatically stops when the condition becomes False."
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "collect 3" }],
+    teacherExplanation: "Introduce the harvester while loop.",
+    commonMistakes: ["No increment"],
+    studentReflection: "I can loop a rover command."
   },
   {
-    id: 2,
-    title: "Challenge 2: Target Quota — Insert Your Own Condition",
-    storyProblem: "Incoming solar flare alert! Mission Control needs a quota of 5 crystals to power up the rover's defensive energy shield. Look at line 2 in the code: you'll see a placeholder '____' in the while loop condition: while crystals < ____:. Insert your own target number 5 so the Cyber Rover harvests 5 crystals! Then press ▶ Run to watch the shield power up.",
-    concept: "Customizing while loop termination boundaries",
+    id: 6,
+    tier: "basic",
+    title: "Target Quota",
+    storyProblem: "Set the quota to 5: collect until crystals reaches 5.",
+    concept: "Changing the quota",
     learnFirst: {
-      problem: "Line 2 has a blank '____'. We need the while loop to stop after harvesting 5 crystals.",
-      knownInfo: "The comparison operator < checks if the variable on the left is strictly less than the number on the right.",
-      pythonQuestion: "What number should we put after < to harvest exactly 5 crystals starting from 0?",
-      whyPath: "Starting at 0, crystals < 5 is True for 0, 1, 2, 3, and 4 (exactly 5 times!). At 5, it stops.",
-      action: "Replace '____' with 5, then click ▶ Run.",
-      learned: "Changing the condition number directly controls the loop's stopping point and total iterations."
+      problem: "Collect to a bigger target.",
+      knownInfo: "Change the condition number.",
+      pythonQuestion: "Which number gives 5?",
+      whyPath: "crystals < 5 stops at 5.",
+      action: "Use while crystals < 5.",
+      learned: "The condition sets the quota."
     },
-    vocabulary: [
-      { term: "target quota", meaning: "A required goal amount that determines when a loop should stop repeating." },
-      { term: "operator <", meaning: "Less-than comparison: returns True if the left value is strictly less than the right value." },
-      { term: "termination", meaning: "The exact moment when a loop condition becomes False and execution moves past the loop." }
-    ],
+    vocabulary: [{ term: "quota", meaning: "Target amount." }],
     hints: [
-      "Concept Clue: Look at line 2. Replace '____' with the number 5 so the condition becomes while crystals < 5:.",
-      "Structure Guide:\ncrystals = 0\nwhile crystals < 5:\n    collect()\n    crystals = crystals + 1",
-      "Guided Correction: Make sure line 2 reads 'while crystals < 5:' followed by a colon :, then press ▶ Run."
+      "Concept Clue: change 3 to 5.",
+      "Structure Guide:\nwhile crystals < 5:",
+      "Guided Correction: crystals < 5"
     ],
     starterCode: `crystals = 0
-while crystals < ____:
+while crystals < 3:
     collect()
     crystals = crystals + 1`,
     solution: `crystals = 0
@@ -89,56 +216,34 @@ while crystals < 5:
     crystals = crystals + 1`,
     variables: ["crystals"],
     base: {},
-    tests: [
-      {
-        environment: {},
-        want: "collect*5",
-        label: "Test 1: collects 5 crystals until crystals is 5",
-        expect: {
-          vars: {
-            crystals: 5
-          }
-        },
-        constraints: {
-          mustUse: ["while"]
-        }
-      }
-    ],
-    teacherExplanation: "Challenge 2 challenges students to insert their own condition limit. Explain that crystals starts at 0, so crystals < 5 executes when crystals is 0, 1, 2, 3, and 4 — exactly 5 repetitions.",
-    commonMistakes: [
-      "Using <= 5 which results in 6 repetitions instead of 5",
-      "Deleting the colon after the condition",
-      "Writing a string like \"5\" instead of integer 5"
-    ],
-    studentReflection: "I can set my own condition threshold in a while loop to control exactly how many times the loop runs."
+    tests: [{ environment: {}, want: "collect*5", expect: { vars: { crystals: 5 } }, label: "collect 5" }],
+    teacherExplanation: "Change the loop quota.",
+    commonMistakes: ["Changing the increment"],
+    studentReflection: "I can set a collection quota."
   },
   {
-    id: 3,
-    title: "Challenge 3: Sonic Drill & Telemetry — Insert Your Own Command",
-    storyProblem: "The rover has reached a crystalline geode field! These rare crystals are encased in volcanic rock. Before collecting each crystal, the rover must activate its sonic laser drill with drill()! In the code below, line 4 has a placeholder '____'. Insert drill() inside the loop body, right before collect(). Also notice print(crystals) reports telemetry on each cycle! Replace '____' with drill() and click ▶ Run.",
-    concept: "Inserting commands inside a multi-step loop body",
+    id: 7,
+    tier: "basic",
+    title: "Sonic Drill & Telemetry",
+    storyProblem: "From crystals = 1 while crystals <= 3: print crystals, drill(), collect(), then increase.",
+    concept: "Multi-command loop body",
     learnFirst: {
-      problem: "The rover needs to drill the rock before collecting each crystal, for 3 crystals total.",
-      knownInfo: "Every statement indented inside the while block executes in sequential order during each cycle.",
-      pythonQuestion: "Where and how do we call drill() inside the while loop?",
-      whyPath: "Placing drill() indented inside the loop ensures the sonic drill fires before every collect() call!",
-      action: "Replace ____ with drill() on line 4, keeping 4-space indentation, then click ▶ Run.",
-      learned: "You can insert multiple commands into a while loop body to execute complex routines on every cycle."
+      problem: "Report, drill, collect each pass.",
+      knownInfo: "Indented lines repeat.",
+      pythonQuestion: "What prints each pass?",
+      whyPath: "print(crystals) is inside.",
+      action: "Add the commands inside the loop.",
+      learned: "Several commands can repeat together."
     },
-    vocabulary: [
-      { term: "drill()", meaning: "Activates the Cyber Rover's high-frequency sonic laser drill to break down crystal geodes." },
-      { term: "loop body", meaning: "All indented lines under the while statement that execute together on each repetition." },
-      { term: "telemetry", meaning: "Automated status data sent back from the rover via print() statements." }
-    ],
+    vocabulary: [{ term: "telemetry", meaning: "Status report." }],
     hints: [
-      "Concept Clue: Look at line 4. Replace '____' with drill() so the rover drills before calling collect().",
-      "Structure Guide:\ncrystals = 1\nwhile crystals <= 3:\n    print(crystals)\n    drill()\n    collect()\n    crystals = crystals + 1",
-      "Guided Correction: Type drill() with 4 spaces of indentation on line 4, then press ▶ Run."
+      "Concept Clue: print, drill, collect all indented.",
+      "Structure Guide:\nwhile crystals <= 3:\n    print(crystals)\n    drill()\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Increase last."
     ],
     starterCode: `crystals = 1
 while crystals <= 3:
-    print(crystals)
-    ____
+    drill()
     collect()
     crystals = crystals + 1`,
     solution: `crystals = 1
@@ -149,58 +254,35 @@ while crystals <= 3:
     crystals = crystals + 1`,
     variables: ["crystals"],
     base: {},
-    tests: [
-      {
-        environment: {},
-        want: "collect*3",
-        label: "Test 1: drills and collects 3 crystals with telemetry 1, 2, 3",
-        expect: {
-          stdout: "1\n2\n3",
-          vars: {
-            crystals: 4
-          }
-        },
-        constraints: {
-          mustUse: ["while"]
-        }
-      }
-    ],
-    teacherExplanation: "In Challenge 3, students insert their own action into an existing while loop body. Highlight the sequential nature of code execution: print -> drill -> collect -> update.",
-    commonMistakes: [
-      "Incorrect indentation causing an indentation error",
-      "Calling drill instead of drill() with parentheses",
-      "Placing drill() outside the loop body"
-    ],
-    studentReflection: "I learned how to insert multiple custom commands inside a while loop so they all repeat in sequence."
+    tests: [{ environment: {}, want: "collect*3", expect: { stdout: "1\n2\n3", vars: { crystals: 4 } }, label: "drill telemetry" }],
+    teacherExplanation: "Multiple commands in a while body.",
+    commonMistakes: ["Printing outside"],
+    studentReflection: "I can run several commands in a loop."
   },
   {
-    id: 4,
-    title: "Challenge 4: Fuel Countdown & Orbital Beacon — Insert Post-Loop Action",
-    storyProblem: "Emergency return protocol! The Cyber Rover has only 4 units of fuel left in its power cells. While fuel is greater than 0, the rover moves across the ridge by scanning terrain with scan() and expending fuel with fuel = fuel - 1. When fuel reaches 0, the loop ends! AFTER the loop (on unindented line 6), replace '____' with beacon() to deploy the orbital beam that signals the dropship! Press ▶ Run to execute the mission.",
-    concept: "Countdown while loops & unindented post-loop execution",
+    id: 8,
+    tier: "basic",
+    title: "Fuel Countdown & Orbital Beacon",
+    storyProblem: "Scan while fuel counts down from 4 to 0, then fire beacon() after the loop.",
+    concept: "Countdown + post-loop",
     learnFirst: {
-      problem: "The rover must scan 4 times as fuel counts down from 4 to 0, then fire beacon() once when done.",
-      knownInfo: "Indented code repeats inside the loop. Code with zero indentation only runs after the while loop finishes.",
-      pythonQuestion: "How do we make beacon() execute exactly once at the end instead of on every cycle?",
-      whyPath: "Keep scan() indented in the loop. Put beacon() at the left margin (unindented) so it only runs when fuel is 0!",
-      action: "Replace ____ on line 6 with beacon() with no indentation, then click ▶ Run.",
-      learned: "Code outside the loop waits until the loop condition turns False before running."
+      problem: "Scan each fuel unit, then beacon.",
+      knownInfo: "Decrease fuel, then beacon after.",
+      pythonQuestion: "Where is beacon()?",
+      whyPath: "After the loop.",
+      action: "scan and decrement, then beacon().",
+      learned: "Combine a countdown with a finale."
     },
-    vocabulary: [
-      { term: "countdown", meaning: "Decreasing a variable step-by-step (fuel = fuel - 1) toward zero." },
-      { term: "beacon()", meaning: "Fires an ultra-bright vertical laser beam to signal the orbital recovery craft." },
-      { term: "post-loop", meaning: "Unindented statements placed after a while block that run only when the loop concludes." }
-    ],
+    vocabulary: [{ term: "beacon", meaning: "A recovery signal." }],
     hints: [
-      "Concept Clue: Inside the loop, scan() runs and fuel decreases. On line 6, beacon() must be unindented (no spaces).",
-      "Structure Guide:\nfuel = 4\nwhile fuel > 0:\n    scan()\n    fuel = fuel - 1\nbeacon()",
-      "Guided Correction: Replace '____' on line 6 with beacon(). Ensure it has NO leading spaces."
+      "Concept Clue: beacon is un-indented.",
+      "Structure Guide:\nwhile fuel > 0:\n    scan()\n    fuel = fuel - 1\nbeacon()",
+      "Guided Correction: Decrease fuel inside."
     ],
     starterCode: `fuel = 4
 while fuel > 0:
     scan()
-    fuel = fuel - 1
-____`,
+    fuel = fuel - 1`,
     solution: `fuel = 4
 while fuel > 0:
     scan()
@@ -208,82 +290,442 @@ while fuel > 0:
 beacon()`,
     variables: ["fuel"],
     base: {},
-    tests: [
-      {
-        environment: {},
-        want: "beacon",
-        label: "Test 1: scans 4 times as fuel counts down, then fires beacon()",
-        expect: {
-          vars: {
-            fuel: 0
-          }
-        },
-        constraints: {
-          mustUse: ["while"]
-        }
-      }
-    ],
-    teacherExplanation: "Challenge 4 demonstrates two vital while loop patterns: decrementing counters (countdown) and separating repeating code (indented) from post-loop completion actions (unindented).",
-    commonMistakes: [
-      "Indenting beacon() inside the loop so it fires 4 times instead of once",
-      "Adding fuel = fuel + 1 instead of subtraction, causing an infinite loop",
-      "Using fuel >= 0 which would run an extra round for fuel = 0"
-    ],
-    studentReflection: "I learned how to count down with a while loop and place commands after the loop so they run once when finished."
+    tests: [{ environment: {}, want: "beacon", expect: { vars: { fuel: 0 } }, label: "countdown + beacon" }],
+    teacherExplanation: "Countdown loop plus post-loop command.",
+    commonMistakes: ["Indenting beacon"],
+    studentReflection: "I can finish a countdown with a beacon."
   },
   {
-    id: 5,
-    title: "Challenge 5: Lumina-9 Rover Sandbox — Master Arena",
-    storyProblem: "Congratulations, Commander! You have conquered the While Loop Challenges. You now have full access to the Lumina-9 Sandbox Arena! Here you can invent your own while loops using collect(), drill(), scan(), beacon(), and print(). Try testing different loop conditions like while crystals < 6: or while fuel > 0:. Click the interactive controls on the stage to spawn crystals, trigger sonic drills, and explore!",
-    concept: "Open challenge arena & creative while loop design",
+    id: 9,
+    tier: "basic",
+    title: "Scan Sweep",
+    storyProblem: "Scan 3 times with scans = 0 while scans < 3.",
+    concept: "while scanning",
     learnFirst: {
-      problem: "You are in command of the Cyber Rover expedition. Build any while loop algorithm you want!",
-      knownInfo: "You have all rover tools available: collect(), drill(), scan(), beacon(), and print(), plus condition controls.",
-      pythonQuestion: "What autonomous mining and survey routine will you program for the Cyber Rover?",
-      whyPath: "Combine counters, conditions, drills, scoops, and signals to create your own custom rover behavior.",
-      action: "Write your while loop in the editor, click ▶ Run, and test with the interactive stage buttons!",
-      learned: "While loops give you the power to automate complex robotic tasks with flexible stopping conditions."
+      problem: "Repeat scan three times.",
+      knownInfo: "while scans < 3 repeats.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "scans reaches 3.",
+      action: "scan and increase.",
+      learned: "Any command can repeat."
     },
-    vocabulary: [
-      { term: "sandbox", meaning: "A free-play coding environment where you can freely experiment without restrictions." },
-      { term: "algorithm", meaning: "A step-by-step sequence of instructions used to solve a problem or automate a task." },
-      { term: "automation", meaning: "Using programming logic and loops to perform repetitive actions without human intervention." }
-    ],
+    vocabulary: [{ term: "scan", meaning: "Send a radar ping." }],
     hints: [
-      "Concept Clue: Try changing the condition to 'gems < 4' or adding drill() and scan() inside your loop!",
-      "Structure Guide:\ngems = 0\nwhile gems < 4:\n    print(gems)\n    drill()\n    collect()\n    gems = gems + 1\nbeacon()",
-      "Guided Correction: This is free play! Write and run any while loop you want."
+      "Concept Clue: while scans < 3.",
+      "Structure Guide:\nwhile scans < 3:\n    scan()\n    scans = scans + 1",
+      "Guided Correction: Increase scans."
+    ],
+    starterCode: `scans = 0
+while scans < 3:
+    scan()
+    scans = scans + 1`,
+    solution: `scans = 0
+while scans < 3:
+    scan()
+    scans = scans + 1`,
+    variables: ["scans"],
+    base: {},
+    tests: [{ environment: {}, want: "scan*3", expect: { vars: { scans: 3 } }, label: "scan three times" }],
+    teacherExplanation: "Repeat scan.",
+    commonMistakes: ["No increment"],
+    studentReflection: "I can loop the scan command."
+  },
+  {
+    id: 10,
+    tier: "basic",
+    title: "Drill and Collect",
+    storyProblem: "Do a drill then collect, twice: gems = 0 while gems < 2.",
+    concept: "Pair of commands in a loop",
+    learnFirst: {
+      problem: "Repeat a drill+collect pair.",
+      knownInfo: "Both commands are indented.",
+      pythonQuestion: "How many collect calls?",
+      whyPath: "Each pass collects once.",
+      action: "drill(); collect(); gems += 1.",
+      learned: "Pairs of commands can repeat together."
+    },
+    vocabulary: [{ term: "pair", meaning: "Two commands together." }],
+    hints: [
+      "Concept Clue: drill then collect inside.",
+      "Structure Guide:\nwhile gems < 2:\n    drill()\n    collect()\n    gems = gems + 1",
+      "Guided Correction: Increase gems."
     ],
     starterCode: `gems = 0
-while gems < 4:
-    print("Harvesting gem:")
-    print(gems)
+while gems < 2:
     drill()
     collect()
-    gems = gems + 1
-beacon()`,
+    gems = gems + 1`,
     solution: `gems = 0
-while gems < 4:
-    print("Harvesting gem:")
+while gems < 2:
+    drill()
+    collect()
+    gems = gems + 1`,
+    variables: ["gems"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*2", expect: { vars: { gems: 2 } }, label: "drill+collect twice" }],
+    teacherExplanation: "Repeat a pair of commands.",
+    commonMistakes: ["Missing increment"],
+    studentReflection: "I can repeat a pair of commands."
+  },
+
+  /* ============================ DEBUG (11–15) ========================== */
+  {
+    id: 11,
+    tier: "debug",
+    title: "Missing Colon",
+    storyProblem: "The while line has no colon. Add : to open the loop body.",
+    concept: "Fix while colon",
+    learnFirst: {
+      problem: "The while line needs a colon.",
+      knownInfo: "while lines end with :.",
+      pythonQuestion: "What ends the while line?",
+      whyPath: "The colon opens the body.",
+      action: "Add : after the condition.",
+      learned: "Every while line ends with a colon."
+    },
+    vocabulary: [{ term: ":", meaning: "Starts the block." }],
+    hints: [
+      "Concept Clue: add : after crystals < 3.",
+      "Structure Guide:\nwhile crystals < 3:\n    collect()",
+      "Guided Correction: Add the colon."
+    ],
+    starterCode: `# Bug: missing colon
+crystals = 0
+while crystals < 3
+    collect()
+    crystals = crystals + 1`,
+    solution: `crystals = 0
+while crystals < 3:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "fixed colon" }],
+    teacherExplanation: "Debug a missing colon.",
+    commonMistakes: ["Adding a semicolon"],
+    studentReflection: "I remember the colon."
+  },
+  {
+    id: 12,
+    tier: "debug",
+    title: "Missing Indentation",
+    storyProblem: "The loop body is not indented. Indent collect() and the increment.",
+    concept: "Fix indentation",
+    learnFirst: {
+      problem: "The body is outside the loop.",
+      knownInfo: "Indented lines repeat.",
+      pythonQuestion: "Which lines belong to the loop?",
+      whyPath: "Both body lines are indented.",
+      action: "Indent both lines.",
+      learned: "Indentation defines the body."
+    },
+    vocabulary: [{ term: "indent", meaning: "Spaces showing block membership." }],
+    hints: [
+      "Concept Clue: indent collect and the increment.",
+      "Structure Guide:\nwhile crystals < 3:\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Add 4 spaces."
+    ],
+    starterCode: `# Bug: body outside the loop
+crystals = 0
+while crystals < 3:
+collect()
+crystals = crystals + 1`,
+    solution: `crystals = 0
+while crystals < 3:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "fixed indent" }],
+    teacherExplanation: "Debug missing indentation.",
+    commonMistakes: ["Indenting the while line"],
+    studentReflection: "I can indent a loop."
+  },
+  {
+    id: 13,
+    tier: "debug",
+    title: "Forgot to Increase",
+    storyProblem: "crystals never changes, so the loop never ends. Add crystals = crystals + 1 inside.",
+    concept: "Fix infinite loop",
+    learnFirst: {
+      problem: "The counter never changes.",
+      knownInfo: "Update the counter each pass.",
+      pythonQuestion: "What is missing?",
+      whyPath: "crystals must increase.",
+      action: "Add the increment inside.",
+      learned: "Update the counter so the loop can stop."
+    },
+    vocabulary: [{ term: "infinite loop", meaning: "A loop that never ends." }],
+    hints: [
+      "Concept Clue: add crystals = crystals + 1 inside.",
+      "Structure Guide:\nwhile crystals < 3:\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Increment inside the loop."
+    ],
+    starterCode: `# Bug: crystals never changes
+crystals = 0
+while crystals < 3:
+    collect()`,
+    solution: `crystals = 0
+while crystals < 3:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "fixed infinite" }],
+    teacherExplanation: "Debug a missing increment.",
+    commonMistakes: ["Decrementing"],
+    studentReflection: "I always increment the counter."
+  },
+  {
+    id: 14,
+    tier: "debug",
+    title: "Wrong Condition",
+    storyProblem: "crystals starts at 0, so 'while crystals > 3' never runs. Change > to <.",
+    concept: "Fix condition direction",
+    learnFirst: {
+      problem: "The condition is backwards.",
+      knownInfo: "0 is not greater than 3.",
+      pythonQuestion: "Should it be < 3?",
+      whyPath: "0 < 3 is True.",
+      action: "Change > to <.",
+      learned: "Check the direction of a comparison."
+    },
+    vocabulary: [{ term: "<", meaning: "Less than." }],
+    hints: [
+      "Concept Clue: change > to <.",
+      "Structure Guide:\nwhile crystals < 3:",
+      "Guided Correction: crystals < 3"
+    ],
+    starterCode: `# Bug: condition never true
+crystals = 0
+while crystals > 3:
+    collect()
+    crystals = crystals + 1`,
+    solution: `crystals = 0
+while crystals < 3:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "fixed condition" }],
+    teacherExplanation: "Debug a reversed condition.",
+    commonMistakes: ["Changing the counter"],
+    studentReflection: "I can check the comparison direction."
+  },
+  {
+    id: 15,
+    tier: "debug",
+    title: "One Equals in a Condition",
+    storyProblem: "The condition uses = instead of a comparison. Fix it to while crystals < 3.",
+    concept: "Fix = in condition",
+    learnFirst: {
+      problem: "A condition needs a comparison.",
+      knownInfo: "= assigns; < compares.",
+      pythonQuestion: "Which operator asks a question?",
+      whyPath: "< compares numbers.",
+      action: "Change = to <.",
+      learned: "Conditions use comparisons."
+    },
+    vocabulary: [{ term: "<", meaning: "Comparison operator." }],
+    hints: [
+      "Concept Clue: use < in the condition.",
+      "Structure Guide:\nwhile crystals < 3:",
+      "Guided Correction: crystals < 3"
+    ],
+    starterCode: `# Bug: assignment in a condition
+crystals = 0
+while crystals = 3:
+    collect()
+    crystals = crystals + 1`,
+    solution: `crystals = 0
+while crystals < 3:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*3", expect: { vars: { crystals: 3 } }, label: "fixed condition" }],
+    teacherExplanation: "Debug an assignment used as a condition.",
+    commonMistakes: ["Using ==", "Removing the condition"],
+    studentReflection: "I know conditions use comparisons."
+  },
+
+  /* =========================== CHALLENGE (16–18) ======================= */
+  {
+    id: 16,
+    tier: "challenge",
+    title: "Quota of Six",
+    storyProblem: "Collect 6 crystals with a while loop from scratch.",
+    concept: "While harvest from scratch",
+    learnFirst: {
+      problem: "Collect six crystals.",
+      knownInfo: "Start at 0, loop while < 6.",
+      pythonQuestion: "When does it stop?",
+      whyPath: "crystals reaches 6.",
+      action: "Write the counter loop.",
+      learned: "I can build a harvest loop."
+    },
+    vocabulary: [{ term: "quota", meaning: "Target amount." }],
+    hints: [
+      "Concept Clue: while crystals < 6.",
+      "Structure Guide:\ncrystals = 0\nwhile crystals < 6:\n    collect()\n    crystals = crystals + 1",
+      "Guided Correction: Increase crystals."
+    ],
+    starterCode: `# Your turn: collect 6 crystals
+`,
+    solution: `crystals = 0
+while crystals < 6:
+    collect()
+    crystals = crystals + 1`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "collect*6", expect: { vars: { crystals: 6 } }, label: "six crystals" }],
+    teacherExplanation: "Independent harvest loop.",
+    commonMistakes: ["No increment", "Wrong bound"],
+    studentReflection: "I can build a harvest loop."
+  },
+  {
+    id: 17,
+    tier: "challenge",
+    title: "Variable Quota",
+    storyProblem: "n tells how many crystals are needed. Loop while i < n, collecting each pass.",
+    concept: "Variable quota",
+    learnFirst: {
+      problem: "Loop until a variable target.",
+      knownInfo: "Use i < n.",
+      pythonQuestion: "How many for n = 3?",
+      whyPath: "i 0,1,2 → three collects.",
+      action: "while i < n: collect(); i += 1.",
+      learned: "A variable can set the quota."
+    },
+    vocabulary: [{ term: "target", meaning: "The stopping value." }],
+    hints: [
+      "Concept Clue: while i < n.",
+      "Structure Guide:\ni = 0\nwhile i < n:\n    collect()\n    i = i + 1",
+      "Guided Correction: No quotes around n."
+    ],
+    starterCode: `# Your turn: collect n crystals
+`,
+    solution: `i = 0
+while i < n:
+    collect()
+    i = i + 1`,
+    variables: ["n", "i"],
+    base: {},
+    tests: [
+      { environment: { n: 2 }, want: "collect*2", expect: { vars: { i: 2 } }, label: "n = 2" },
+      { environment: { n: 3 }, want: "collect*3", expect: { vars: { i: 3 } }, label: "n = 3" }
+    ],
+    teacherExplanation: "Independent variable quota loop.",
+    commonMistakes: ["Quoting n", "No increment"],
+    studentReflection: "I can collect to a variable target."
+  },
+  {
+    id: 18,
+    tier: "challenge",
+    title: "Scan Then Beacon",
+    storyProblem: "Scan 3 times, then beacon(). Use scans = 0 while scans < 3.",
+    concept: "Loop then finale",
+    learnFirst: {
+      problem: "Scan, then beacon.",
+      knownInfo: "beacon is after the loop.",
+      pythonQuestion: "Where is beacon?",
+      whyPath: "Un-indented after the loop.",
+      action: "Loop scans, then beacon.",
+      learned: "Finish a loop with a beacon."
+    },
+    vocabulary: [{ term: "beacon", meaning: "Recovery signal." }],
+    hints: [
+      "Concept Clue: beacon is not indented.",
+      "Structure Guide:\nwhile scans < 3:\n    scan()\n    scans = scans + 1\nbeacon()",
+      "Guided Correction: Put beacon at the left edge."
+    ],
+    starterCode: `# Your turn: scan 3 times then beacon
+`,
+    solution: `scans = 0
+while scans < 3:
+    scan()
+    scans = scans + 1
+beacon()`,
+    variables: ["scans"],
+    base: {},
+    tests: [{ environment: {}, want: "beacon", expect: { vars: { scans: 3 } }, label: "scan + beacon" }],
+    teacherExplanation: "Independent loop + finale.",
+    commonMistakes: ["Indenting beacon"],
+    studentReflection: "I can finish a scan loop with beacon."
+  },
+
+  /* ============================ ADVANCED (19–20) ======================= */
+  {
+    id: 19,
+    tier: "advanced",
+    title: "Full Harvest",
+    storyProblem: "Follow the comments: collect 4 crystals in a while loop, then beacon().",
+    concept: "Comment-guided harvest",
+    learnFirst: {
+      problem: "Build a harvest mission from comments.",
+      knownInfo: "Loop to 4, then beacon.",
+      pythonQuestion: "Where is beacon?",
+      whyPath: "After the loop.",
+      action: "Follow the comments.",
+      learned: "I can build a harvest mission."
+    },
+    vocabulary: [{ term: "comment", meaning: "A note starting with #." }],
+    hints: [
+      "Concept Clue: follow the comments.",
+      "Structure Guide:\n# collect 4; then beacon",
+      "Guided Correction: beacon is un-indented."
+    ],
+    starterCode: `# 1) crystals = 0
+# 2) while crystals < 4: collect() and increase
+# 3) after the loop, beacon()`,
+    solution: `crystals = 0
+while crystals < 4:
+    collect()
+    crystals = crystals + 1
+beacon()`,
+    variables: ["crystals"],
+    base: {},
+    tests: [{ environment: {}, want: "beacon", expect: { vars: { crystals: 4 } }, label: "harvest mission" }],
+    teacherExplanation: "Advanced: build a harvest loop from comments.",
+    commonMistakes: ["Indenting beacon", "No increment"],
+    studentReflection: "I can build a harvest mission from comments."
+  },
+  {
+    id: 20,
+    tier: "advanced",
+    title: "Deep Core Mission",
+    storyProblem: "Follow the comments: print the gem count, drill, collect, and increase, three times, then beacon().",
+    concept: "Multi-command mission",
+    learnFirst: {
+      problem: "Build a multi-command mission from comments.",
+      knownInfo: "Print, drill, collect, increase in the loop; beacon after.",
+      pythonQuestion: "What runs after the loop?",
+      whyPath: "beacon.",
+      action: "Follow the comments.",
+      learned: "I can build a full mission from comments."
+    },
+    vocabulary: [{ term: "mission", meaning: "A sequence of rover commands." }],
+    hints: [
+      "Concept Clue: follow the comments in order.",
+      "Structure Guide:\n# loop 3 with print/drill/collect/increase; then beacon",
+      "Guided Correction: beacon is un-indented."
+    ],
+    starterCode: `# 1) gems = 0
+# 2) while gems < 3: print("Gem:"), print(gems), drill(), collect(), increase gems
+# 3) after the loop, beacon()`,
+    solution: `gems = 0
+while gems < 3:
+    print("Gem:")
     print(gems)
     drill()
     collect()
     gems = gems + 1
 beacon()`,
-    variables: ["gems", "crystals", "fuel"],
+    variables: ["gems"],
     base: {},
-    free: true,
-    tests: [
-      {
-        environment: {},
-        want: null,
-        label: "Free exploration sandbox"
-      }
-    ],
-    teacherExplanation: "The sandbox arena lets students synthesize everything they have learned: designing while loop conditions, structuring loop bodies with multiple rover commands, printing telemetry, and concluding with orbital beacons.",
-    commonMistakes: [
-      "Forgetting to increment or decrement the loop counter, leading to an infinite loop"
-    ],
-    studentReflection: "I can design, program, and master my own autonomous while loop routines for the Cyber Rover!"
+    tests: [{ environment: {}, want: "beacon", expect: { vars: { gems: 3 }, stdout: "Gem:\n0\nGem:\n1\nGem:\n2" }, label: "deep core mission" }],
+    teacherExplanation: "Advanced: multi-command mission from comments.",
+    commonMistakes: ["Indenting beacon", "Missing increment"],
+    studentReflection: "I can build a full rover mission."
   }
 ];
