@@ -210,8 +210,8 @@ export const LESSONS = [
     solution: 'hero = "Nova"\nprint(hero)',
     variables: [],
     base: {},
-    tests: [{ environment: {}, want: "print", expect: { vars: { hero: "Nova" }, stdout: "Nova" }, label: "Test 1: string variable" }],
-    teacherExplanation: "String assignment with a variable name hint.",
+    tests: [{ environment: {}, want: "print", constraints: { mustUse: ["str"] }, label: "Test 1: store a name and print it" }],
+    teacherExplanation: "Open-ended: any name inside quote marks passes. The sample uses \"Nova\"; students should use their own hero's name. The test only requires a string literal and a print() call.",
     commonMistakes: ["Forgetting quotes around the string", "Putting quotes around the number"],
     studentReflection: "I can store text in a variable using quotes."
   },
@@ -570,8 +570,8 @@ export const LESSONS = [
     solution: 'distance = 10\nname = "Sun"\ncount = 5\nprint(name)',
     variables: [],
     base: {},
-    tests: [{ environment: {}, want: "print", expect: { vars: { distance: 10, name: "Sun", count: 5 }, stdout: "Sun" }, label: "Test 1: three items" }],
-    teacherExplanation: "Advanced: follow a commented plan to create three variables with correct types.",
+    tests: [{ environment: {}, want: "print", expect: { vars: { distance: 10, count: 5 } }, constraints: { mustUse: ["str"] }, label: "Test 1: three items" }],
+    teacherExplanation: "Advanced: follow a commented plan. distance and count are fixed; the name can be any word (open-ended).",
     commonMistakes: ["Wrong variable type", "Not printing"],
     studentReflection: "I can build variables from a written plan."
   },
@@ -595,7 +595,7 @@ export const LESSONS = [
       "Structure Guide:\n# Step comments tell you exactly what to write.",
       "Guided Correction: Check the comments one by one."
     ],
-    starterCode: '# Vault Challenge:\n# 1) Store \"Kindness\" in city\n# 2) Change city to \"Kindness City\"\n# 3) Store 5 in zones\n# 4) Change zones to 7\n# 5) Print city and zones, with a comma',
+    starterCode: '# Vault Challenge:\n# 1) Store "Kindness" in city\n# 2) Change city to "Kindness City"\n# 3) Store 5 in zones\n# 4) Change zones to 7\n# 5) Print city and zones, with a comma',
     solution: 'city = "Kindness"\ncity = "Kindness City"\nzones = 5\nzones = 7\nprint(city, zones)',
     variables: [],
     base: {},
