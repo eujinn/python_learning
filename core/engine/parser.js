@@ -320,7 +320,7 @@ class Parser {
       while (this.check("OPERATOR", ",")) { this.next(); args.push(this.parseExpr()); }
     }
     this.expect("BRACKET", ")");
-    return { t: "call", f: name, args, n: line !== undefined ? line : (this.peek() ? this.peek().line : 0) };
+    return { t: "call", f: name, args, n: line !== undefined ? line : (name === "range" ? (args.length ? args[0].n : (this.peek() ? this.peek().line : 1)) : (this.peek() ? this.peek().line : 1)) };
   }
 
   parseMethodCall(obj, method, line) {
