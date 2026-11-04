@@ -54,6 +54,36 @@ index.html           shell (module picker, lesson tab, code pane, output pane)
 - **Engine is NOT forked.** Module branches use `main`'s `core/engine.js` directly — they never carry their own copy. Fixes to the engine on `main` propagate to all module branches on next `git rebase main`.
 - **`allowedSyntax` gates replace engine forks.** Each module declares which Python constructs it enables via `allowedSyntax` in `module.json`. The engine gates itself at parse time — no syntax from later lessons is available to students.
 
+### Shared infrastructure rule (important)
+
+All shared files live on `main` **only**. Module branches must NEVER modify them:
+
+| Directory | Contents | Owner |
+|:---|---:|:---|
+| `core/` | Engine, UI shell, assertions, progress, hints, editor | `main` only |
+| `css/` | Shared design system | `main` only |
+| `scripts/` | CLI verifier, dev tools | `main` only |
+| `index.html` | App shell | `main` only |
+| `assets/` | Logos, aphorisms | `main` only |
+| `modules/<id>/` | Module-specific content (scene, data, CSS) | Module branch only |
+| `modules.json` | Module manifest for this branch | Module branch only |
+
+**Workflow for shared changes:**
+
+1. A fix or improvement to `core/`, `css/`, `scripts/`, `index.html`, or `assets/` must be committed to `main` first.
+2. Rebase the module branch on `main` to pick it up: `git rebase main`.
+3. Never commit shared files on a module branch — even if mixed with module content in the same commit. If this happens, split the commit: cherry-pick only the module-specific files to the branch and let `main` carry the shared changes.
+
+**Verification before pushing a module branch:**
+
+```bash
+# Check that no shared files differ from main
+git diff main --stat -- core/ css/ scripts/ index.html assets/
+# Should produce NO output. If it does, the branch carries shared changes.
+```
+
+Only `modules/<id>/` and `modules.json` should appear in the diff.
+
 ### Curriculum module naming convention
 
 Each lesson in the Python curriculum is its own long-lived module branch (one lesson = one module), named with a stable lesson id:
