@@ -1,0 +1,55 @@
+{
+  "id": "l9_compare_bool",
+  "name": "Comparison + Boolean — Smart Eco-Greenhouse",
+  "icon": "🌱",
+  "description": "Lesson 9 — Master Python comparison operators (==, !=, <, >, <=, >=) and boolean logic (True, False, and, or, not) to automate Kindness City's Smart Eco-Greenhouse. 20 exercises: comparison recap, boolean basics, syntax debugging, multi-sensor challenges, autonomous eco-guardian.",
+  "commands": ["water", "fan", "lights", "eco_mode"],
+  "allowedSyntax": ["print", "strings", "variables", "int", "comparisons", "booleans", "if"],
+  "labels": {
+    "water": "spray gentle mist to water plants",
+    "fan": "spin cooling fan for fresh air",
+    "lights": "turn on warm eco grow-lights",
+    "eco_mode": "activate energy-saving green shield"
+  },
+  "legend": "🌱 <b>water()</b> mist plants · 🌀 <b>fan()</b> cool greenhouse · 💡 <b>lights()</b> grow-lights · 🛡️ <b>eco_mode()</b> power-saver",
+  "idleText": "The Smart Eco-Greenhouse is ready. Click sensors or commands to explore, or run your Python code.",
+  "css": "modules/l9_compare_bool/scene.css",
+  "userIdea": "Smart Eco-Greenhouse: students experience python Comparison + Boolean, transitioning from following commands to composing their own logic. Right side has smooth graphics and interactive student controls.",
+  "badges": [
+    {
+      "id": "recap",
+      "title": "Warm-Up Guardian",
+      "desc": "Complete the four comparison recap exercises",
+      "levels": [0, 1, 2, 3],
+      "badge": "🔁 Recap Star"
+    },
+    {
+      "id": "basics",
+      "title": "Logic Apprentice",
+      "desc": "Solve basic exercises 5–10 mastering True/False, and, or, not",
+      "levels": [4, 5, 6, 7, 8, 9],
+      "badge": "🌱 Logic Sprout"
+    },
+    {
+      "id": "debugger",
+      "title": "Bug Detective",
+      "desc": "Fix the 5 comparison & boolean debugging exercises 11–15",
+      "levels": [10, 11, 12, 13, 14],
+      "badge": "🐞 Bug Hunter"
+    },
+    {
+      "id": "challenge",
+      "title": "Circuit Hero",
+      "desc": "Conquer multi-condition boolean challenges 16–18",
+      "levels": [15, 16, 17],
+      "badge": "⚡ Circuit Hero"
+    },
+    {
+      "id": "advanced",
+      "title": "Master Eco-Guardian",
+      "desc": "Complete the advanced autonomous greenhouse systems 19–20",
+      "levels": [18, 19],
+      "badge": "🏆 Master Guardian"
+    }
+  ]
+}

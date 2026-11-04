@@ -1,0 +1,183 @@
+/* =========================================================================
+   Lesson 9 — Comparison + Boolean: Smart Eco-Greenhouse
+   Ultra-Compact & High-Performance Scene Stylesheet
+   Guarantees all step controls (#stepbar) fit on screen without scrolling
+   ========================================================================= */
+
+.l9-scene {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  user-select: none;
+  margin-bottom: 2px;
+}
+
+/* Compact 135px Stage Box */
+.l9-stage-box {
+  position: relative;
+  width: 100%;
+  height: 135px;
+  background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 60%, #dcfce7 100%);
+  border: 2px solid var(--border-strong, #b7c3d4);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+  contain: paint;
+  transition: background 0.3s ease;
+}
+
+.l9-stage-box.is-night {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 60%, #14532d 100%);
+}
+
+.l9-stage-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Top HUD Banner */
+.l9-hud-bar {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.l9-hud-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.l9-truth-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #10b981;
+  border-radius: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #047857;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.l9-truth-pill.is-false {
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+/* Speech Bubble in Scene */
+.l9-scene .bubble {
+  position: absolute;
+  top: 30px;
+  right: 12px;
+  max-width: 170px;
+  background: #ffffff;
+  color: #10233f;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  border: 1.5px solid #0ea5e9;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-2px) scale(0.96);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.l9-scene .bubble.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Active Command Animations (Zero Idle CPU Cost) */
+#l9-fan-blades {
+  transform-origin: 200px 22px;
+  will-change: transform;
+}
+
+.fan-running #l9-fan-blades {
+  animation: l9-spin 0.2s linear infinite;
+}
+
+@keyframes l9-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.fan-running #l9-breeze-lines {
+  opacity: 0.9 !important;
+}
+
+/* Sprinklers */
+.water-running .l9-water-drop {
+  opacity: 0.95 !important;
+  animation: l9-spray 0.25s ease-in infinite;
+}
+
+@keyframes l9-spray {
+  0% { transform: translateY(0); opacity: 0.95; }
+  100% { transform: translateY(45px); opacity: 0; }
+}
+
+/* Grow-Lights Glow */
+#l9-grow-light-glow {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.lights-running #l9-grow-light-glow {
+  opacity: 0.9;
+}
+
+/* Eco Shield */
+#l9-eco-shield {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.eco-running #l9-eco-shield {
+  opacity: 0.9;
+}
+
+/* Plant Bounce */
+.water-running .plant-item {
+  animation: l9-bounce 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes l9-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+
+/* Make Next step button pulse gently when waiting for user click */
+#stepbar:not([hidden]) #step:not(:disabled) {
+  animation: l9-step-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes l9-step-pulse {
+  0%, 100% { box-shadow: 0 3px 0 var(--primary-dark), 0 0 0 rgba(30, 58, 138, 0); }
+  50% { box-shadow: 0 3px 0 var(--primary-dark), 0 0 10px rgba(30, 58, 138, 0.35); }
+}
