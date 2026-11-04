@@ -148,8 +148,19 @@ ta.addEventListener("keydown", e => {
     e.preventDefault();
     const s = ta.selectionStart, ls = ta.value.lastIndexOf("\n", s - 1) + 1, line = ta.value.slice(ls, s);
     let ind = line.match(/^ */)[0];
-    if (line.trim().endsWith(":")) ind += "    ";
+    if (line.trim().endsWith(":") && !line.trimStart().startsWith("#")) ind += "    ";
     ins("\n" + ind);
+  }
+  else if (e.key == "Backspace") {
+    const s = ta.selectionStart;
+    if (ta.selectionStart == ta.selectionEnd && s > 0) {
+      const lineStart = ta.value.lastIndexOf("\n", s - 1) + 1;
+      const beforeCursor = ta.value.slice(lineStart, s);
+      if (/^ +$/.test(beforeCursor) && beforeCursor.length % 4 === 0) {
+        e.preventDefault();
+        ta.setRangeText("", s - 4, s, "end");
+      }
+    }
   }
 });
 els.keys.addEventListener("click", e => {
