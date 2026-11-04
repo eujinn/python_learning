@@ -6,7 +6,6 @@
 let root;
 let currentInventory = [];
 let selectedSlot = null;
-let lastHighlightedSlot = null;
 
 const ITEM_ICONS = {
   potion: "🧪",
@@ -41,7 +40,6 @@ function getIcon(itemName) {
 export function init(container) {
   root = container;
   selectedSlot = null;
-  lastHighlightedSlot = null;
   currentInventory = ["potion", "map", "torch"];
 
   root.innerHTML = `
@@ -193,6 +191,7 @@ function renderInventory(items, options = {}) {
 
 function selectSlot(index, item) {
   selectedSlot = index;
+  if (!root) return;
   const allSlots = root.querySelectorAll(".bp-slot");
   allSlots.forEach(s => s.classList.remove("inspected"));
 
@@ -212,7 +211,6 @@ function selectSlot(index, item) {
 
 export function render(env) {
   if (!root) return;
-  // Look for inventory or any array variable in env
   let list = null;
   if (env && Array.isArray(env.inventory)) {
     list = env.inventory;
@@ -226,16 +224,29 @@ export function render(env) {
   }
 
   if (list) {
-    const isNew = list.length > currentInventory.length;
+    let swappedIndex = null;
+    let newlyAddedIndex = null;
+
+    if (list.length > currentInventory.length && currentInventory.length > 0) {
+      newlyAddedIndex = list.length - 1;
+    } else if (list.length === currentInventory.length && currentInventory.length > 0) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i] !== currentInventory[i]) {
+          swappedIndex = i;
+          break;
+        }
+      }
+    }
+
     renderInventory(list, {
-      newlyAddedIndex: isNew ? list.length - 1 : null
+      swappedIndex,
+      newlyAddedIndex
     });
   }
 }
 
 export function reset() {
   selectedSlot = null;
-  lastHighlightedSlot = null;
   if (root) {
     const allSlots = root.querySelectorAll(".bp-slot");
     allSlots.forEach(s => {
@@ -246,20 +257,74 @@ export function reset() {
   }
 }
 
-export async function play(name, { setBubble }) {
+export async function play(name, ctx = {}) {
   if (!root) return;
+  const setBubble = ctx.setBubble;
 
   if (name === "print") {
-    // When print executes, animate a gentle glow pulse across slots
-    if (setBubble) setBubble("🔍 print() reads and inspects your backpack item!");
-    const slots = root.querySelectorAll(".bp-slot");
-    slots.forEach(s => s.classList.add("highlight-glow"));
-    await new Promise(r => setTimeout(r, 450));
-    slots.forEach(s => s.classList.remove("highlight-glow"));
+    // Determine the specific slot being accessed/printed
+    let targetIndex = null;
+
+    // 1. Inspect the actively highlighted trace line in #view
+    const hlLine = document.querySelector("#view .ln.hl");
+    const lineText = hlLine ? hlLine.textContent : "";
+    const idxMatch = lineText.match(/\[\s*(\d+)\s*\]/);
+    if (idxMatch) {
+      targetIndex = parseInt(idxMatch[1], 10);
+    }
+
+    // 2. If not found in trace text, check ctx.args / ctx.event.args
+    const args = ctx.args || (ctx.event && ctx.event.args);
+    if (targetIndex === null && Array.isArray(args) && args.length > 0) {
+      const printedVal = args[0];
+      const matchIdx = currentInventory.indexOf(printedVal);
+      if (matchIdx !== -1) {
+        targetIndex = matchIdx;
+      }
+    }
+
+    // 3. Fallback: check #code editor line by line number from ctx.event.n or hlLine
+    if (targetIndex === null) {
+      const lineNum = (ctx.event && ctx.event.n) || (hlLine ? parseInt(hlLine.dataset.n, 10) : null);
+      const codeEl = document.getElementById("code");
+      if (codeEl && lineNum) {
+        const lines = codeEl.value.split("\n");
+        const codeLine = lines[lineNum - 1] || "";
+        const m = codeLine.match(/\[\s*(\d+)\s*\]/);
+        if (m) targetIndex = parseInt(m[1], 10);
+      }
+    }
+
+    // Clear previous glow
+    const allSlots = root.querySelectorAll(".bp-slot");
+    allSlots.forEach(s => s.classList.remove("highlight-glow"));
+
+    // Highlight ONLY the specific slot that was printed!
+    if (targetIndex !== null && targetIndex >= 0 && targetIndex < currentInventory.length) {
+      const slotEl = root.querySelector(`.bp-slot[data-index="${targetIndex}"]`);
+      if (slotEl) {
+        slotEl.classList.add("highlight-glow");
+        selectSlot(targetIndex, currentInventory[targetIndex]);
+        if (setBubble) setBubble(`🔍 print(inventory[${targetIndex}]) ➔ "${currentInventory[targetIndex]}"`);
+      }
+    } else {
+      // General print fallback if whole inventory is printed
+      allSlots.forEach(s => s.classList.add("highlight-glow"));
+      if (setBubble) setBubble("🔍 print() reads backpack!");
+    }
+
+    await new Promise(r => setTimeout(r, 650));
+    allSlots.forEach(s => s.classList.remove("highlight-glow"));
     if (setBubble) setBubble("");
   } else if (name && name.includes("append")) {
-    if (setBubble) setBubble("💎 .append() placed a new item into the end of your backpack!");
-    await new Promise(r => setTimeout(r, 450));
+    const lastIdx = Math.max(0, currentInventory.length - 1);
+    const slotEl = root.querySelector(`.bp-slot[data-index="${lastIdx}"]`);
+    if (slotEl) {
+      slotEl.classList.add("newly-added", "highlight-glow");
+    }
+    if (setBubble) setBubble(`💎 .append() added a new item to slot [${lastIdx}]!`);
+    await new Promise(r => setTimeout(r, 650));
+    if (slotEl) slotEl.classList.remove("highlight-glow");
     if (setBubble) setBubble("");
   } else {
     if (setBubble) setBubble(`▶ ${name}()`);
