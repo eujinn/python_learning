@@ -220,8 +220,6 @@ function applyGuidedForLesson(i, reset) {
 /* ---- Step-through runner ---------------------------------------------- */
 function exitStep() {
   st.S = null;
-  st.running = false;
-  if (els.step) els.step.disabled = false;
   els.view.hidden = true;
   els.code.hidden = false;
   els.keys.hidden = false;
@@ -334,8 +332,7 @@ function finish() {
 }
 
 function skip() {
-  if (!st.S) return;
-  st.running = false;
+  if (!st.S || st.running) return;
   for (let i = st.S.rows; i < st.S.T.length; i++) addRow(i);
   finish();
 }
@@ -347,84 +344,53 @@ async function step() {
     else finish();
     return;
   }
-  const t = st.S.T[st.S.si], X = els.expl;
-
-  if (!t.ev || t.ev.length === 0) {
-    st.S.testDone = true;
-    addRow(st.S.si);
-    hl(0);
-    X.textContent = "No actions or condition checks were executed." +
-      (st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code executed nothing."));
-    els.step.textContent = st.S.si < st.S.T.length - 1 ? "Next test ▶" : "See results ▶";
-    return;
-  }
-
-  const e = t.ev[++st.S.ei];
-  if (!e) {
-    st.S.testDone = true;
-    addRow(st.S.si);
-    hl(0);
-    els.step.textContent = st.S.si < st.S.T.length - 1 ? "Next test ▶" : "See results ▶";
-    return;
-  }
-
+  const t = st.S.T[st.S.si], e = t.ev[++st.S.ei], X = els.expl;
   st.running = true;
   els.step.disabled = true;
-  try {
-    hl(e.n);
-    const labels = st.moduleInfo.labels || {};
+  hl(e.n);
+  const labels = st.moduleInfo.labels || {};
 
-    if (e.k == "cond") {
-      const ex = exprOf(e.s), u = used(ex, e.env), q = "Is " + ex + "?  (" + u + ")";
-      setBubble("🤔 " + ex + " ?");
-      X.textContent = q;
-      await sleep(400);
-      if (!st.S) return;
-      setBubble(e.r ? "✅ True" : "❌ False");
-      X.textContent = q + (e.r ? "  → ✅ True! Run the lines inside." : "  → ❌ False. Skip the lines inside.");
-    } else if (e.k == "set") {
-      if (st.api.render) st.api.render(e.env);
-      setBubble("💾 " + e.key + " = " + py(e.val));
-      X.textContent = "Save! " + e.key + " is now " + py(e.val) + ". One = means “save this value”.";
-    } else if (e.k == "else") {
-      setBubble("↪️ else");
-      X.textContent = "None of the questions above were True, so the else lines run.";
-    } else if (e.k == "for") {
-      if (st.api.render) st.api.render(e.env);
-      setBubble("🔁 " + e.var + " = " + py(e.val));
-      X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
+  if (e.k == "cond") {
+    const ex = exprOf(e.s), u = used(ex, e.env), q = "Is " + ex + "?  (" + u + ")";
+    setBubble("🤔 " + ex + " ?");
+    X.textContent = q;
+    await sleep(900);
+    setBubble(e.r ? "✅ True" : "❌ False");
+    X.textContent = q + (e.r ? "  → ✅ True! Run the lines inside." : "  → ❌ False. Skip the lines inside.");
+  } else if (e.k == "set") {
+    if (st.api.render) st.api.render(e.env);
+    setBubble("💾 " + e.key + " = " + py(e.val));
+    X.textContent = "Save! " + e.key + " is now " + py(e.val) + ". One = means “save this value”.";
+  } else if (e.k == "else") {
+    setBubble("↪️ else");
+    X.textContent = "None of the questions above were True, so the else lines run.";
+  } else if (e.k == "for") {
+    if (st.api.render) st.api.render(e.env);
+    setBubble("🔁 " + e.var + " = " + py(e.val));
+    X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
+  } else {
+    const callOut = (e.args && e.args.length)
+      ? e.args.map(a => a === undefined || a === null ? "None" : String(a)).join(" ")
+      : undefined;
+    if (callOut !== undefined) {
+      const shown = callOut.length > 40 ? callOut.slice(0, 40) + "…" : callOut;
+      X.textContent = "Cast " + e.f + "() → “" + shown + "”! " + (labels[e.f] || "");
     } else {
-      const callOut = (e.args && e.args.length)
-        ? e.args.map(a => a === undefined || a === null ? "None" : String(a)).join(" ")
-        : undefined;
-      if (callOut !== undefined) {
-        const shown = callOut.length > 40 ? callOut.slice(0, 40) + "…" : callOut;
-        X.textContent = "Cast " + e.f + "() → “" + shown + "”! " + (labels[e.f] || "");
-      } else {
-        X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
-      }
-      if (st.api.play) await st.api.play(e.f, { setBubble, out: callOut });
-      else setBubble("▶ " + e.f + "()");
-      if (!st.S) return;
+      X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
     }
-
-    if (st.S && st.S.ei >= t.ev.length - 1) {
-      st.S.testDone = true;
-      addRow(st.S.si);
-      hl(0);
-      X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing") + ".");
-    }
-  } catch (err) {
-    console.error("Step execution error:", err);
-  } finally {
-    st.running = false;
-    if (els.step) {
-      els.step.disabled = false;
-      if (st.S) {
-        els.step.textContent = st.S.testDone ? (st.S.si < st.S.T.length - 1 ? "Next test ▶" : "See results ▶") : "Next step ▶";
-      }
-    }
+    if (st.api.play) await st.api.play(e.f, { setBubble, out: callOut });
+    else setBubble("▶ " + e.f + "()");
   }
+
+  if (st.S.ei >= t.ev.length - 1) {
+    st.S.testDone = true;
+    addRow(st.S.si);
+    hl(0);
+    X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing") + ".");
+  }
+  st.running = false;
+  els.step.disabled = false;
+  els.step.textContent = st.S.testDone ? (st.S.si < st.S.T.length - 1 ? "Next test ▶" : "See results ▶") : "Next step ▶";
 }
 
 /* ---- Lesson navigation & rendering ------------------------------------ */
