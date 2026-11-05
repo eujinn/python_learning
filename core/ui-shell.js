@@ -503,6 +503,9 @@ async function loadModule(id) {
     els.vars.textContent = info.idleText || "The program is waiting for your code.";
     els.expl.textContent = "Press Run to watch your code, one step at a time.";
     updateProgressHeader(els, st.done, info.badges || [], st.LESSONS);
+    els.sceneRoot.hidden = false;
+    const s = document.querySelector("style");
+    if (s && s.textContent.includes("body { display: none")) s.remove();
     load(0);
   } catch (err) {
     console.error("Failed to load module", id, err);
