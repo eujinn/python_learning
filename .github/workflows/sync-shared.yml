@@ -8,9 +8,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Case 1: shared files changed on a module/* branch → create/update PR to main
+  # Case 1: shared files changed on a curriculum module branch → create/update PR to main
   sync-to-main:
-    if: startsWith(github.ref_name, 'module/') && github.actor != 'github-actions[bot]'
+    if: startsWith(github.ref_name, 'module/l') && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +108,7 @@ jobs:
         run: |
           REPO="${{ github.repository }}"
 
-          gh api "repos/$REPO/branches" --paginate --jq '.[] | select(.name | startswith("module/")) | .name' > /tmp/module-branches.txt
+          gh api "repos/$REPO/branches" --paginate --jq '.[] | select(.name | test("^module/l[0-9]+_")) | .name' > /tmp/module-branches.txt
 
           while IFS= read -r MOD_BRANCH; do
             [ -z "$MOD_BRANCH" ] && continue
