@@ -1,0 +1,66 @@
+name: 🐛 Bug Report
+description: Report a problem you encountered while using Python Playground
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Python Playground! Please fill in as much as you can.
+  - type: dropdown
+    id: module
+    attributes:
+      label: Which module were you using?
+      options:
+        - l1_pyprint
+        - l3_variable
+        - l8_comparison_ops
+        - l9_compare_bool
+        - l12_for_loop
+        - l14_list
+        - l15_list_for_loop
+        - l16_while_loop
+        - l17_while_challenge
+        - l18_input_interactive
+        - l19_ai_challenge
+        - Other / Not sure
+    validations:
+      required: true
+  - type: input
+    id: exercise
+    attributes:
+      label: Exercise number
+      description: Which exercise (1–20)? Leave blank if unknown.
+      placeholder: "e.g. 7"
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug or unexpected behaviour in detail.
+      placeholder: |
+        When I ran my code, the simulation showed…
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open exercise …
+        2. Type this code: …
+        3. Press Run
+        4. …
+  - type: textarea
+    id: code
+    attributes:
+      label: Your code
+      description: Paste the code that caused the problem (if any).
+      render: python
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device type
+      options: [Desktop/Chrome, Desktop/Safari, Desktop/Firefox, Phone/Android, Phone/iPhone, Tablet, Other]
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?

@@ -1,0 +1,24 @@
+name: ✨ Feature Request
+description: Suggest a new lesson, exercise, or improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to see?
+      description: Describe your idea for a new lesson, exercise, or platform feature.
+      placeholder: |
+        e.g. A lesson where kids program a robot to water plants,
+        teaching care for the Earth…
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: How does it help students?
+      description: Which life value does it support — loving yourself, others, or the Earth?
+  - type: input
+    id: who
+    attributes:
+      label: Who is it for?
+      placeholder: "e.g. age 9–10, beginners"

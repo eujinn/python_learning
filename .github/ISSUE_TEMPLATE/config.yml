@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a Question
+    url: https://github.com/eujinn/python_learning/discussions
+    about: For questions about using Python Playground, ask here instead.
