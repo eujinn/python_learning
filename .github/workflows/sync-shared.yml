@@ -1,0 +1,110 @@
+name: Sync shared infrastructure
+
+on:
+  push:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Case 1: shared files changed on a curriculum module branch → push them to main
+  sync-to-main:
+    if: startsWith(github.ref_name, 'module/l') && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for shared file changes
+        id: check
+        run: |
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          MERGE_BASE=$(git merge-base HEAD origin/main)
+          CHANGED=$(git diff --name-only "$MERGE_BASE" HEAD -- $SHARED)
+          if [ -n "$CHANGED" ]; then
+            echo "has_shared=true" >> $GITHUB_OUTPUT
+            echo "$CHANGED" > /tmp/changed-files.txt
+          else
+            echo "has_shared=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push shared changes to main
+        if: steps.check.outputs.has_shared == 'true'
+        run: |
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          SRC_SHA=$(git rev-parse HEAD)
+          git fetch origin main
+          git checkout -B sync-tmp origin/main
+          git rm -rq --ignore-unmatch -f $SHARED 2>/dev/null || true
+          git checkout "$SRC_SHA" -- $SHARED
+          git add $SHARED
+
+          if git diff --cached --quiet; then
+            echo "Shared files already identical to main — nothing to push"
+            exit 0
+          fi
+
+          git commit -m "sync shared infrastructure from ${{ github.ref_name }}" \
+            -m "$(cat /tmp/changed-files.txt)"
+          git push origin HEAD:main
+
+  # Case 2: shared files changed on main → push them directly into every curriculum branch
+  sync-from-main:
+    if: github.ref_name == 'main' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push shared files into every curriculum branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          REPO="${{ github.repository }}"
+          MAIN_SHA=$(git rev-parse HEAD)
+
+          gh api "repos/$REPO/branches" --paginate \
+            --jq '.[] | select(.name | test("^module/l[0-9]+_")) | .name' \
+            > /tmp/module-branches.txt
+
+          synced=0
+          while IFS= read -r MOD_BRANCH; do
+            [ -z "$MOD_BRANCH" ] && continue
+            echo "::group::Sync to $MOD_BRANCH"
+
+            git fetch origin "$MOD_BRANCH"
+            git checkout -B sync-tmp "origin/$MOD_BRANCH"
+
+            git rm -rq --ignore-unmatch -f $SHARED 2>/dev/null || true
+            git checkout "$MAIN_SHA" -- $SHARED
+            git add $SHARED
+
+            if git diff --cached --quiet; then
+              echo "Already in sync — skipping"
+              echo "::endgroup::"
+              continue
+            fi
+
+            CHANGED_FILES=$(git diff --cached --name-only)
+            git commit -m "sync shared infrastructure from main" -m "$CHANGED_FILES"
+            git push origin HEAD:"$MOD_BRANCH"
+            echo "Pushed to $MOD_BRANCH"
+            synced=$((synced + 1))
+            echo "::endgroup::"
+          done < /tmp/module-branches.txt
+
+          echo "Synced $synced branch(es)"
