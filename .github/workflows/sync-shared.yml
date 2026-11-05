@@ -3,6 +3,10 @@ name: Sync shared infrastructure
 on:
   push:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   # Case 1: shared files changed on a non-main branch → create/update PR to main
   sync-to-main:
