@@ -265,3 +265,15 @@ header {
     padding: 0 12px;
   }
 }
+
+/* Report Issue button — subtle red accent */
+.btn-3d.btn-issue {
+  border-color: #fca5a5;
+  color: #991b1b;
+  box-shadow: 0 3px 0 #f87171;
+  background: #fef2f2;
+}
+.btn-3d.btn-issue:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
