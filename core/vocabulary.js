@@ -38,7 +38,7 @@ export function renderVocabulary(lesson) {
     const lbl = document.createElement("span");
     lbl.style.fontSize = ".85rem";
     lbl.style.fontWeight = "700";
-    lbl.style.color = "var(--muted)";
+    lbl.style.color = "var(--ink-muted)";
     lbl.textContent = "🔑 Python Words (tap to explain):";
     vBar.appendChild(lbl);
     lesson.vocabulary.forEach(v => {

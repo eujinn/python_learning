@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="./css/base.css">
 <link rel="stylesheet" href="./css/layout.css">
 <link rel="stylesheet" href="./css/editor.css">
+<link rel="stylesheet" href="./css/typing-guide.css">
 <link rel="stylesheet" href="./css/stage.css">
 <link rel="stylesheet" href="./css/modals.css">
 </head>
@@ -20,6 +21,8 @@
       </div>
       <button class="btn-3d btn-journey" id="journeyBtn">📋 Learning Record</button>
       <button class="btn-3d btn-teacher" id="teacherBtn">👩‍🏫 Teacher Mode</button>
+      <button class="btn-3d btn-issue" id="issueBtn" title="Report a bug or suggest an improvement">🐛 Report Issue</button>
+      <img class="header-logo" src="./assets/tzuchi_logo.png" alt="Tzu Chi logo" width="75" height="40">
     </div>
   </div>
   <div class="header-sub">
@@ -42,22 +45,6 @@
   </div>
   <h2 class="mission-title" id="title"></h2>
   <p class="mission-story" id="task"></p>
-
-  <!-- Teacher Mode Control Drawer (hidden in normal student view) -->
-  <div class="t-drawer" id="teacherDrawer" hidden>
-    <div class="t-drawer-hdr">
-      <span>👩‍🏫 Teacher Mode Controls</span>
-      <button class="t-act" id="lockTeacherBtn">🔒 Exit Teacher Mode</button>
-    </div>
-    <div class="t-actions">
-      <button class="t-act" id="tRevealBtn">1. Reveal Solution</button>
-      <button class="t-act" id="tNotesBtn">2. Show Teaching Notes</button>
-      <button class="t-act" id="tDemoBtn">3. Demonstrate Step Execution</button>
-      <button class="t-act" id="tTestsBtn">4. Show Expected Test Results</button>
-      <button class="t-act" id="tResetBtn">5. Reset Student View</button>
-    </div>
-    <div class="t-out" id="teacherOut" hidden></div>
-  </div>
 
   <!-- Learn First teaching system (closed by default to keep screen compact) -->
   <div class="learn-drawer closed" id="learnCard">
@@ -82,10 +69,24 @@
   <button id="peek" hidden style="display:none">Show the answer 👀</button>
   <pre id="ex" hidden></pre>
 
-  <!-- Python Code Input Editor (line-number gutter + textarea) -->
+  <!-- Python Code Input Editor (line-number gutter + textarea + guided overlay) -->
+  <div class="mode-toggle-bar" id="modeBar" hidden>
+    <div class="mode-pills">
+      <button class="mode-btn" id="freeModeBtn">💻 Free Editor</button>
+      <button class="mode-btn active" id="guidedModeBtn">⌨️ Guided Typing</button>
+    </div>
+    <span class="tg-progress-pill" id="tgProgressPill" hidden>0 / 0</span>
+  </div>
+
+  <div class="tg-clue-card" id="tgClueCard" hidden>
+    <div class="tg-clue-icon">🕵️</div>
+    <div class="tg-clue-text" id="tgClueText">Follow the glowing cursor to type each character!</div>
+  </div>
+
   <div class="editor-shell" id="editorShell">
     <div class="editor-gutter" id="editorGutter" aria-hidden="true"></div>
     <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Type your Python code here"></textarea>
+    <div class="tg-display" id="tgDisplay" hidden aria-label="Guided typing display"></div>
   </div>
 
   <!-- Quick-Insert Python Toolbar -->
@@ -101,7 +102,15 @@
 </section>
 
 <!-- RIGHT COLUMN: SIMULATION, THINKING TRACE, AND NEXT STEP CONTROLS -->
-<section class="card-panel">
+<section class="card-panel stage-panel" id="stagePanel">
+  <!-- Aphorism overlay: shown when the student's code has a syntax/runtime error -->
+  <div class="aphorism-overlay" id="aphorismOverlay" hidden>
+    <div class="aphorism-box">
+      <div class="aphorism-label">静思语 · Jing Si Aphorism</div>
+      <p class="aphorism-text" id="aphorismText"></p>
+      <div class="aphorism-hint">Fix the code on the left, then run again.</div>
+    </div>
+  </div>
   <!-- Module injects its scene DOM here -->
   <div id="module-scene"></div>
   <div class="legend" id="legend"></div>
@@ -127,6 +136,15 @@
 </section>
 </main>
 
+<!-- Bottom advertisement board: slow left-to-right ticker -->
+<div class="ticker" role="marquee" aria-label="知识要用心体会，才能变成自己的智慧。 Knowledge must be truly felt to become your own wisdom.">
+  <div class="ticker-track">
+    <span class="ticker-item">知识要用心体会，才能变成自己的智慧。</span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">Knowledge must be truly felt to become your own wisdom.</span>
+  </div>
+</div>
+
 <!-- Learning Record Modal -->
 <div class="modal-bg" id="journeyModal" hidden>
   <div class="modal-box">
@@ -145,15 +163,46 @@
 <div class="modal-bg" id="teacherModal" hidden>
   <div class="modal-box">
     <button class="modal-x" id="closeTeacherBtn">✕</button>
-    <h3 style="margin:0 0 6px">👩‍🏫 Teacher Mode Authentication</h3>
-    <p style="margin:0 0 12px;color:var(--ink-muted);font-size:.92rem">Enter the teacher password to access solutions, teaching notes, and step demonstrations.</p>
+    <h3 style="margin:0 0 6px">👩‍🏫 Teacher Authentication</h3>
+    <p style="margin:0 0 12px;color:var(--ink-muted);font-size:.92rem">Enter the teacher password to unlock classroom tools, teaching notes, and guided-typing settings.</p>
     <form id="teacherAuthForm" onsubmit="return false;">
       <input type="password" id="teacherPwdInput" placeholder="Enter teacher password" autocomplete="off">
       <div class="action-row" style="justify-content:flex-end">
-        <button type="submit" class="btn-3d btn-teacher unlocked" id="teacherUnlockSubmit">Unlock Teacher Mode</button>
+        <button type="submit" class="btn-3d btn-teacher unlocked" id="teacherUnlockSubmit">Unlock</button>
       </div>
       <div id="teacherAuthError" hidden>Incorrect password. Please try again.</div>
     </form>
+  </div>
+</div>
+
+<!-- Teacher Mode Controls (overlay shown after authentication) -->
+<div class="modal-bg" id="teacherDrawer" hidden>
+  <div class="modal-box teacher-panel-box">
+    <button class="modal-x" id="closeTeacherPanelBtn">✕</button>
+    <div class="t-drawer-hdr">
+      <span>👩‍🏫 Teacher Mode Controls</span>
+      <button class="t-act" id="lockTeacherBtn">🔒 Exit Teacher Mode</button>
+    </div>
+    <div class="t-actions">
+      <button class="t-act" id="tRevealBtn">1. Reveal Solution</button>
+      <button class="t-act" id="tNotesBtn">2. Show Teaching Notes</button>
+      <button class="t-act" id="tDemoBtn">3. Demonstrate Step Execution</button>
+      <button class="t-act" id="tTestsBtn">4. Show Expected Test Results</button>
+      <button class="t-act" id="tResetBtn">5. Reset Student View</button>
+    </div>
+    <div class="t-out" id="teacherOut" hidden></div>
+
+    <!-- Guided Typing control: choose which exercises get the typing guide -->
+    <div class="tg-teacher-panel" id="tgTeacherPanel">
+      <b>6. Guided Typing — choose exercises for this module</b>
+      <div class="tg-checklist" id="tgExerciseList"></div>
+      <div class="tg-panel-actions">
+        <button class="t-act" id="tgSelectAll">Select all</button>
+        <button class="t-act" id="tgClearAll">Clear</button>
+        <button class="t-act" id="tgApply">Apply</button>
+      </div>
+      <div class="tg-apply-msg" id="tgApplyMsg"></div>
+    </div>
   </div>
 </div>
 

@@ -5,14 +5,21 @@
    ========================================================================= */
 
 import { PyErr, parse, tr, py } from "./engine.js";
-import { adaptLesson, label, exprOf, used, matchesWant, describeWant } from "./lessons.js";
-import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal } from "./progress.js";
+import { adaptLesson, label, exprOf, used, describeWant } from "./lessons.js";
+import { checkWant, checkExpect, checkConstraints, checkAll } from "./assertions.js";
+import { loadSavedProgress, saveProgress, updateProgressHeader, renderLearningRecordModal, isUnlocked } from "./progress.js";
 import { resetHints, advanceHint } from "./hints.js";
 import { renderLearnFirst, renderVocabulary } from "./vocabulary.js";
 import { renderGutter } from "./editor.js";
+import { initEditorScrollSync } from "./editor.js";
+import { loadAphorisms, randomAphorism } from "./aphorisms.js";
+import {
+  setTypingLesson, getTargetCode, renderTypingDisplay, evaluateTyping, setGuidedMode, getGuidedMode
+} from "./typing-guide.js";
 import {
   verifyTeacherPassword, setTeacherMode, renderTeacherSolution, renderTeacherNotes,
-  demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive
+  demonstrateStepExecution, renderExpectedTestResults, resetStudentView, isTeacherActive,
+  isGuidedExercise, renderGuidedTypingPanel
 } from "./teacher.js";
 
 /* ---- DOM elements ----------------------------------------------------- */
@@ -28,6 +35,7 @@ const els = {
   task: document.getElementById("task"),
   teacherBtn: document.getElementById("teacherBtn"),
   teacherDrawer: document.getElementById("teacherDrawer"),
+  closeTeacherPanelBtn: document.getElementById("closeTeacherPanelBtn"),
   lockTeacherBtn: document.getElementById("lockTeacherBtn"),
   teacherOut: document.getElementById("teacherOut"),
   tRevealBtn: document.getElementById("tRevealBtn"),
@@ -56,6 +64,19 @@ const els = {
   next: document.getElementById("next"),
   msg: document.getElementById("msg"),
   reflBox: document.getElementById("reflBox"),
+  editorShell: document.getElementById("editorShell"),
+  modeBar: document.getElementById("modeBar"),
+  freeModeBtn: document.getElementById("freeModeBtn"),
+  guidedModeBtn: document.getElementById("guidedModeBtn"),
+  tgProgressPill: document.getElementById("tgProgressPill"),
+  tgClueCard: document.getElementById("tgClueCard"),
+  tgClueText: document.getElementById("tgClueText"),
+  tgDisplay: document.getElementById("tgDisplay"),
+  tgExerciseList: document.getElementById("tgExerciseList"),
+  tgSelectAll: document.getElementById("tgSelectAll"),
+  tgClearAll: document.getElementById("tgClearAll"),
+  tgApply: document.getElementById("tgApply"),
+  tgApplyMsg: document.getElementById("tgApplyMsg"),
   sceneRoot: document.getElementById("module-scene"),
   legend: document.getElementById("legend"),
   view: document.getElementById("view"),
@@ -66,13 +87,16 @@ const els = {
   edit: document.getElementById("edit"),
   vars: document.getElementById("vars"),
   res: document.getElementById("res"),
+  aphorismOverlay: document.getElementById("aphorismOverlay"),
+  aphorismText: document.getElementById("aphorismText"),
   journeyBtn: document.getElementById("journeyBtn"),
   journeyModal: document.getElementById("journeyModal"),
   closeJourneyBtn: document.getElementById("closeJourneyBtn"),
   journeySummary: document.getElementById("journeySummary"),
   skillList: document.getElementById("skillList"),
   badgeGrid: document.getElementById("badgeGrid"),
-  nextSkillBanner: document.getElementById("nextSkillBanner")
+  nextSkillBanner: document.getElementById("nextSkillBanner"),
+  issueBtn: document.getElementById("issueBtn")
 };
 
 /* ---- Shared runner state --------------------------------------------- */
@@ -95,10 +119,29 @@ const setBubble = txt => {
 const msg = (t, c) => { const m = els.msg; m.className = "msg " + c; m.textContent = t; };
 const hl = n => els.view.querySelectorAll(".ln").forEach(d => d.classList.toggle("hl", +d.dataset.n === n));
 
+/* ---- Aphorism overlay (shown on a code error) ------------------------- */
+const hideAphorism = () => { if (els.aphorismOverlay) els.aphorismOverlay.hidden = true; };
+const showAphorism = () => {
+  if (!els.aphorismOverlay) return;
+  if (els.aphorismText) els.aphorismText.textContent = randomAphorism();
+  els.aphorismOverlay.hidden = false;
+};
+
 /* ---- Editor helpers (Tab, smart Enter, virtual keys) ------------------ */
 const ta = els.code;
-function ins(t) { ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end"); ta.focus(); }
-ta.addEventListener("input", renderGutter);
+function ins(t) {
+  ta.setRangeText(t, ta.selectionStart, ta.selectionEnd, "end");
+  ta.focus();
+  if (getGuidedMode()) updateTypingUI();
+}
+ta.addEventListener("input", () => { renderGutter(); hideAphorism(); if (getGuidedMode()) updateTypingUI(); });
+ta.addEventListener("paste", e => {
+  if (getGuidedMode()) {
+    e.preventDefault();
+    if (els.tgClueCard) els.tgClueCard.hidden = false;
+    if (els.tgClueText) els.tgClueText.textContent = "🛡️ Type it by hand, never copy-paste! Muscle memory builds real skill.";
+  }
+});
 ta.addEventListener("keydown", e => {
   if (e.key == "Tab") { e.preventDefault(); ins("    "); }
   else if (e.key == "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
@@ -106,8 +149,19 @@ ta.addEventListener("keydown", e => {
     e.preventDefault();
     const s = ta.selectionStart, ls = ta.value.lastIndexOf("\n", s - 1) + 1, line = ta.value.slice(ls, s);
     let ind = line.match(/^ */)[0];
-    if (line.trim().endsWith(":")) ind += "    ";
+    if (line.trim().endsWith(":") && !line.trimStart().startsWith("#")) ind += "    ";
     ins("\n" + ind);
+  }
+  else if (e.key == "Backspace") {
+    const s = ta.selectionStart;
+    if (ta.selectionStart == ta.selectionEnd && s > 0) {
+      const lineStart = ta.value.lastIndexOf("\n", s - 1) + 1;
+      const beforeCursor = ta.value.slice(lineStart, s);
+      if (/^ +$/.test(beforeCursor) && beforeCursor.length % 4 === 0) {
+        e.preventDefault();
+        ta.setRangeText("", s - 4, s, "end");
+      }
+    }
   }
 });
 els.keys.addEventListener("click", e => {
@@ -115,8 +169,54 @@ els.keys.addEventListener("click", e => {
   if (!b) return;
   ins(b.dataset.i);
   if (b.dataset.i == "()") ta.setSelectionRange(ta.selectionStart - 1, ta.selectionStart - 1);
+  else if (b.dataset.i == 'print("")') ta.setSelectionRange(ta.selectionStart - 2, ta.selectionStart - 2);
 });
 els.peek.onclick = () => { els.ex.hidden = !els.ex.hidden; };
+if (els.aphorismOverlay) els.aphorismOverlay.onclick = hideAphorism;
+if (els.freeModeBtn) els.freeModeBtn.onclick = () => switchEditorMode(false);
+if (els.guidedModeBtn) els.guidedModeBtn.onclick = () => switchEditorMode(true);
+if (els.tgDisplay) els.tgDisplay.onclick = () => els.code.focus();
+
+/* ---- Guided Typing controller ----------------------------------------- */
+function updateTypingUI() {
+  const isGuided = getGuidedMode();
+  if (els.freeModeBtn) els.freeModeBtn.classList.toggle("active", !isGuided);
+  if (els.guidedModeBtn) els.guidedModeBtn.classList.toggle("active", isGuided);
+  if (els.editorShell) els.editorShell.classList.toggle("guided", isGuided);
+
+  if (isGuided) {
+    const target = getTargetCode();
+    const res = evaluateTyping(target, els.code.value);
+    if (els.tgDisplay) { els.tgDisplay.hidden = false; renderTypingDisplay(els.tgDisplay, target, els.code.value); }
+    if (els.tgProgressPill) { els.tgProgressPill.hidden = false; els.tgProgressPill.textContent = res.progress + " / " + res.total; }
+    if (els.tgClueCard) els.tgClueCard.hidden = false;
+    if (els.tgClueText) els.tgClueText.textContent = res.clue || (res.isMatch ? "✅ Perfect! Press ▶ Run step by step." : "Follow the glowing cursor and type each character.");
+  } else {
+    if (els.tgDisplay) els.tgDisplay.hidden = true;
+    if (els.tgProgressPill) els.tgProgressPill.hidden = true;
+    if (els.tgClueCard) els.tgClueCard.hidden = true;
+  }
+}
+
+function switchEditorMode(guided) {
+  setGuidedMode(guided);
+  updateTypingUI();
+  if (els.code) els.code.focus();
+}
+
+function forceFreeMode() { switchEditorMode(false); }
+
+/* Turn guided typing on/off for the current exercise based on teacher config.
+   `reset` clears the editor for a fresh follow-along (used when loading an
+   exercise); manual Free/Guided toggles keep the student's current code. */
+function applyGuidedForLesson(i, reset) {
+  const available = st.moduleInfo && isGuidedExercise(st.moduleInfo.id, i, st.LESSONS);
+  st.guidedAvailable = !!available;
+  if (els.modeBar) els.modeBar.hidden = !available;
+  if (!available) { setGuidedMode(false); updateTypingUI(); return; }
+  if (reset) { els.code.value = ""; renderGutter(); }
+  switchEditorMode(true);
+}
 
 /* ---- Step-through runner ---------------------------------------------- */
 function exitStep() {
@@ -135,27 +235,30 @@ function run() {
   els.res.innerHTML = "";
   els.next.hidden = true;
   msg("", "");
+  hideAphorism();
   let prog;
   try {
-    prog = parse(els.code.value, L.names, st.moduleInfo.commands || []);
+    prog = parse(els.code.value, L.names, st.moduleInfo.commands || [], st.moduleInfo.allowedSyntax || []);
   } catch (e) {
-    if (e instanceof PyErr) { msg("🐞 " + e.message, "bad"); return; }
+    if (e instanceof PyErr) { msg("🐞 " + e.message, "bad"); showAphorism(); return; }
     throw e;
   }
   const T = [];
   for (const sc of (L.free ? [{}] : L.sc)) {
     const env0 = Object.assign({}, L.base || {}, sc);
-    delete env0.want; delete env0.label;
+    const testInputs = (sc.inputs || []).slice();
+    delete env0.want; delete env0.label; delete env0.expect; delete env0.constraints; delete env0.inputs;
     const env = Object.assign({}, env0), ev = [];
-    try { tr(prog, env, ev); }
-    catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); return; }
-    if (!ev.some(x => x.k == "call")) ev.push({ k: "call", n: 0, f: "go", auto: true });
-    const calls = ev.filter(x => x.k == "call").map(c => c.f);
+    const ctx = { gates: st.moduleInfo.allowedSyntax || [], commands: st.moduleInfo.commands || [], stdout: [], inputs: testInputs };
+    try { tr(prog, env, ev, ctx); }
+    catch (e) { msg("🐞 Something went wrong inside your spell.", "bad"); showAphorism(); return; }
+    const callEvents = ev.filter(x => x.k == "call");
+    const calls = callEvents.map(c => c.f);
+    const sigs = callEvents.map(c => c.args && c.args.length ? c.f + "(" + c.args.map(a => a === undefined || a === null ? "None" : String(a)).join(", ") + ")" : c.f + "()");
     const got = calls[calls.length - 1];
-    T.push({ sc, env0, ev, got, calls, good: L.free || matchesWant(sc.want, calls), lab: sc.label || label(env0) });
+    const result = checkAll(sc.want, sigs, sc.expect, sc.constraints, prog, ev, env, ctx);
+    T.push({ sc, env0, ev, got, calls, sigs, good: L.free || result.ok, lab: sc.label || label(env0), result });
   }
-  /* Lessons 4+ (0-indexed >= 3): an unseen auto "go" is not a pass. */
-  if (st.cur >= 3 && !L.free) T.forEach(t => { if (t.ev.some(e => e.auto)) t.good = false; });
 
   const v = els.view;
   v.innerHTML = "";
@@ -200,7 +303,12 @@ function addRow(i) {
     r.textContent = "✅ " + t.lab + " → " + (want == null ? describeWant(t.got) : describeWant(want));
   } else {
     const yourCalls = t.calls.length ? t.calls.map(c => c + "()").join(", ") : "nothing";
-    r.textContent = "❌ " + t.lab + " → " + yourCalls + "  (needed " + describeWant(want) + ")";
+    const failures = t.result && t.result.failures;
+    if (failures && failures.length) {
+      r.textContent = "❌ " + t.lab + " → " + failures.join("; ");
+    } else {
+      r.textContent = "❌ " + t.lab + " → " + yourCalls + "  (needed " + describeWant(want) + ")";
+    }
   }
   els.res.appendChild(r);
   st.S.rows = i + 1;
@@ -215,7 +323,7 @@ function finish() {
     tabs();
     msg("🎉 Every test passed!", "ok");
     if (st.cur < st.LV.length - 1) els.next.hidden = false;
-    saveProgress(st.moduleInfo.id, st.done, st.moduleInfo.badges || []);
+    saveProgress(st.moduleInfo.id, st.done, st.moduleInfo.badges || [], st.LESSONS);
     updateProgressHeader(els, st.done, st.moduleInfo.badges || [], st.LESSONS);
     els.reflBox.hidden = false;
     els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[st.cur].studentReflection}"`;
@@ -262,8 +370,16 @@ async function step() {
     setBubble("🔁 " + e.var + " = " + py(e.val));
     X.textContent = "Start loop " + e.iter + "/" + e.total + ": save " + e.var + " = " + py(e.val) + " and run the lines inside.";
   } else {
-    X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
-    if (st.api.play) await st.api.play(e.f, { setBubble });
+    const callOut = (e.args && e.args.length)
+      ? e.args.map(a => a === undefined || a === null ? "None" : String(a)).join(" ")
+      : undefined;
+    if (callOut !== undefined) {
+      const shown = callOut.length > 40 ? callOut.slice(0, 40) + "…" : callOut;
+      X.textContent = "Cast " + e.f + "() → “" + shown + "”! " + (labels[e.f] || "");
+    } else {
+      X.textContent = e.auto ? "No spell was cast, so the program just continues." : "Cast " + e.f + "()! " + (labels[e.f] || "");
+    }
+    if (st.api.play) await st.api.play(e.f, { setBubble, out: callOut });
     else setBubble("▶ " + e.f + "()");
   }
 
@@ -284,16 +400,30 @@ function tabs() {
   st.LV.forEach((L, i) => {
     const b = document.createElement("button");
     b.className = "level-tab";
+    const open = isUnlocked(st.LESSONS, st.done, i);
     if (i == st.cur) b.classList.add("active");
     if (st.done.has(i)) b.classList.add("completed");
-    b.title = L.t;
-    b.textContent = i == st.LV.length - 1 ? "🎮" : (i + 1);
-    b.onclick = () => { if (!st.running) load(i); };
+    if (!open) {
+      b.classList.add("locked");
+      b.disabled = true;
+      b.setAttribute("aria-disabled", "true");
+      b.title = `Locked — pass Exercise ${i} to unlock`;
+    } else {
+      b.title = (L.tier ? L.tier + " · " : "") + L.t;
+      b.onclick = () => { if (!st.running) load(i); };
+    }
+    b.textContent = L.free ? "🎮" : (i + 1);
     els.tabs.appendChild(b);
   });
 }
 
 function load(i) {
+  if (i < 0 || i >= st.LV.length) return;
+  if (!isUnlocked(st.LESSONS, st.done, i)) {
+    msg(`🔒 Exercise ${i + 1} is locked. Pass the previous exercise first.`, "info");
+    return;
+  }
+  hideAphorism();
   exitStep();
   st.cur = i;
   const L = st.LV[i];
@@ -320,8 +450,13 @@ function load(i) {
   renderLearnFirst(st.LESSONS[i]);
   resetHints(els);
   renderVocabulary(st.LESSONS[i]);
+  setTypingLesson(st.LESSONS[i]);
+  applyGuidedForLesson(i, true);
   updateProgressHeader(els, st.done, st.moduleInfo.badges || [], st.LESSONS);
-  if (isTeacherActive()) renderTeacherNotes(els, st);
+  if (isTeacherActive()) {
+    renderTeacherNotes(els, st);
+    renderGuidedTypingPanel(els, st, () => applyGuidedForLesson(st.cur));
+  }
   tabs();
 }
 
@@ -371,7 +506,7 @@ async function loadModule(id) {
     load(0);
   } catch (err) {
     console.error("Failed to load module", id, err);
-    els.sceneRoot.innerHTML = "<p style='color:var(--bad)'>Failed to load module “" + id + "”. Check the module files.</p>";
+    els.sceneRoot.innerHTML = "<p style='color:var(--danger)'>Failed to load module “" + id + "”. Check the module files.</p>";
   }
 }
 
@@ -416,27 +551,61 @@ els.journeyBtn.onclick = () => {
 };
 els.closeJourneyBtn.onclick = () => { els.journeyModal.hidden = true; };
 
+els.issueBtn.onclick = () => {
+  const repo = "eujinn/python_learning";
+  const name = st.moduleInfo?.name || "unknown";
+  const idx  = st.cur !== undefined ? st.cur + 1 : "?";
+  const ttl  = st.LV[st.cur]?.t || "";
+  const url  = window.location.href;
+  const ua   = navigator.userAgent;
+  const body = [
+    "## Description",
+    "",
+    "",
+    "## Steps to Reproduce",
+    "1.",
+    "2.",
+    "3.",
+    "",
+    "## Environment",
+    "- **Module:** " + name + " (Exercise " + idx + " \u2014 " + ttl + ")",
+    "- **URL:** " + url,
+    "- **Browser:** " + ua,
+    "",
+    "## Expected Behavior",
+    "",
+    "## Actual Behavior",
+    "",
+    "## Screenshots / Code",
+  ].join("\n");
+  window.open(
+    "https://github.com/" + repo + "/issues/new?title=[" + name + "]%20&body=" + encodeURIComponent(body),
+    "_blank"
+  );
+};
+
 els.teacherBtn.onclick = () => {
-  if (isTeacherActive()) {
-    els.teacherDrawer.hidden = !els.teacherDrawer.hidden;
-  } else {
-    els.teacherPwdInput.value = "";
-    els.teacherAuthError.hidden = true;
-    els.teacherModal.hidden = false;
-    els.teacherPwdInput.focus();
-  }
+  if (isTeacherActive()) { els.teacherDrawer.hidden = false; return; }
+  els.teacherPwdInput.value = "";
+  els.teacherAuthError.hidden = true;
+  els.teacherModal.hidden = false;
+  els.teacherPwdInput.focus();
 };
 els.closeTeacherBtn.onclick = () => { els.teacherModal.hidden = true; };
-els.teacherAuthForm.onsubmit = () => {
+els.teacherAuthForm.onsubmit = (e) => {
+  if (e) e.preventDefault();
   if (verifyTeacherPassword(els.teacherPwdInput.value)) {
     els.teacherModal.hidden = true;
     setTeacherMode(true, els, st);
+    renderGuidedTypingPanel(els, st, () => applyGuidedForLesson(st.cur));
   } else {
     els.teacherAuthError.hidden = false;
+    els.teacherPwdInput.select();
   }
   return false;
 };
-els.lockTeacherBtn.onclick = () => setTeacherMode(false, els, st);
+els.lockTeacherBtn.onclick = () => { setTeacherMode(false, els, st); };
+els.closeTeacherPanelBtn.onclick = () => { setTeacherMode(false, els, st); };
 els.tRevealBtn.onclick = () => renderTeacherSolution(els, st);
 els.tNotesBtn.onclick = () => renderTeacherNotes(els, st);
 els.tDemoBtn.onclick = () => demonstrateStepExecution(els, st);
@@ -446,6 +615,9 @@ els.tResetBtn.onclick = () => resetStudentView(els, st, load);
 /* Expose runner entry points to teacher module */
 st.exitStep = exitStep;
 st.run = run;
+st.forceFreeMode = forceFreeMode;
 
 /* Boot */
+initEditorScrollSync();
+loadAphorisms();
 buildPicker();

@@ -8,6 +8,60 @@
   min-height: 0;
 }
 
+/* Right panel becomes the positioning context for the aphorism overlay */
+.stage-panel { position: relative; }
+
+/* Aphorism (Jing Si Aphorism) overlay shown on a code error */
+.aphorism-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(16, 35, 63, 0.72);
+  backdrop-filter: blur(3px);
+  border-radius: 17px;
+  cursor: pointer;
+  animation: aphorism-fade 0.25s ease;
+}
+.aphorism-overlay[hidden] { display: none; }
+.aphorism-box {
+  max-width: 420px;
+  background: var(--bg-card);
+  border: 3px solid var(--primary);
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.aphorism-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.aphorism-text {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink-main);
+  white-space: pre-line;
+}
+.aphorism-hint {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+@keyframes aphorism-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* Scene shell default (modules may override with their own .scene) */
 .scene {
   position: relative;
@@ -90,7 +144,7 @@
   padding: 7px 16px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  background: linear-gradient(180deg, #2a4f9e, #1e3a8a);
   border: 2px solid var(--primary-dark);
   box-shadow: 0 3px 0 var(--primary-dark);
 }
@@ -126,9 +180,9 @@
   margin: 0 4px 4px 0;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #e0f2fe;
-  color: #075985;
-  border: 1.5px solid #7dd3fc;
+  background: #e8edf4;
+  color: var(--primary);
+  border: 1.5px solid var(--border-strong);
   font-family: "JetBrains Mono", monospace;
   font-size: 0.82rem;
 }

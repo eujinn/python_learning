@@ -64,7 +64,7 @@ function sha256Hex(ascii) {
 
 /* SHA-256 digest of the teacher passcode (stored as hash only).
    Replace the value below with sha256Hex("your-passcode") to set your own. */
-const TEACHER_PWD_HASH = "0c86f6fcae03526fb40c2b75d792577c7bae7143b0d8f058e237f8cacfbd8b51";
+const TEACHER_PWD_HASH = "925da08610a49f94c6bdea9b4c1dce35a72e773bbdb133266b3e4d957df7d2c4";
 
 let teacherModeActive = false;
 
@@ -79,7 +79,7 @@ export function setTeacherMode(active, els, state) {
   els.teacherBtn.textContent = teacherModeActive ? "👩‍🏫 Teacher Mode (Active)" : "👩‍🏫 Teacher Mode";
   if (!teacherModeActive) {
     els.teacherOut.hidden = true;
-    els.teacherOut.innerHTML = "";
+    els.teacherOut.textContent = "";
     els.ex.textContent = "";
     els.ex.hidden = true;
     els.peek.hidden = true;
@@ -90,10 +90,10 @@ export function setTeacherMode(active, els, state) {
 
 export function renderTeacherSolution(els, state) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  out.innerHTML = "";
+  out.textContent = "";
   const title = document.createElement("b");
   title.textContent = `1. Canonical Solution (${lesson.title}):`;
   const pre = document.createElement("pre");
@@ -112,33 +112,75 @@ export function renderTeacherSolution(els, state) {
 
 export function renderTeacherNotes(els, state) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  const mistakes = (lesson.commonMistakes || []).length
-    ? `<br><b>Common Student Mistakes:</b> ${lesson.commonMistakes.join(" · ")}`
-    : "";
-  out.innerHTML = `<b>2. Teaching Notes (${lesson.concept}):</b><br>${lesson.teacherExplanation}${mistakes}`;
+  out.textContent = "";
+  const head = document.createElement("b");
+  head.textContent = `2. Teaching Notes (${lesson.concept}):`;
+  out.appendChild(head);
+  out.appendChild(document.createElement("br"));
+  const expl = document.createTextNode(lesson.teacherExplanation || "");
+  out.appendChild(expl);
+  if ((lesson.commonMistakes || []).length) {
+    out.appendChild(document.createElement("br"));
+    const mHead = document.createElement("b");
+    mHead.textContent = "Common Student Mistakes: ";
+    out.appendChild(mHead);
+    const mText = document.createTextNode(lesson.commonMistakes.join(" · "));
+    out.appendChild(mText);
+  }
 }
 
 export function demonstrateStepExecution(els, state) {
   if (!teacherModeActive) return;
+  if (state.forceFreeMode) state.forceFreeMode();
   state.exitStep();
-  els.code.value = state.lessons[state.cur].solution;
+  els.code.value = state.LESSONS[state.cur].solution;
   renderGutter();
   state.run();
 }
 
 export function renderExpectedTestResults(els, state, py) {
   if (!teacherModeActive) return;
-  const lesson = state.lessons[state.cur];
+  const lesson = state.LESSONS[state.cur];
   const out = els.teacherOut;
   out.hidden = false;
-  const rows = (lesson.tests || []).map((t, idx) => {
+  out.textContent = "";
+  const head = document.createElement("b");
+  head.textContent = "4. Expected Test Results:";
+  out.appendChild(head);
+  const table = document.createElement("table");
+  table.style.cssText = "width:100%;margin-top:6px;border-collapse:collapse;font-size:.84rem";
+  const thead = document.createElement("tr");
+  thead.style.cssText = "background:#fef3c7;text-align:left";
+  ["#", "Scenario Label", "Environment", "Expected Action"].forEach(h => {
+    const th = document.createElement("th");
+    th.style.cssText = "padding:4px 8px";
+    th.textContent = h;
+    thead.appendChild(th);
+  });
+  table.appendChild(thead);
+  (lesson.tests || []).forEach((t, idx) => {
     const envStr = Object.entries(t.environment || {}).map(([k, v]) => `${k}=${py(v)}`).join(", ") || "(base)";
-    return `<tr><td style="padding:4px 8px;border-bottom:1px solid #eee">Test ${idx + 1}</td><td style="padding:4px 8px;border-bottom:1px solid #eee">${t.label || envStr}</td><td style="padding:4px 8px;border-bottom:1px solid #eee"><code>${envStr}</code></td><td style="padding:4px 8px;border-bottom:1px solid #eee;font-weight:700;color:#12a150">${t.want}()</td></tr>`;
-  }).join("");
-  out.innerHTML = `<b>4. Expected Test Results:</b><table style="width:100%;margin-top:6px;border-collapse:collapse;font-size:.84rem"><tr style="background:#fef3c7;text-align:left"><th style="padding:4px 8px">#</th><th style="padding:4px 8px">Scenario Label</th><th style="padding:4px 8px">Environment</th><th style="padding:4px 8px">Expected Action</th></tr>${rows}</table>`;
+    const tr = document.createElement("tr");
+    const cells = [
+      `Test ${idx + 1}`,
+      t.label || envStr,
+      envStr,
+      `${t.want}()`
+    ];
+    cells.forEach((c, ci) => {
+      const td = document.createElement("td");
+      td.style.cssText = "padding:4px 8px;border-bottom:1px solid #eee";
+      if (ci === 3) { td.style.fontWeight = "700"; td.style.color = "#12a150"; }
+      if (ci === 2) { const code = document.createElement("code"); code.textContent = c; td.appendChild(code); }
+      else td.textContent = c;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  out.appendChild(table);
 }
 
 export function resetStudentView(els, state, load) {
@@ -147,3 +189,63 @@ export function resetStudentView(els, state, load) {
 }
 
 export function isTeacherActive() { return teacherModeActive; }
+/* =========================================================================
+   GUIDED TYPING SELECTION (teacher-controlled, per module)
+   Exercises 5 and 6 (0-based 4 and 5) are enabled by default for every
+   module; teachers can add or remove any exercise from the drawer.
+   ========================================================================= */
+
+const guidedKey = moduleId => "plp_gt_" + moduleId;
+const DEFAULT_GUIDED = [4, 5];
+
+export function getGuidedSet(moduleId, lessons) {
+  const max = Math.max(0, (lessons || []).length - 1);
+  let arr = null;
+  try {
+    const raw = localStorage.getItem(guidedKey(moduleId));
+    if (raw) arr = JSON.parse(raw);
+  } catch (e) { arr = null; }
+  if (!Array.isArray(arr)) arr = DEFAULT_GUIDED.slice();
+  return new Set(arr.filter(i => typeof i === "number" && i >= 0 && i <= max));
+}
+
+export function saveGuidedSet(moduleId, set) {
+  try {
+    localStorage.setItem(guidedKey(moduleId), JSON.stringify([...set].sort((a, b) => a - b)));
+  } catch (e) { /* storage blocked */ }
+}
+
+export function isGuidedExercise(moduleId, index, lessons) {
+  return getGuidedSet(moduleId, lessons).has(index);
+}
+
+export function renderGuidedTypingPanel(els, state, onApply) {
+  if (!teacherModeActive) return;
+  const list = els.tgExerciseList;
+  if (!list) return;
+  const moduleId = state.moduleInfo && state.moduleInfo.id;
+  const set = getGuidedSet(moduleId, state.LESSONS);
+  list.innerHTML = "";
+  (state.LESSONS || []).forEach((L, i) => {
+    const lab = document.createElement("label");
+    lab.className = "tg-check";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = String(i);
+    cb.checked = set.has(i);
+    const span = document.createElement("span");
+    span.textContent = "Ex " + (i + 1) + (L.tier ? " · " + L.tier : "");
+    lab.append(cb, span);
+    list.appendChild(lab);
+  });
+  if (els.tgApplyMsg) els.tgApplyMsg.textContent = "";
+  if (els.tgSelectAll) els.tgSelectAll.onclick = () => list.querySelectorAll("input").forEach(c => { c.checked = true; });
+  if (els.tgClearAll) els.tgClearAll.onclick = () => list.querySelectorAll("input").forEach(c => { c.checked = false; });
+  if (els.tgApply) els.tgApply.onclick = () => {
+    const next = new Set();
+    list.querySelectorAll("input:checked").forEach(c => next.add(Number(c.value)));
+    saveGuidedSet(moduleId, next);
+    if (els.tgApplyMsg) els.tgApplyMsg.textContent = "Saved — guided typing set for " + next.size + " exercise(s).";
+    if (onApply) onApply();
+  };
+}

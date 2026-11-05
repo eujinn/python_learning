@@ -1,0 +1,133 @@
+/* =========================================================================
+   GUIDED TYPING — styles (light grey + dark blue design system)
+   ========================================================================= */
+
+/* Mode switcher */
+.mode-toggle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.mode-toggle-bar[hidden] { display: none !important; }
+
+.mode-pills {
+  display: inline-flex;
+  background: #e3e9f2;
+  padding: 3px;
+  border-radius: 12px;
+  gap: 3px;
+}
+.mode-btn {
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  padding: 4px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mode-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+.mode-btn:hover:not(.active) { color: var(--ink-main); }
+
+.tg-progress-pill {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: #e3e9f2;
+  border: 1.5px solid var(--border-strong);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.tg-progress-pill[hidden] { display: none !important; }
+
+/* Guided overlay sits exactly over the editor text area (gutter stays visible) */
+.editor-shell.guided #code {
+  color: transparent;
+  caret-color: transparent;
+}
+.editor-shell.guided .tg-display {
+  display: block;
+  position: absolute;
+  left: 34px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 10px 12px;
+  background: transparent;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  white-space: pre;
+  overflow: auto;
+  pointer-events: none;
+  user-select: none;
+}
+.tg-display[hidden] { display: none !important; }
+
+/* Character states */
+.tg-char { border-radius: 2px; }
+.tg-pending { color: #94a3b8; }
+.tg-ok { color: #34d399; }
+.tg-bad { color: #ffffff; background: #ef4444; outline: 2px solid #ef4444; }
+.tg-cur { color: #fbbf24; background: rgba(251, 191, 36, 0.28); outline: 2px solid #fbbf24; }
+.tg-comment { color: #38bdf8; font-style: italic; }
+.tg-nlmark { color: #64748b; margin-left: 3px; font-size: 0.82em; }
+
+/* Detective clue card */
+.tg-clue-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #fef3c7;
+  border: 1.5px solid #f59e0b;
+  color: #78350f;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+.tg-clue-card[hidden] { display: none !important; }
+.tg-clue-icon { font-size: 1.1rem; flex-shrink: 0; }
+.tg-clue-text { line-height: 1.35; }
+
+/* Teacher-mode guided typing checklist */
+.tg-teacher-panel {
+  border-top: 1px dashed var(--border-line);
+  margin-top: 8px;
+  padding-top: 8px;
+}
+.tg-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 4px;
+  margin: 6px 0;
+  max-height: 160px;
+  overflow: auto;
+}
+.tg-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  padding: 3px 6px;
+  border-radius: 7px;
+  background: #f4f6f9;
+  border: 1px solid var(--border-line);
+  cursor: pointer;
+}
+.tg-check input { accent-color: var(--primary); }
+.tg-panel-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.tg-apply-msg { font-size: 0.74rem; color: var(--success); margin-top: 4px; min-height: 1em; }
