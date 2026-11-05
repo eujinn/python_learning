@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Case 1: shared files changed on a curriculum module branch → create/update PR to main
+  # Case 1: shared files changed on a curriculum module branch → push them to main
   sync-to-main:
     if: startsWith(github.ref_name, 'module/l') && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
@@ -35,60 +35,26 @@ jobs:
             echo "has_shared=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create or update sync PR to main
+      - name: Push shared changes to main
         if: steps.check.outputs.has_shared == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          REPO="${{ github.repository }}"
-          BR="sync/${{ github.ref_name }}/shared"
-          TITLE="Sync shared files from ${{ github.ref_name }} to main"
-
-          EXISTING=$(gh pr list --repo "$REPO" --base main --head "$BR" --json number --jq '.[0].number' 2>/dev/null || echo "")
-
+          SRC_SHA=$(git rev-parse HEAD)
           git fetch origin main
-          git checkout -b "$BR" origin/main 2>/dev/null || git checkout "$BR"
+          git checkout -B sync-tmp origin/main
           git rm -rq --ignore-unmatch -f core/ css/ scripts/ index.html assets/ 2>/dev/null || true
-          git checkout "${{ github.ref_name }}" -- core/ css/ scripts/ index.html assets/
+          git checkout "$SRC_SHA" -- core/ css/ scripts/ index.html assets/
           git add core/ css/ scripts/ index.html assets/
 
           if git diff --cached --quiet; then
-            echo "No changes to sync (shared files are identical to main)"
+            echo "Shared files already identical to main — nothing to push"
             exit 0
           fi
 
-          git commit -m "sync shared infrastructure from ${{ github.ref_name }}"
-          git push --force origin "$BR"
+          git commit -m "sync shared infrastructure from ${{ github.ref_name }}" \
+            -m "$(cat /tmp/changed-files.txt)"
+          git push origin HEAD:main
 
-          printf '%s\n' \
-            "Automated sync of shared infrastructure changes from \`${{ github.ref_name }}\`." \
-            "" \
-            "**Modified shared files:**" \
-            '```' > /tmp/pr-body.md
-          cat /tmp/changed-files.txt >> /tmp/pr-body.md
-          printf '%s\n' \
-            '```' \
-            "" \
-            "After merging, rebase module branches on \`main\`:" \
-            '```' \
-            "git rebase main" \
-            '```' >> /tmp/pr-body.md
-
-          if [ -z "$EXISTING" ]; then
-            gh pr create \
-              --repo "$REPO" \
-              --base main \
-              --head "$BR" \
-              --title "$TITLE" \
-              --body-file /tmp/pr-body.md
-          else
-            gh pr edit "$EXISTING" \
-              --repo "$REPO" \
-              --title "$TITLE" \
-              --body-file /tmp/pr-body.md
-          fi
-
-  # Case 2: shared files changed on main → create/update PRs to every module/* branch
+  # Case 2: shared files changed on main → push them directly into every curriculum branch
   sync-from-main:
     if: github.ref_name == 'main' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
@@ -102,63 +68,41 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Sync to every module branch
+      - name: Push shared files into every curriculum branch
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           REPO="${{ github.repository }}"
+          MAIN_SHA=$(git rev-parse HEAD)
 
-          gh api "repos/$REPO/branches" --paginate --jq '.[] | select(.name | test("^module/l[0-9]+_")) | .name' > /tmp/module-branches.txt
+          gh api "repos/$REPO/branches" --paginate \
+            --jq '.[] | select(.name | test("^module/l[0-9]+_")) | .name' \
+            > /tmp/module-branches.txt
 
+          synced=0
           while IFS= read -r MOD_BRANCH; do
             [ -z "$MOD_BRANCH" ] && continue
             echo "::group::Sync to $MOD_BRANCH"
 
             git fetch origin "$MOD_BRANCH"
-            TITLE="Sync shared infrastructure from main"
-            BR="sync/main-to-$MOD_BRANCH"
+            git checkout -B sync-tmp "origin/$MOD_BRANCH"
 
-            EXISTING=$(gh pr list --repo "$REPO" --base "$MOD_BRANCH" --head "$BR" --json number --jq '.[0].number' 2>/dev/null || echo "")
-
-            git checkout -b "$BR" "origin/$MOD_BRANCH" 2>/dev/null || git checkout "$BR" 2>/dev/null
             git rm -rq --ignore-unmatch -f core/ css/ scripts/ index.html assets/ 2>/dev/null || true
-            git checkout origin/main -- core/ css/ scripts/ index.html assets/
+            git checkout "$MAIN_SHA" -- core/ css/ scripts/ index.html assets/
             git add core/ css/ scripts/ index.html assets/
 
             if git diff --cached --quiet; then
-              echo "No shared changes needed"
-              git checkout origin/main
+              echo "Already in sync — skipping"
               echo "::endgroup::"
               continue
             fi
 
-            git commit -m "sync shared infrastructure from main"
-            git push --force origin "$BR"
-
-            CHANGED_FILES=$(git diff --name-only "origin/$MOD_BRANCH" "$BR")
-
-            printf '%s\n' \
-              "Automated sync of shared infrastructure from \`main\` to \`$MOD_BRANCH\`." \
-              "" \
-              "**Changed shared files:**" \
-              '```' > /tmp/pr-body.md
-            echo "$CHANGED_FILES" >> /tmp/pr-body.md
-            printf '%s\n' \
-              '```' \
-              "" \
-              "After merging, run:" \
-              '```' \
-              "git rebase main" \
-              '```' >> /tmp/pr-body.md
-
-            if [ -z "$EXISTING" ]; then
-              gh pr create --repo "$REPO" --base "$MOD_BRANCH" --head "$BR" --title "$TITLE" --body-file /tmp/pr-body.md
-              echo "PR created"
-            else
-              gh pr edit "$EXISTING" --repo "$REPO" --title "$TITLE" --body-file /tmp/pr-body.md
-              echo "PR #$EXISTING updated"
-            fi
-
-            git checkout origin/main
+            CHANGED_FILES=$(git diff --cached --name-only)
+            git commit -m "sync shared infrastructure from main" -m "$CHANGED_FILES"
+            git push origin HEAD:"$MOD_BRANCH"
+            echo "Pushed to $MOD_BRANCH"
+            synced=$((synced + 1))
             echo "::endgroup::"
           done < /tmp/module-branches.txt
+
+          echo "Synced $synced branch(es)"
