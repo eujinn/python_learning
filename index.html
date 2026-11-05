@@ -9,8 +9,9 @@
 <link rel="stylesheet" href="./css/typing-guide.css">
 <link rel="stylesheet" href="./css/stage.css">
 <link rel="stylesheet" href="./css/modals.css">
+  <style>body { display: none !important; }</style>
 </head>
-<body>
+<body id="appBody">
 <header>
   <div class="header-top">
     <h1 class="brand-title" id="appTitle">🧪 Python Playground <span class="brand-badge">Modular Series</span></h1>
@@ -37,7 +38,7 @@
   </div>
 </header>
 
-<main class="workspace-grid">
+<main class="workspace-grid" id="appMain" hidden>
 <!-- LEFT COLUMN: LESSON & CODE INPUT -->
 <section class="card-panel">
   <div class="mission-header">
@@ -112,7 +113,7 @@
     </div>
   </div>
   <!-- Module injects its scene DOM here -->
-  <div id="module-scene"></div>
+  <div id="module-scene" hidden></div>
   <div class="legend" id="legend"></div>
 
   <!-- Python Thinking Trace View -->
@@ -137,7 +138,7 @@
 </main>
 
 <!-- Bottom advertisement board: slow left-to-right ticker -->
-<div class="ticker" role="marquee" aria-label="知识要用心体会，才能变成自己的智慧。 Knowledge must be truly felt to become your own wisdom.">
+<div class="ticker" id="appTicker" hidden role="marquee" aria-label="知识要用心体会，才能变成自己的智慧。 Knowledge must be truly felt to become your own wisdom.">
   <div class="ticker-track">
     <span class="ticker-item">知识要用心体会，才能变成自己的智慧。</span>
     <span class="ticker-sep">·</span>
