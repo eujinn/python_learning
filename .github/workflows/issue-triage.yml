@@ -1,0 +1,47 @@
+name: Issue Triage
+on:
+  issues:
+    types: [opened]
+permissions:
+  issues: write
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        id: triage
+        with:
+          script: |
+            const { issue } = context.payload;
+            const body = (issue.body || '') + ' ' + issue.title;
+            const labels = [];
+
+            if (/bug|error|broken|fail|crashes|wrong|not working/i.test(body)) labels.push('bug');
+            else if (/suggest|feature|would (like|love)|enhancement|idea/i.test(body)) labels.push('enhancement');
+            else if (/\?/.test(issue.title) || /how (do|to|could)|question/i.test(body)) labels.push('question');
+            if (/lesson|exercise/i.test(body)) labels.push('lesson-content');
+            if (/code (editor|area)|textarea|gutter/i.test(body)) labels.push('editor');
+
+            if (labels.length) {
+              await github.rest.issues.addLabels({
+                ...context.repo,
+                issue_number: issue.number,
+                labels
+              });
+            }
+            return JSON.stringify(labels);
+      - uses: actions/github-script@v7
+        if: fromJSON(steps.triage.outputs.result).length > 0
+        with:
+          script: |
+            const labels = JSON.parse(steps.triage.outputs.result);
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body:
+                '🤖 Thanks for filing this! I\'ve tagged it as: ' +
+                labels.map(l => '`' + l + '`').join(', ') +
+                '.\n\nA maintainer will review it shortly. ' +
+                'In the meantime: module branches auto-sync shared infrastructure from `main`, ' +
+                'so fixes land on every lesson branch at once.'
+            });
