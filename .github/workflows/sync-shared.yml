@@ -25,7 +25,7 @@ jobs:
       - name: Check for shared file changes
         id: check
         run: |
-          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
           MERGE_BASE=$(git merge-base HEAD origin/main)
           CHANGED=$(git diff --name-only "$MERGE_BASE" HEAD -- $SHARED)
           if [ -n "$CHANGED" ]; then
@@ -38,7 +38,7 @@ jobs:
       - name: Push shared changes to main
         if: steps.check.outputs.has_shared == 'true'
         run: |
-          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
           SRC_SHA=$(git rev-parse HEAD)
           git fetch origin main
           git checkout -B sync-tmp origin/main
@@ -73,7 +73,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
           REPO="${{ github.repository }}"
           MAIN_SHA=$(git rev-parse HEAD)
 
