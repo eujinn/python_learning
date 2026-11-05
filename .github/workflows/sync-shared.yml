@@ -25,7 +25,7 @@ jobs:
       - name: Check for shared file changes
         id: check
         run: |
-          SHARED="core/ css/ scripts/ index.html assets/"
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
           MERGE_BASE=$(git merge-base HEAD origin/main)
           CHANGED=$(git diff --name-only "$MERGE_BASE" HEAD -- $SHARED)
           if [ -n "$CHANGED" ]; then
@@ -38,12 +38,13 @@ jobs:
       - name: Push shared changes to main
         if: steps.check.outputs.has_shared == 'true'
         run: |
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
           SRC_SHA=$(git rev-parse HEAD)
           git fetch origin main
           git checkout -B sync-tmp origin/main
-          git rm -rq --ignore-unmatch -f core/ css/ scripts/ index.html assets/ 2>/dev/null || true
-          git checkout "$SRC_SHA" -- core/ css/ scripts/ index.html assets/
-          git add core/ css/ scripts/ index.html assets/
+          git rm -rq --ignore-unmatch -f $SHARED 2>/dev/null || true
+          git checkout "$SRC_SHA" -- $SHARED
+          git add $SHARED
 
           if git diff --cached --quiet; then
             echo "Shared files already identical to main — nothing to push"
@@ -72,6 +73,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          SHARED="core/ css/ scripts/ index.html assets/ .github/workflows/sync-shared.yml"
           REPO="${{ github.repository }}"
           MAIN_SHA=$(git rev-parse HEAD)
 
@@ -87,9 +89,9 @@ jobs:
             git fetch origin "$MOD_BRANCH"
             git checkout -B sync-tmp "origin/$MOD_BRANCH"
 
-            git rm -rq --ignore-unmatch -f core/ css/ scripts/ index.html assets/ 2>/dev/null || true
-            git checkout "$MAIN_SHA" -- core/ css/ scripts/ index.html assets/
-            git add core/ css/ scripts/ index.html assets/
+            git rm -rq --ignore-unmatch -f $SHARED 2>/dev/null || true
+            git checkout "$MAIN_SHA" -- $SHARED
+            git add $SHARED
 
             if git diff --cached --quiet; then
               echo "Already in sync — skipping"
