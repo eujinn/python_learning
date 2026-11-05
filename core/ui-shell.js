@@ -95,7 +95,8 @@ const els = {
   journeySummary: document.getElementById("journeySummary"),
   skillList: document.getElementById("skillList"),
   badgeGrid: document.getElementById("badgeGrid"),
-  nextSkillBanner: document.getElementById("nextSkillBanner")
+  nextSkillBanner: document.getElementById("nextSkillBanner"),
+  issueBtn: document.getElementById("issueBtn")
 };
 
 /* ---- Shared runner state --------------------------------------------- */
@@ -386,15 +387,7 @@ async function step() {
     st.S.testDone = true;
     addRow(st.S.si);
     hl(0);
-    if (!st.S.L.free && !t.good) {
-      const failures = t.result && t.result.failures;
-      const why = failures && failures.length
-        ? failures.join("; ")
-        : "This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing");
-      X.textContent += "  ❌ " + why + ".";
-    } else if (!st.S.L.free) {
-      X.textContent += "  ✅ Test passed!";
-    }
+    X.textContent += st.S.L.free ? "" : (t.good ? "  ✅ Test passed!" : "  ❌ This test needed " + describeWant(t.sc.want) + " but your code " + (t.calls.length ? "cast " + t.calls.map(c => c + "()").join(", ") : "cast nothing") + ".");
   }
   st.running = false;
   els.step.disabled = false;
@@ -557,6 +550,39 @@ els.journeyBtn.onclick = () => {
   els.journeyModal.hidden = false;
 };
 els.closeJourneyBtn.onclick = () => { els.journeyModal.hidden = true; };
+
+els.issueBtn.onclick = () => {
+  const repo = "eujinn/python_learning";
+  const name = st.moduleInfo?.name || "unknown";
+  const idx  = st.cur !== undefined ? st.cur + 1 : "?";
+  const ttl  = st.LV[st.cur]?.t || "";
+  const url  = window.location.href;
+  const ua   = navigator.userAgent;
+  const body = [
+    "## Description",
+    "",
+    "",
+    "## Steps to Reproduce",
+    "1.",
+    "2.",
+    "3.",
+    "",
+    "## Environment",
+    "- **Module:** " + name + " (Exercise " + idx + " \u2014 " + ttl + ")",
+    "- **URL:** " + url,
+    "- **Browser:** " + ua,
+    "",
+    "## Expected Behavior",
+    "",
+    "## Actual Behavior",
+    "",
+    "## Screenshots / Code",
+  ].join("\n");
+  window.open(
+    "https://github.com/" + repo + "/issues/new?title=[" + name + "]%20&body=" + encodeURIComponent(body),
+    "_blank"
+  );
+};
 
 els.teacherBtn.onclick = () => {
   if (isTeacherActive()) { els.teacherDrawer.hidden = false; return; }
