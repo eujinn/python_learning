@@ -8,9 +8,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Case 1: shared files changed on a non-main branch → create/update PR to main
+  # Case 1: shared files changed on a module/* branch → create/update PR to main
   sync-to-main:
-    if: github.ref_name != 'main' && github.actor != 'github-actions[bot]'
+    if: startsWith(github.ref_name, 'module/') && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
