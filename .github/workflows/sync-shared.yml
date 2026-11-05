@@ -16,7 +16,7 @@ jobs:
       - name: Check for shared file changes
         id: check
         run: |
-          SHARED="core/ css/ scripts/ index.html assets/"
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
           MERGE_BASE=$(git merge-base HEAD origin/main)
           CHANGED=$(git diff --name-only "$MERGE_BASE" HEAD -- $SHARED)
           if [ -n "$CHANGED" ]; then
@@ -34,6 +34,8 @@ jobs:
           REPO="${{ github.repository }}"
           BR="sync/${{ github.ref_name }}/shared"
           TITLE="Sync shared files from ${{ github.ref_name }} to main"
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
+          SRC_SHA=$(git rev-parse HEAD)
 
           EXISTING=$(gh pr list --repo "$REPO" --base main --head "$BR" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
@@ -105,6 +107,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          SHARED="core/ css/ scripts/ index.html assets/ README.md .github/workflows/sync-shared.yml"
           REPO="${{ github.repository }}"
 
           gh api "repos/$REPO/branches" --paginate --jq '.[] | select(.name | startswith("module/")) | .name' > /tmp/module-branches.txt
