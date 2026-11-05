@@ -102,8 +102,8 @@ const BEAR_BODY = `
 
 const BEAR_MOODS = {
   happy: `
-    <path d="M39 52 Q45 45 51 52" fill="none" stroke="#2b1708" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M69 52 Q75 45 81 52" fill="none" stroke="#2b1708" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="45" cy="54" r="4.5" fill="#2b1708"/><circle cx="43.5" cy="52.5" r="1.5" fill="#fff"/>
+    <circle cx="75" cy="54" r="4.5" fill="#2b1708"/><circle cx="73.5" cy="52.5" r="1.5" fill="#fff"/>
     <path d="M50 69 Q60 82 70 69 Z" fill="#e11d48" stroke="#3d2214" stroke-width="2.5"/>`,
   thinking: `
     <circle cx="45" cy="52" r="4.5" fill="#2b1708"/><circle cx="46.5" cy="50.5" r="1.5" fill="#fff"/>
@@ -119,10 +119,13 @@ const BEAR_MOODS = {
     <path d="M53 74 Q60 80 67 74" fill="none" stroke="#3d2214" stroke-width="3" stroke-linecap="round"/>`
 };
 
+let _lastMood = null;
 function setBearMood(mood) {
-  const g = $("bear-svg #bear-face-expr");
-  const svg = $("bear-svg");
+  const g = document.querySelector("#bear-svg #bear-face-expr");
+  const svg = document.querySelector("#bear-svg");
   if (!g || !svg) return;
+  if (mood === _lastMood) return;
+  _lastMood = mood;
   svg.classList.toggle("bear-bounce", mood === "happy");
   g.innerHTML = BEAR_MOODS[mood] || BEAR_MOODS.default;
 }
@@ -176,13 +179,8 @@ function renderTarget(want) {
 export function render(env, meta = {}) {
   if (meta && meta.want !== undefined) currentWant = meta.want;
   renderTarget(currentWant);
-  const bowl = $("#bowl");
-  const count = bowl ? bowl.querySelectorAll(".scoop-item").length : 0;
-  void count;
   const order = $("#order");
-  if (order) {
-    if (env.n !== undefined && env.n !== -1) order.textContent = `🧾 Order: ${py(env.n)} scoops`;
-  }
+  if (order && env.n !== undefined && env.n !== -1) order.textContent = `🧾 Order: ${py(env.n)} scoops`;
   const loopDial = $("#loop-dial");
   if (loopDial) {
     loopDial.textContent = env.i !== undefined ? `🔁 Loop round ${env.i + 1}` : "🔁 Loop —";
@@ -190,22 +188,26 @@ export function render(env, meta = {}) {
   renderMemoryBoxes(env);
 }
 
+let _lastVars = null;
 function renderMemoryBoxes(env) {
   const V = document.getElementById("vars");
   if (!V) return;
-  V.innerHTML = "";
   const entries = Object.entries(env).filter(([k]) => k !== "_want" && k !== "pc" && k !== "want" && k !== "label");
+  const key = entries.map(([k, v]) => k + ":" + py(v)).join("|");
+  if (key === _lastVars) return;
+  _lastVars = key;
+  V.innerHTML = "";
   if (!entries.length) return;
   entries.forEach(([k, v]) => {
     const box = document.createElement("span");
     box.className = "mem-box";
-    const key = document.createElement("span");
-    key.className = "mem-key";
-    key.textContent = k;
+    const keyEl = document.createElement("span");
+    keyEl.className = "mem-key";
+    keyEl.textContent = k;
     const val = document.createElement("span");
     val.className = "mem-val";
     val.textContent = py(v);
-    box.append(key, val);
+    box.append(keyEl, val);
     V.appendChild(box);
   });
 }
