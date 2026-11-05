@@ -102,20 +102,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Check for shared file changes against previous commit
-        id: check
-        run: |
-          SHARED="core/ css/ scripts/ index.html assets/"
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- $SHARED 2>/dev/null)
-          if [ -n "$CHANGED" ]; then
-            echo "has_shared=true" >> $GITHUB_OUTPUT
-            echo "$CHANGED" > /tmp/changed-files.txt
-          else
-            echo "has_shared=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Sync to every module branch
-        if: steps.check.outputs.has_shared == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -148,12 +135,14 @@ jobs:
             git commit -m "sync shared infrastructure from main"
             git push --force origin "$BR"
 
+            CHANGED_FILES=$(git diff --name-only "origin/$MOD_BRANCH" "$BR")
+
             printf '%s\n' \
               "Automated sync of shared infrastructure from \`main\` to \`$MOD_BRANCH\`." \
               "" \
               "**Changed shared files:**" \
               '```' > /tmp/pr-body.md
-            cat /tmp/changed-files.txt >> /tmp/pr-body.md
+            echo "$CHANGED_FILES" >> /tmp/pr-body.md
             printf '%s\n' \
               '```' \
               "" \
