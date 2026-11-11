@@ -1,10 +1,135 @@
 /* For Loop — Ice Cream Machine scene.
-   Ports the ice-cream repo's "Cognitive Visualizer" stage:
-   order ticket bar, SVG Bear with moods, flavored scoop stack, HUD.
    Implements the module scene API: init(root), render(env), reset(), play(name, arg). */
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const py = v => v === true ? "True" : v === false ? "False" : JSON.stringify(v);
+
+/* Keep code editor visible during stepping */
+function keepCodeVisible() {
+  document.getElementById("run")?.addEventListener("click", () => {
+    setTimeout(() => {
+      const el = document.getElementById("code");
+      if (el) { el.hidden = false; el.removeAttribute("hidden"); }
+      const keys = document.getElementById("keys");
+      if (keys) { keys.hidden = false; keys.removeAttribute("hidden"); }
+    }, 10);
+  });
+}
+
+/* Code persistence across exercise revisits */
+const LS_KEY = "plp_l12_code_";
+function saveCode(i, code) { try { localStorage.setItem(LS_KEY + i, code); } catch {} }
+function restoreCode(i) { try { return localStorage.getItem(LS_KEY + i); } catch { return null; } }
+
+function hookCodeSave() {
+  let _saveIdx = -1;
+  const obs = new MutationObserver(() => {
+    const tabs = document.getElementById("tabs");
+    if (!tabs) return;
+    Array.from(tabs.querySelectorAll(".level-tab")).forEach(tab => {
+      if (tab.classList.contains("completed") && !tab._saved) {
+        tab._saved = true;
+        const idx = parseInt(tab.textContent, 10);
+        if (!isNaN(idx) && idx !== _saveIdx) {
+          _saveIdx = idx;
+          const ta = document.getElementById("code");
+          if (ta) saveCode(idx - 1, ta.value);
+        }
+      }
+    });
+  });
+  const T = document.getElementById("tabs");
+  if (T) obs.observe(T, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+}
+
+/* Restore saved code when tab changes (after DOM has updated) */
+function hookCodeRestore() {
+  const T = document.getElementById("tabs");
+  if (!T) return;
+  let _lastTab = -1;
+  new MutationObserver(() => {
+    const active = T.querySelector(".level-tab.active");
+    if (!active) return;
+    const n = parseInt(active.textContent, 10);
+    if (isNaN(n) || n === _lastTab) return;
+    _lastTab = n;
+    setTimeout(() => {
+      const saved = restoreCode(n - 1);
+      const ta = document.getElementById("code");
+      if (ta && saved !== null && saved !== undefined && saved.length > 0) {
+        ta.value = saved;
+      }
+    }, 200);
+  }).observe(T, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+}
+
+/* ---- Guided walkthrough stages ---------------------------------------- */
+let _guideEl = null;
+let _guideBar = null;
+
+function guideStage(stage) {
+  document.body.classList.remove("guide-read", "guide-write", "guide-run");
+  if (stage) document.body.classList.add("guide-" + stage);
+  _guideEl = stage;
+  if (!_guideBar) {
+    _guideBar = document.createElement("div");
+    _guideBar.id = "guideBar";
+    _guideBar.style.cssText = "color:var(--ink-muted);padding:6px 0;font-size:0.9rem;cursor:pointer;border-bottom:1px dashed var(--border-line);margin:2px 0 8px;";
+    const task = document.getElementById("task");
+    if (task && task.parentNode) task.parentNode.insertBefore(_guideBar, task.nextSibling);
+    else document.querySelector(".card-panel:first-child")?.appendChild(_guideBar);
+    _guideBar.onclick = () => { if (_guideEl === "read" || _guideEl === "write") guideNext(); };
+  }
+  if (stage === "read") {
+    _guideBar.textContent = "👆 Step 1: Read the instruction. Click the instruction or this bar to continue.";
+    _guideBar.style.display = "";
+  } else if (stage === "write") {
+    _guideBar.textContent = "✏️ Step 2: Write your code, then press ▶ Run step by step.";
+    _guideBar.style.display = "";
+  } else {
+    guideStage(null);
+    _guideBar.style.display = "none";
+  }
+}
+
+function guideNext() {
+  const order = ["read", "write", "run", null];
+  const idx = order.indexOf(_guideEl);
+  guideStage(order[Math.min(idx + 1, order.length - 1)]);
+}
+
+function hookGuide() {
+  const task = document.getElementById("task");
+  if (task) {
+    task.style.cursor = "pointer";
+    task.addEventListener("click", () => { if (_guideEl === "read") guideNext(); });
+  }
+  if (_guideBar) _guideBar.onclick = () => { if (_guideEl === "read" || _guideEl === "write") guideNext(); };
+  document.getElementById("run")?.addEventListener("click", () => {
+    document.body.classList.remove("guide-read", "guide-write", "guide-run");
+    _guideEl = null;
+    if (_guideBar) _guideBar.style.display = "none";
+  });
+  /* Restart guide on tab switch (exercise change) */
+  const T = document.getElementById("tabs");
+  if (T) {
+    let _lastIdx = -1;
+    const cb = () => {
+      const active = T.querySelector(".level-tab.active");
+      if (!active) return;
+      const now = parseInt(active.textContent, 10);
+      if (isNaN(now) || now === _lastIdx) return;
+      _lastIdx = now;
+      setTimeout(() => {
+        document.body.classList.remove("guide-read", "guide-write", "guide-run");
+        _guideEl = null;
+        guideStage("read");
+      }, 150);
+    };
+    new MutationObserver(cb).observe(T, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+    cb();
+  }
+}
 
 let root = null;
 let currentWant = null;
@@ -33,7 +158,7 @@ function palette(flavor) {
   return FLAVOR_COLORS[String(flavor).toLowerCase().trim()] || fallbackPalette(String(flavor).toLowerCase().trim());
 }
 
-/* ---- SVG builders (ported from the repo's graphics.js) ---------------- */
+/* ---- SVG builders ------------------------------------------------------ */
 function bowlSVG() {
   const d = document.createElement("div");
   d.className = "cup-svg-wrap";
@@ -85,7 +210,7 @@ function toppingEl(name) {
   return d;
 }
 
-/* ---- Bear SVG with mood faces (ported from the repo) ------------------- */
+/* ---- Bear SVG with mood faces ----------------------------------------- */
 const BEAR_BODY = `
   <svg id="bear-svg" viewBox="0 0 120 124" width="102" height="112" role="img" aria-label="Customer Bear">
     <ellipse cx="60" cy="112" rx="34" ry="7" fill="#3d2214" opacity="0.18"/>
@@ -102,8 +227,8 @@ const BEAR_BODY = `
 
 const BEAR_MOODS = {
   happy: `
-    <circle cx="45" cy="54" r="4.5" fill="#2b1708"/><circle cx="43.5" cy="52.5" r="1.5" fill="#fff"/>
-    <circle cx="75" cy="54" r="4.5" fill="#2b1708"/><circle cx="73.5" cy="52.5" r="1.5" fill="#fff"/>
+    <path d="M39 52 Q45 45 51 52" fill="none" stroke="#2b1708" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M69 52 Q75 45 81 52" fill="none" stroke="#2b1708" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M50 69 Q60 82 70 69 Z" fill="#e11d48" stroke="#3d2214" stroke-width="2.5"/>`,
   thinking: `
     <circle cx="45" cy="52" r="4.5" fill="#2b1708"/><circle cx="46.5" cy="50.5" r="1.5" fill="#fff"/>
@@ -119,13 +244,10 @@ const BEAR_MOODS = {
     <path d="M53 74 Q60 80 67 74" fill="none" stroke="#3d2214" stroke-width="3" stroke-linecap="round"/>`
 };
 
-let _lastMood = null;
 function setBearMood(mood) {
-  const g = document.querySelector("#bear-svg #bear-face-expr");
-  const svg = document.querySelector("#bear-svg");
+  const g = $("bear-svg #bear-face-expr");
+  const svg = $("bear-svg");
   if (!g || !svg) return;
-  if (mood === _lastMood) return;
-  _lastMood = mood;
   svg.classList.toggle("bear-bounce", mood === "happy");
   g.innerHTML = BEAR_MOODS[mood] || BEAR_MOODS.default;
 }
@@ -136,121 +258,74 @@ export function init(container) {
   root.innerHTML = `
     <div class="shop">
       <div class="shop-top-bar">
-        <div id="order">🧾 Order: —</div>
-        <div class="target-preview-wrap">
-          <span>Goal:</span>
-          <div id="target-mini"></div>
-        </div>
+        <div id="order"></div>
       </div>
       <div class="stage-arena">
         <div class="bear-box">${BEAR_BODY}</div>
         <div id="bowl">${bowlSVG().outerHTML}</div>
         <div class="cognitive-hud">
-          <div id="bubble">Serving your order…</div>
-          <div id="loop-dial">🔁 Loop —</div>
+          <div id="bubble">🤔 Think…</div>
         </div>
       </div>
     </div>
   `;
   setBearMood("default");
-}
-
-function renderTarget(want) {
-  const wrap = $("#target-mini");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  if (!want) return;
-  const list = Array.isArray(want) ? want : [want];
-  list.forEach(w => {
-    const m = String(w).match(/^([a-z_]+)\((.*)\)$/);
-    const flavor = m ? m[2] : "";
-    const dot = document.createElement("span");
-    dot.className = "mini-dot";
-    if (flavor) {
-      const pal = palette(flavor);
-      dot.style.background = pal.base;
-    } else {
-      dot.style.background = "#fbcfe8";
-    }
-    wrap.appendChild(dot);
-  });
+  keepCodeVisible();
+  /* Move stepbar to left panel */
+  const stepbar = document.getElementById("stepbar");
+  const actionRow = document.querySelector(".card-panel:first-child .action-row");
+  if (stepbar && actionRow) {
+    actionRow.parentNode.appendChild(stepbar);
+  }
+  setTimeout(() => { guideStage("read"); hookGuide(); hookCodeSave(); hookCodeRestore(); }, 50);
 }
 
 export function render(env, meta = {}) {
-  if (meta && meta.want !== undefined) currentWant = meta.want;
-  renderTarget(currentWant);
   const order = $("#order");
+  const stepbar = document.getElementById("stepbar");
+  const running = stepbar && !stepbar.hidden;
   if (order) {
-    if (env.n !== undefined && env.n !== -1) {
+    if (!running) {
+      order.textContent = "";
+    } else if (env.n !== undefined && env.n !== -1) {
       order.textContent = `🧾 Order: ${py(env.n)} scoops`;
     } else if (env.order !== undefined) {
       order.textContent = `🧾 Order: ${py(env.order)}`;
     } else {
-      order.textContent = "🧾 Order: —";
+      order.textContent = "";
     }
   }
   const loopDial = $("#loop-dial");
   if (loopDial) {
     loopDial.textContent = env.i !== undefined ? `🔁 Loop round ${env.i + 1}` : "🔁 Loop —";
   }
-  renderMemoryBoxes(env);
-}
-
-let _lastVars = null;
-function renderMemoryBoxes(env) {
-  const V = document.getElementById("vars");
-  if (!V) return;
-  const entries = Object.entries(env).filter(([k]) => k !== "_want" && k !== "pc" && k !== "want" && k !== "label");
-  const key = entries.map(([k, v]) => k + ":" + py(v)).join("|");
-  if (key === _lastVars) return;
-  _lastVars = key;
-  V.innerHTML = "";
-  if (!entries.length) return;
-  entries.forEach(([k, v]) => {
-    const box = document.createElement("span");
-    box.className = "mem-box";
-    const keyEl = document.createElement("span");
-    keyEl.className = "mem-key";
-    keyEl.textContent = k;
-    const val = document.createElement("span");
-    val.className = "mem-val";
-    val.textContent = py(v);
-    box.append(keyEl, val);
-    V.appendChild(box);
-  });
-}
+  }
 
 export function reset() {
   const bowl = $("#bowl");
   if (bowl) {
     bowl.querySelectorAll(".scoop-item, .sauce-item, .topping-item").forEach(n => n.remove());
   }
-  const dial = $("#loop-dial");
-  if (dial) dial.textContent = "🔁 Loop —";
   setBearMood("default");
-  renderTarget(null);
-  const bubble = $("#bubble");
-  if (bubble) bubble.textContent = "Serving your order…";
-}
+  }
 
 export async function play(name, { setBubble, out } = {}) {
-  const bubbleSet = setBubble || (t => { const b = $("#bubble"); if (b) b.textContent = t; });
   const bowl = $("#bowl");
   const a = out === undefined || out === null ? "" : String(out);
+  const bs = setBubble || (t => { const b = $("#bubble"); if (b) b.textContent = t; });
   if (name == "scoop") {
-    bubbleSet("🍨 scoop(" + a + ")!");
+    bs("🍨 scoop(" + a + ")!");
     setBearMood("happy");
     if (bowl) bowl.appendChild(scoopSVG(a));
     await sleep(750);
   } else if (name == "sauce") {
-    bubbleSet("🍫 sauce(" + a + ")!");
+    bs("🍫 sauce(" + a + ")!");
     if (bowl) bowl.appendChild(sauceSVG(a));
     await sleep(800);
   } else {
-    bubbleSet("✨ topping(" + a + ")!");
+    bs("✨ topping(" + a + ")!");
     if (bowl) bowl.appendChild(toppingEl(a));
     await sleep(600);
   }
   setBearMood("default");
-  bubbleSet("");
 }

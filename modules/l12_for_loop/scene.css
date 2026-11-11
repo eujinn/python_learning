@@ -4,6 +4,21 @@
    right-pane shop (Bear, bowl, scoops, HUD, memory boxes) is themed here.
    ========================================================================= */
 
+/* ── Guided walkthrough overlay ────────────────────────────────────────── */
+body.guide-read .card-panel:first-child > :not(.mission-header):not(.mission-title):not(#task):not(#guideBar) {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+}
+body.guide-read .stage-panel > * { display: none !important; }
+body.guide-read .stage-panel { background: #f0f2f5 !important; }
+
+body.guide-write .card-panel:first-child > :not(.mission-header):not(.mission-title):not(#task):not(.editor-shell):not(.action-row):not(#run):not(#code):not(.hint-wrap):not(.vocab-bar):not(#guideBar) {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+}
+
+#skip { display: none !important; }
+
 /* ── Young-student mode: hide extra UI, bigger type ───────────────────── */
 
 /* Hide progress bar in header */
@@ -39,7 +54,7 @@ html, body { font-size: var(--fs-body); }
 .legend               { font-size: 1rem !important; }
 #step                 { font-size: 1.1rem !important; }
 .sec                  { font-size: 1.05rem !important; }
-#bubble               { font-size: 1.05rem !important; }
+#bubble               { font-size: 1rem !important; }
 #order                { font-size: 1.1rem !important; }
 .btn-3d               { font-size: 1.05rem !important; }
 .header-controls .btn-3d { font-size: 1rem !important; height: 42px !important; }
@@ -54,18 +69,21 @@ html, body { font-size: var(--fs-body); }
 /* Hide symbol bar under code editor */
 .syntax-keys { display: none !important; }
 
-/* Taller code editor */
-.editor-shell { max-height: 360px !important; min-height: 180px !important; }
+/* Equal columns */
+.workspace-grid { grid-template-columns: 1fr 1fr !important; }
 
-/* Hide the Goal preview dots in the shop top bar */
-.target-preview-wrap { display: none !important; }
+/* Bigger trace view and code editor */
+#view { max-height: 400px !important; min-height: 120px !important; }
+.editor-shell { max-height: 400px !important; min-height: 200px !important; }
+#vars { display: none !important; }
+
 :root {
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
 }
 
-/* ---- Ice-cream shop stage (ported from the repo's stage.css) ----------- */
+/* ---- Ice-cream shop stage -------------------------------------------- */
 .shop {
   background: linear-gradient(180deg, #ffdde8 0%, #fff5eb 68%, #f3d5b5 68%, #e6be94 100%);
   border: 3px solid #f5c2d1;
@@ -91,31 +109,8 @@ html, body { font-size: var(--fs-body); }
 
 #order {
   font-weight: 700;
-  font-size: 0.86rem;
   color: var(--ink-main);
   text-align: left;
-}
-
-.target-preview-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--ink-muted);
-  background: #fff8f1;
-  padding: 2px 8px;
-  border-radius: 8px;
-  border: 1.5px dashed #f3c4d2;
-}
-
-#target-mini { display: flex; align-items: center; gap: 3px; }
-.mini-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(0, 0, 0, 0.25);
-  display: inline-block;
 }
 
 .stage-arena {
@@ -213,7 +208,6 @@ html, body { font-size: var(--fs-body); }
   border-radius: 16px;
   padding: 6px 10px;
   font-weight: 700;
-  font-size: 0.82rem;
   color: var(--ink-main);
   min-height: 2.4em;
   display: flex;
@@ -223,43 +217,4 @@ html, body { font-size: var(--fs-body); }
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
   transition: transform 0.2s, background 0.2s;
   width: 100%;
-}
-
-#loop-dial {
-  background: #ede9fe;
-  border: 2px solid #8b5cf6;
-  color: #5b21b6;
-  border-radius: 12px;
-  padding: 4px 8px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  text-align: center;
-  width: 100%;
-}
-
-/* Memory boxes (variables inspector) */
-.memory-section {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-#vars { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
-.mem-box {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 2px solid var(--ink-main);
-  font: 600 0.8rem "Fira Code", Consolas, monospace;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
-  animation: memPulse 0.3s ease;
-}
-.mem-key { background: var(--ink-main); color: #fde047; padding: 2px 7px; }
-.mem-val { background: #fff; color: var(--ink-main); padding: 2px 8px; }
-@keyframes memPulse {
-  0% { transform: scale(0.9); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
 }
