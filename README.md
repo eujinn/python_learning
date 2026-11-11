@@ -1,5 +1,11 @@
 # Python Playground
 
+> **Good habits matter more than good fortune** (命好不如习惯好) — let technology be the enabler, and good habits become your strength.
+>
+> This repository is a **development framework for creating Python lesson plans** designed for primary school students. Built on **Python in AI**, it provides a complete scaffolding system (core engine, shared UI, branching model, and automated infrastructure sync) for authoring and deploying modular, interactive programming lessons set in **Kindness City**.
+>
+> Each exercise guides children through hands-on coding and problem-solving, cultivating the habits of **loving yourself, loving others, and loving the Earth** (爱自己 · 爱别人 · 爱地球). Every lesson teaches not just a programming concept, but a life value — helping young learners build a strong technical foundation and a positive mindset they can carry into everyday life.
+
 A modular platform for teaching Python through interactive, visual lessons. Each module presents a split-screen: **code editor on the left**, **simulation + step-through trace on the right**.
 
 ## Overview
@@ -8,8 +14,6 @@ A modular platform for teaching Python through interactive, visual lessons. Each
 - Each module = a separate long-lived branch (e.g. `module/traffic-light`, or curriculum `module/l12_for_loop`)
 - Each branch deploys independently to its own Netlify site
 - UI/color base (the "design system") is a light-grey surface with a dark-blue brand tone — see `AGENTS.md`
-
-> Legacy theme branches were renamed into the curriculum (`module/traffic-light` → `module/l8_comparison_ops`).
 
 ## Structure
 
@@ -26,7 +30,7 @@ index.html
 
 | Branch | Module | Description |
 |---|---|---|
-| `module/l8_comparison_ops` | Comparison Operators — Traffic Light | Lesson 8 curriculum: compare sensors to drive the car |
+| `module/traffic-light` | Traffic Light Python (legacy) | Learn conditionals by programming a self-driving car |
 | `module/forloop` | For-Loop Outpost (legacy) | Learn Python for loops with an outpost mecha |
 | `module/l12_for_loop` | For Loop — Lesson 12 | Curriculum lesson: bend the rules of repetition with for loops |
 
