@@ -180,7 +180,15 @@ export function render(env, meta = {}) {
   if (meta && meta.want !== undefined) currentWant = meta.want;
   renderTarget(currentWant);
   const order = $("#order");
-  if (order && env.n !== undefined && env.n !== -1) order.textContent = `🧾 Order: ${py(env.n)} scoops`;
+  if (order) {
+    if (env.n !== undefined && env.n !== -1) {
+      order.textContent = `🧾 Order: ${py(env.n)} scoops`;
+    } else if (env.order !== undefined) {
+      order.textContent = `🧾 Order: ${py(env.order)}`;
+    } else {
+      order.textContent = "🧾 Order: —";
+    }
+  }
   const loopDial = $("#loop-dial");
   if (loopDial) {
     loopDial.textContent = env.i !== undefined ? `🔁 Loop round ${env.i + 1}` : "🔁 Loop —";
@@ -217,8 +225,6 @@ export function reset() {
   if (bowl) {
     bowl.querySelectorAll(".scoop-item, .sauce-item, .topping-item").forEach(n => n.remove());
   }
-  const order = $("#order");
-  if (order) order.textContent = "🧾 Order: —";
   const dial = $("#loop-dial");
   if (dial) dial.textContent = "🔁 Loop —";
   setBearMood("default");

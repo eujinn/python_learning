@@ -3,6 +3,62 @@
    The shared shell keeps the core light-grey + dark-blue theme; only the
    right-pane shop (Bear, bowl, scoops, HUD, memory boxes) is themed here.
    ========================================================================= */
+
+/* ── Young-student mode: hide extra UI, bigger type ───────────────────── */
+
+/* Hide progress bar in header */
+.progress-pill { display: none !important; }
+
+/* Hide Learn First drawer */
+#learnCard { display: none !important; }
+
+/* Hide "What you learned" reflection box */
+#reflBox { display: none !important; }
+
+/* Bigger base font for younger readers */
+:root {
+  --fs-body: 1.1rem;
+}
+html, body { font-size: var(--fs-body); }
+
+.concept-badge        { font-size: 1rem; }
+.mission-title        { font-size: 1.7rem !important; }
+.mission-story        { font-size: 1.25rem !important; line-height: 1.65 !important; }
+.vocab-pill           { font-size: 1rem !important; }
+.info-pop             { font-size: 1.05rem !important; }
+.hint-panel           { font-size: 1.05rem; }
+#run                  { font-size: 1.2rem !important; padding: 12px 26px !important; }
+#next                 { font-size: 1.2rem !important; padding: 12px 26px !important; }
+#code                 { font-size: 1.2rem !important; line-height: 1.7 !important; }
+.syntax-keys button   { font-size: 1rem !important; height: 40px !important; }
+.editor-gutter        { font-size: 1.1rem !important; }
+.level-tab            { font-size: 1.1rem !important; height: 40px !important; padding: 0 12px !important; }
+#view                 { font-size: 1.1rem !important; }
+.expl                 { font-size: 1.15rem !important; }
+.vars                 { font-size: 1.05rem !important; }
+.legend               { font-size: 1rem !important; }
+#step                 { font-size: 1.1rem !important; }
+.sec                  { font-size: 1.05rem !important; }
+#bubble               { font-size: 1.05rem !important; }
+#order                { font-size: 1.1rem !important; }
+.btn-3d               { font-size: 1.05rem !important; }
+.header-controls .btn-3d { font-size: 1rem !important; height: 42px !important; }
+
+/* Remove the double-quote button from the syntax toolbar */
+[data-i="\0022"] { display: none !important; }
+
+/* Hide module selector, learning record button */
+.module-selector-wrap { display: none !important; }
+#journeyBtn { display: none !important; }
+
+/* Hide symbol bar under code editor */
+.syntax-keys { display: none !important; }
+
+/* Taller code editor */
+.editor-shell { max-height: 360px !important; min-height: 180px !important; }
+
+/* Hide the Goal preview dots in the shop top bar */
+.target-preview-wrap { display: none !important; }
 :root {
   --radius-lg: 20px;
   --radius-md: 14px;
