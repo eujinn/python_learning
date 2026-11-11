@@ -271,8 +271,10 @@ function run() {
     v.appendChild(d);
   });
   st.S = { L, T, si: 0, ei: -1, rows: 0, testDone: false };
-  els.code.hidden = true;
-  els.keys.hidden = true;
+  if (!document.body.classList.contains("keep-code-visible")) {
+    els.code.hidden = true;
+    els.keys.hidden = true;
+  }
   v.hidden = false;
   els.run.hidden = true;
   els.stepbar.hidden = false;
