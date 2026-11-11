@@ -1,5 +1,11 @@
 # Python Playground
 
+> **Good habits matter more than good fortune** (命好不如习惯好) — let technology be the enabler, and good habits become your strength.
+>
+> This repository is a **development framework for creating Python lesson plans** designed for primary school students. Built on **Python in AI**, it provides a complete scaffolding system (core engine, shared UI, branching model, and automated infrastructure sync) for authoring and deploying modular, interactive programming lessons set in **Kindness City**.
+>
+> Each exercise guides children through hands-on coding and problem-solving, cultivating the habits of **loving yourself, loving others, and loving the Earth** (爱自己 · 爱别人 · 爱地球). Every lesson teaches not just a programming concept, but a life value — helping young learners build a strong technical foundation and a positive mindset they can carry into everyday life.
+
 A modular platform for teaching Python through interactive, visual lessons. Each module presents a split-screen: **code editor on the left**, **simulation + step-through trace on the right**.
 
 ## Overview
