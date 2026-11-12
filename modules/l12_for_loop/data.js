@@ -114,34 +114,34 @@ export const LESSONS = [
   {
     id: 4,
     tier: "recap",
-    title: "Exercise 4: Recap — Print the Order",
-    storyProblem: "Print the order so staff can hear it, then serve vanilla or chocolate with if/else.",
-    concept: "print + if/else recap",
+    title: "Exercise 4: Recap — Serve and Top",
+    storyProblem: "If it is vanilla, serve it with sprinkles on top! Otherwise just serve the flavor. Notice you can put more than one line under if.",
+    concept: "Multiple lines under if/else",
     learnFirst: {
-      problem: "Announce the order, then serve it.",
-      knownInfo: "print() shows text; if/else chooses a flavor.",
-      pythonQuestion: "Which branch serves chocolate?",
-      whyPath: "When order is not vanilla, else runs.",
-      action: "Print order, then use if/else for the scoop.",
-      learned: "You can combine print and decisions."
+      problem: "Bear wants sprinkles only if it's vanilla. Otherwise just a plain scoop.",
+      knownInfo: "if checks the order; else runs for any other flavor.",
+      pythonQuestion: "What goes inside if's indented block?",
+      whyPath: "When order is vanilla, Python runs both scoop AND topping before moving on.",
+      action: "scoop the flavor and add topping only inside the if branch.",
+      learned: "if/else can hold multiple lines of code."
     },
-    vocabulary: [{ term: "print()", meaning: "Shows a value on screen." }],
+    vocabulary: [{ term: "topping()", meaning: "Adds a topping to the bowl." }],
     hints: [
-      "Concept Clue: print(order) first, then the if/else.",
-      "Structure Guide:\nprint(order)\nif order == \"vanilla\":\n    scoop(\"vanilla\")\nelse:\n    scoop(\"chocolate\")",
-      "Guided Correction: print(order) has no quotes around order."
+      "Concept Clue: Under if, indent scoop() and topping() one after the other.",
+      "Structure Guide:\nif order == \"vanilla\":\n    scoop(\"vanilla\")\n    topping(\"sprinkles\")\nelse:\n    scoop(order)",
+      "Guided Correction: scoop() and topping() must both be indented under if."
     ],
-    starterCode: '# Announce the order, then serve it:\n',
-    solution: 'print(order)\nif order == "vanilla":\n    scoop("vanilla")\nelse:\n    scoop("chocolate")',
+    starterCode: '# Serve with sprinkles on vanilla:\n',
+    solution: 'if order == "vanilla":\n    scoop("vanilla")\n    topping("sprinkles")\nelse:\n    scoop(order)',
     variables: ["order"],
     base: { order: "vanilla" },
     tests: [
-      { environment: { order: "vanilla" }, want: ["print(vanilla)", "scoop(vanilla)"], expect: { stdout: "vanilla" }, label: "vanilla" },
-      { environment: { order: "chocolate" }, want: ["print(chocolate)", "scoop(chocolate)"], expect: { stdout: "chocolate" }, label: "chocolate" }
+      { environment: { order: "vanilla" }, want: ["scoop(vanilla)", "topping(sprinkles)"], label: "vanilla + sprinkles" },
+      { environment: { order: "chocolate" }, want: ["scoop(chocolate)"], label: "chocolate plain" }
     ],
-    teacherExplanation: "Combine output with a decision, recapping print and if/else.",
-    commonMistakes: ["Quoting order in print", "Missing the else"],
-    studentReflection: "I can print an order and serve it conditionally."
+    teacherExplanation: "An if/else branch can have many lines — Python runs them all as long as the condition holds.",
+    commonMistakes: ["Forgetting the topping() line under if", "Putting topping outside the indented block"],
+    studentReflection: "I can put multiple commands under an if or else branch."
   },
 
   /* ============================ BASIC (5–10) =========================== */
