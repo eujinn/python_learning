@@ -21,8 +21,36 @@ const LS_KEY = "plp_l12_code_";
 function saveCode(i, code) { try { localStorage.setItem(LS_KEY + i, code); } catch {} }
 function restoreCode(i) { try { return localStorage.getItem(LS_KEY + i); } catch { return null; } }
 
-function hookCodeSave() {
+/* Auto-save code to localStorage on every edit */
+function hookAutoSave() {
+  const ta = document.getElementById("code");
+  if (!ta) return;
+  const tabsEl = document.getElementById("tabs");
+  const getIdx = () => {
+    const active = tabsEl && tabsEl.querySelector(".level-tab.active");
+    if (!active) return -1;
+    const n = parseInt(active.textContent, 10);
+    return isNaN(n) ? -1 : n - 1;
+  };
+  ta.addEventListener("input", () => {
+    const idx = getIdx();
+    if (idx >= 0) saveCode(idx, ta.value);
+  });
+}
+
+/* Save code when all tests pass (the .completed class appears on the active tab) */
+function hookCompletionSave() {
   let _saveIdx = -1;
+  const tabsEl = document.getElementById("tabs");
+  if (tabsEl) {
+    Array.from(tabsEl.querySelectorAll(".level-tab.completed")).forEach(tab => {
+      const idx = parseInt(tab.textContent, 10);
+      if (!isNaN(idx)) {
+        const ta = document.getElementById("code");
+        if (ta && ta.value.trim().length > 0) saveCode(idx - 1, ta.value);
+      }
+    });
+  }
   const obs = new MutationObserver(() => {
     const tabs = document.getElementById("tabs");
     if (!tabs) return;
@@ -123,7 +151,9 @@ function hookGuide() {
       setTimeout(() => {
         document.body.classList.remove("guide-read", "guide-write", "guide-run");
         _guideEl = null;
-        guideStage("read");
+        if (!active.classList.contains("completed")) {
+          guideStage("read");
+        }
       }, 150);
     };
     new MutationObserver(cb).observe(T, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
@@ -245,8 +275,8 @@ const BEAR_MOODS = {
 };
 
 function setBearMood(mood) {
-  const g = $("bear-svg #bear-face-expr");
-  const svg = $("bear-svg");
+  const g = root && root.querySelector("#bear-face-expr");
+  const svg = root && root.querySelector("#bear-svg");
   if (!g || !svg) return;
   svg.classList.toggle("bear-bounce", mood === "happy");
   g.innerHTML = BEAR_MOODS[mood] || BEAR_MOODS.default;
@@ -277,7 +307,11 @@ export function init(container) {
   if (stepbar && actionRow) {
     actionRow.parentNode.appendChild(stepbar);
   }
-  setTimeout(() => { guideStage("read"); hookGuide(); hookCodeSave(); hookCodeRestore(); }, 50);
+  setTimeout(() => {
+    const firstTab = document.querySelector(".level-tab.active");
+    if (!firstTab || !firstTab.classList.contains("completed")) guideStage("read");
+    hookGuide(); hookAutoSave(); hookCompletionSave(); hookCodeRestore();
+  }, 50);
 }
 
 export function render(env, meta = {}) {
