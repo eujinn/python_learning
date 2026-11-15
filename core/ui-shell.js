@@ -316,11 +316,22 @@ function addRow(i) {
   st.S.rows = i + 1;
 }
 
+function playSound(src, offset) {
+  try {
+    const a = document.createElement("audio");
+    a.src = src;
+    a.volume = 0.5;
+    if (offset) a.currentTime = offset;
+    a.play();
+  } catch (_) {}
+}
+
 function finish() {
   const L = st.S.L, ok = st.S.T.every(t => t.good);
   exitStep();
   if (L.free) { msg("Change the code and run again.", "info"); return; }
   if (ok) {
+    setTimeout(() => playSound("assets/correct.mp3.mpeg", 0.6), 300);
     st.done.add(st.cur);
     tabs();
     msg("🎉 Every test passed!", "ok");
@@ -330,6 +341,7 @@ function finish() {
     els.reflBox.hidden = false;
     els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[st.cur].studentReflection}"`;
   } else {
+    playSound("assets/incorrect.MP3.mpeg");
     msg("Almost! Look at the ❌ lines, fix your code and try again.", "info");
   }
 }
