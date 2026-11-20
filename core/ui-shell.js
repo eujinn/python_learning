@@ -134,7 +134,11 @@ function ins(t) {
   ta.focus();
   if (getGuidedMode()) updateTypingUI();
 }
-ta.addEventListener("input", () => { renderGutter(); hideAphorism(); if (getGuidedMode()) updateTypingUI(); });
+ta.addEventListener("input", () => {
+  renderGutter(); hideAphorism();
+  if (getGuidedMode()) { updateTypingUI(); }
+  else if (st.moduleInfo) { try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {} }
+});
 ta.addEventListener("paste", e => {
   if (getGuidedMode()) {
     e.preventDefault();
@@ -331,8 +335,9 @@ function finish() {
   exitStep();
   if (L.free) { msg("Change the code and run again.", "info"); return; }
   if (ok) {
-    setTimeout(() => playSound("assets/correct.mp3.mpeg", 0.6), 300);
+    setTimeout(() => playSound("assets/correct.mp3", 1), 300);
     st.done.add(st.cur);
+    try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {}
     tabs();
     msg("🎉 Every test passed!", "ok");
     if (st.cur < st.LV.length - 1) els.next.hidden = false;
@@ -341,7 +346,7 @@ function finish() {
     els.reflBox.hidden = false;
     els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[st.cur].studentReflection}"`;
   } else {
-    playSound("assets/incorrect.MP3.mpeg");
+    playSound("assets/incorrect.mp3");
     msg("Almost! Look at the ❌ lines, fix your code and try again.", "info");
   }
 }
@@ -447,7 +452,9 @@ function load(i) {
   els.ex.hidden = true;
   els.peek.hidden = true;
   els.peek.style.display = "none";
-  els.code.value = L.start || "";
+  let saved;
+  try { saved = localStorage.getItem("plp_" + st.moduleInfo.id + "_code_" + i); } catch {}
+  els.code.value = saved || L.start || "";
   renderGutter();
   els.res.innerHTML = "";
   els.next.hidden = true;
