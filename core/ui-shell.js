@@ -294,6 +294,7 @@ function intro() {
   hl(0);
   if (st.api.render) st.api.render(t.env0);
   if (st.api.reset) st.api.reset();
+  setBubble("");
   els.expl.textContent = "Test " + (st.S.si + 1) + " of " + st.S.T.length + ": " + t.lab + ". Press Next step to see what your code does.";
   els.step.textContent = "Next step ▶";
 }
@@ -334,7 +335,7 @@ function finish() {
   exitStep();
   if (L.free) { msg("Change the code and run again.", "info"); return; }
   if (ok) {
-    setTimeout(() => playSound("assets/correct.mp3", 1), 300);
+    setTimeout(() => playSound("assets/correct.mp3", 1), 0);
     st.done.add(st.cur);
     try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {}
     tabs();
@@ -465,12 +466,8 @@ function load(i) {
   if (st.api.reset) st.api.reset();
 
   /* Educational decorators */
-  if (st.done.has(i)) {
-    els.reflBox.textContent = `🌟 Answer: ${st.LV[i].ex || "✅ completed"}`;
-    els.reflBox.hidden = false;
-  } else {
-    els.reflBox.hidden = !st.done.has(i);
-  }
+  els.reflBox.hidden = !st.done.has(i);
+  if (st.done.has(i)) els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[i].studentReflection}"`;
   renderLearnFirst(st.LESSONS[i]);
   resetHints(els);
   renderVocabulary(st.LESSONS[i]);
