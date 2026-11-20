@@ -134,7 +134,11 @@ function ins(t) {
   ta.focus();
   if (getGuidedMode()) updateTypingUI();
 }
-ta.addEventListener("input", () => { renderGutter(); hideAphorism(); if (getGuidedMode()) updateTypingUI(); });
+ta.addEventListener("input", () => {
+  renderGutter(); hideAphorism();
+  if (getGuidedMode()) { updateTypingUI(); }
+  else if (st.moduleInfo) { try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {} }
+});
 ta.addEventListener("paste", e => {
   if (getGuidedMode()) {
     e.preventDefault();
@@ -271,8 +275,10 @@ function run() {
     v.appendChild(d);
   });
   st.S = { L, T, si: 0, ei: -1, rows: 0, testDone: false };
-  els.code.hidden = true;
-  els.keys.hidden = true;
+  if (!document.body.classList.contains("keep-code-visible")) {
+    els.code.hidden = true;
+    els.keys.hidden = true;
+  }
   v.hidden = false;
   els.run.hidden = true;
   els.stepbar.hidden = false;
@@ -314,12 +320,24 @@ function addRow(i) {
   st.S.rows = i + 1;
 }
 
+function playSound(src, offset) {
+  try {
+    const a = document.createElement("audio");
+    a.src = src;
+    a.volume = 0.5;
+    if (offset) a.currentTime = offset;
+    a.play();
+  } catch (_) {}
+}
+
 function finish() {
   const L = st.S.L, ok = st.S.T.every(t => t.good);
   exitStep();
   if (L.free) { msg("Change the code and run again.", "info"); return; }
   if (ok) {
+    setTimeout(() => playSound("assets/correct.mp3", 1), 300);
     st.done.add(st.cur);
+    try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {}
     tabs();
     msg("🎉 Every test passed!", "ok");
     if (st.cur < st.LV.length - 1) els.next.hidden = false;
@@ -328,6 +346,7 @@ function finish() {
     els.reflBox.hidden = false;
     els.reflBox.textContent = `🌟 What you learned: "${st.LESSONS[st.cur].studentReflection}"`;
   } else {
+    playSound("assets/incorrect.mp3");
     msg("Almost! Look at the ❌ lines, fix your code and try again.", "info");
   }
 }
@@ -433,7 +452,9 @@ function load(i) {
   els.ex.hidden = true;
   els.peek.hidden = true;
   els.peek.style.display = "none";
-  els.code.value = L.start || "";
+  let saved;
+  try { saved = localStorage.getItem("plp_" + st.moduleInfo.id + "_code_" + i); } catch {}
+  els.code.value = saved || L.start || "";
   renderGutter();
   els.res.innerHTML = "";
   els.next.hidden = true;
