@@ -335,7 +335,7 @@ function finish() {
   exitStep();
   if (L.free) { msg("Change the code and run again.", "info"); return; }
   if (ok) {
-    setTimeout(() => playSound("assets/correct.mp3", 1), 300);
+    setTimeout(() => playSound("assets/correct.mp3", 1), 0);
     st.done.add(st.cur);
     try { localStorage.setItem("plp_" + st.moduleInfo.id + "_code_" + st.cur, els.code.value); } catch {}
     tabs();
