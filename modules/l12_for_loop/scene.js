@@ -109,7 +109,7 @@ function guideStage(stage) {
     _guideBar.onclick = () => { if (_guideEl === "read" || _guideEl === "write") guideNext(); };
   }
   if (stage === "read") {
-    _guideBar.textContent = "👆 Step 1: Read the instruction. Click the instruction or this bar to continue.";
+    _guideBar.innerHTML = "👆 Step 1: Read the instruction. <b>Click the instruction or this bar to continue.</b> 👆👆👆";
     _guideBar.style.display = "";
   } else if (stage === "write") {
     _guideBar.textContent = "✏️ Step 2: Write your code, then press ▶ Run step by step.";

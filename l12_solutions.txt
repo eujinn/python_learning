@@ -1,0 +1,179 @@
+
+===============================================
+Exercise 1: Exercise 1: Recap — Choose the Flavor
+-----------------------------------------------
+
+if order == "vanilla":
+    scoop("vanilla")
+else:
+    scoop("chocolate")
+
+
+===============================================
+Exercise 2: Exercise 2: Recap — Mango or Vanilla
+-----------------------------------------------
+
+if order == "mango":
+    scoop("mango")
+else:
+    scoop("vanilla")
+
+
+===============================================
+Exercise 3: Exercise 3: Recap — Three Flavors
+-----------------------------------------------
+
+if order == "vanilla":
+    scoop("vanilla")
+elif order == "chocolate":
+    scoop("chocolate")
+else:
+    scoop("strawberry")
+
+
+===============================================
+Exercise 4: Exercise 4: Recap — Serve and Top
+-----------------------------------------------
+
+if order == "vanilla":
+    scoop("vanilla")
+    topping("sprinkles")
+else:
+    scoop(order)
+
+
+===============================================
+Exercise 5: Exercise 5: Serve a Scoop
+-----------------------------------------------
+
+scoop("vanilla")
+
+
+===============================================
+Exercise 6: Exercise 6: Repeat with for
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 7: Exercise 7: Loop, then One More
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+scoop("strawberry")
+
+
+===============================================
+Exercise 8: Exercise 8: The Flavor Box
+-----------------------------------------------
+
+flavor = "mango"
+for i in range(2):
+    scoop(flavor)
+
+
+===============================================
+Exercise 9: Exercise 9: Count from the Customer
+-----------------------------------------------
+
+for i in range(n):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 10: Exercise 10: Topping After the Loop
+-----------------------------------------------
+
+for i in range(2):
+    scoop("vanilla")
+topping("sprinkles")
+
+
+===============================================
+Exercise 11: Exercise 11: Missing Colon
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 12: Exercise 12: Missing Indentation
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 13: Exercise 13: Wrong Scoop Count
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 14: Exercise 14: Quotes Around the Variable
+-----------------------------------------------
+
+flavor = "mango"
+for i in range(2):
+    scoop(flavor)
+
+
+===============================================
+Exercise 15: Exercise 15: Wrong Loop Keyword
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+
+
+===============================================
+Exercise 16: Exercise 16: Five Sundaes
+-----------------------------------------------
+
+for i in range(5):
+    scoop("chocolate")
+
+
+===============================================
+Exercise 17: Exercise 17: Loop with a Variable Count
+-----------------------------------------------
+
+flavor = "strawberry"
+count = 4
+for i in range(count):
+    scoop(flavor)
+
+
+===============================================
+Exercise 18: Exercise 18: Scoop and Sauce
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+sauce("chocolate")
+
+
+===============================================
+Exercise 19: Exercise 19: Bear's Order
+-----------------------------------------------
+
+for i in range(3):
+    scoop("vanilla")
+scoop("mango")
+
+
+===============================================
+Exercise 20: Exercise 20: Party Sundae
+-----------------------------------------------
+
+for i in range(4):
+    scoop("chocolate")
+topping("sprinkles")
+sauce("caramel")
